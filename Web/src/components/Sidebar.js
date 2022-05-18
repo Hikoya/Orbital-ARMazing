@@ -25,32 +25,11 @@ export default function Sidebar({ onClose, ...rest }) {
       const session = await currentSession();
       if (session.user.admin) {
         LinkItems = [
-          { label: "VENUE BOOKING SYSTEM", icon: FiHome, href: "/vbs" },
-          { label: "CCA ATTENDANCE", icon: FiSettings, href: "/cca" },
-          { label: "KEIPs", icon: FiStar, href: "/keips" },
-          { label: "CONTACT US", icon: FiCompass, href: "/contact" },
-          {
-            label: "MANAGE BOOKINGS",
-            icon: FiCalendar,
-            href: "/manage/admin/bookings",
-          },
-          {
-            label: "MANAGE VENUES",
-            icon: FiMapPin,
-            href: "/manage/admin/venues",
-          },
+          { label: "Home", icon: FiHome, href: "/" },
         ];
       } else {
         LinkItems = [
-          { label: "VENUE BOOKING SYSTEM", icon: FiHome, href: "/vbs" },
-          { label: "CCA ATTENDANCE", icon: FiSettings, href: "/cca" },
-          { label: "KEIPs", icon: FiStar, href: "/keips" },
-          { label: "CONTACT US", icon: FiCompass, href: "/contact" },
-          {
-            label: "MANAGE BOOKINGS",
-            icon: FiCalendar,
-            href: "/manage/bookings",
-          },
+          { label: "Home", icon: FiHome, href: "/" },
         ];
       }
 
@@ -78,7 +57,7 @@ export default function Sidebar({ onClose, ...rest }) {
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
         <Link href="/">
           <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-            KEVII
+            ARMazing
           </Text>
         </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />

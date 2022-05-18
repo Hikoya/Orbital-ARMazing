@@ -34,7 +34,7 @@ export default function Header({ onOpen, ...rest }) {
           fontFamily="monospace"
           fontWeight="bold"
         >
-          KEVII
+          ARMazing
         </Text>
       </Link>
       <UserProfile />
