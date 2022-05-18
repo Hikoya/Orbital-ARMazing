@@ -1,6 +1,9 @@
 import NextAuth from "next-auth";
 import EmailProvider from "next-auth/providers/email";
+import nodemailer from "nodemailer";
+
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { prisma } from "@constants/db";
 
 const authHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
@@ -48,29 +51,6 @@ const options = {
     signIn: "/signin",
   },
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      var isAllowedToSignIn = true;
-
-      if (email.hasOwnProperty("verificationRequest")) {
-        isAllowedToSignIn = false;
-
-        const doesUserExist = await prisma.users.findUnique({
-          where: {
-            email: user.email,
-          },
-        });
-
-        if (doesUserExist !== null) {
-          isAllowedToSignIn = true;
-        }
-      }
-
-      if (isAllowedToSignIn) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     async session({ session, token, user }) {
       const userFromDB = await prisma.users.findUnique({
         where: {
@@ -207,7 +187,6 @@ function html({ url, host, email }) {
         <td style="word-break: break-word;border-collapse: collapse !important;vertical-align: top">
           <!--[if (mso)|(IE)]><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color: #f9f9f9;"><![endif]-->
 
-
           <div class="u-row-container" style="padding: 0px;background-color: transparent">
             <div class="u-row" style="Margin: 0 auto;min-width: 320px;max-width: 600px;overflow-wrap: break-word;word-wrap: break-word;word-break: break-word;background-color: #003399;">
               <div style="border-collapse: collapse;display: table;width: 100%;background-color: transparent;">
@@ -310,6 +289,21 @@ function html({ url, host, email }) {
                                   </span>
                                 </a>
                                 <!--[if mso]></center></v:roundrect></td></tr></table><![endif]-->
+                              </div>
+
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <table style="font-family:'Cabin',sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+                        <tbody>
+                          <tr>
+                            <td style="overflow-wrap:break-word;word-break:break-word;padding:15px 55px 16px;font-family:'Cabin',sans-serif;" align="left">
+
+                              <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
+                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">Thanks,</span></p>
+                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">KEWeb</span></p>
                               </div>
 
                             </td>
