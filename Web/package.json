@@ -6,15 +6,30 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prettier": "prettier --write .",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@chakra-ui/react": "2.0.2",
+    "@emotion/react": "11.9.0",
+    "@emotion/styled": "11.8.1",
+    "@prisma/client": "3.14.0",
+    "framer-motion": "6.3.3",
     "next": "12.1.6",
+    "next-auth": "4.3.4",
     "react": "18.1.0",
     "react-dom": "18.1.0"
   },
   "devDependencies": {
     "eslint": "8.15.0",
-    "eslint-config-next": "12.1.6"
-  }
+    "eslint-config-next": "12.1.6",
+    "prettier": "2.6.2",
+    "prisma": "3.14.0"
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "next.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
