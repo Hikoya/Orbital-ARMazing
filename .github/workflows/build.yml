@@ -37,6 +37,9 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: ./Web
 
     steps:
     - name: Restore cached artifacts
