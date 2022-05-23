@@ -15,7 +15,7 @@ import {
 import TableWidget from "@components/TableWidget";
 
 export default function Event() {
-  const [loadingData, setLoading] = useState(false);
+  const [loadingData, setLoading] = useState(true);
   const toast = useToast();
   
   const nameDB = useRef("");
@@ -176,6 +176,7 @@ export default function Event() {
   };
   
   const fetchData = async () => {
+    setLoading(true);
     try {
       const rawResponse = await fetch("/api/event/fetch", {
         headers: {
@@ -186,6 +187,7 @@ export default function Event() {
       const content = await rawResponse.json();
       if (content.status) {
         await includeActionButton(content.msg);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);

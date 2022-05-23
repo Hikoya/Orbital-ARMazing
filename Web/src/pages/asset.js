@@ -1,5 +1,5 @@
 import Auth from "@components/Auth";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import {
   Button,
   Box,
@@ -18,11 +18,10 @@ import {
   VisuallyHidden,
   useToast,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-
-const MotionBox = motion(Box);
+import TableWidget from "@components/TableWidget";
 
 export default function Asset() {
+  const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
   const nameDB = useRef("");
@@ -48,6 +47,8 @@ export default function Asset() {
   const [longitude, setLongitude] = useState("");
 
   const [error, setError] = useState(null);
+
+  const [data, setData] = useState([]);
 
   const reset = async () => {
     nameDB.current = "";
@@ -203,19 +204,82 @@ export default function Asset() {
     }
   };
 
+  const includeActionButton = async (content) => {
+    for (let key in content) {
+      if (content[key]) {
+        const data = content[key];
+      }
+    }
+    setData(content);
+  };
+
+  const fetchAssetData = async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch("/api/asset/fetch", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     async function generate() {
       await fetchData();
+      await fetchAssetData();
     }
 
     generate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name",
+      },
+      {
+        Header: "Description",
+        accessor: "description",
+      },
+      {
+        Header: "Latitude",
+        accessor: "latitude",
+      },
+      {
+        Header: "Longitude",
+        accessor: "longitude",
+      },
+      {
+        Header: "Visible",
+        accessor: "visibleText",
+      },
+    ],
+    []
+  );
+
   return (
     <Auth>
       <Box>
-        <MotionBox>
+      <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
+        {loadingData ? (
+              <Text>Loading Please wait...</Text>
+            ) : (
+              <TableWidget key={1} columns={columns} data={data} />
+            )}
+      </Box>
+
+        <Box>
           <Stack
             spacing={4}
             w={"full"}
@@ -391,7 +455,7 @@ export default function Asset() {
               </Stack>
             </form>
           </Stack>
-        </MotionBox>
+        </Box>
       </Box>
     </Auth>
   );
