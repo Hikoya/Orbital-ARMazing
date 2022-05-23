@@ -9,7 +9,7 @@ import {
   FormLabel,
   Text,
   Stack,
-  useColorModeValue,
+  useToast,
   Checkbox,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -17,6 +17,8 @@ import { motion } from "framer-motion";
 const MotionBox = motion(Box);
 
 export default function Event() {
+  const toast = useToast();
+  
   const nameDB = useRef("");
   const [name, setName] = useState("");
 

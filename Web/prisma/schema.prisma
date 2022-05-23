@@ -56,6 +56,8 @@ model Assets {
   imagePath  String
   createdBy  String
   visible   Boolean @default(true)
+  latitude  String
+  longitude String
   created_at DateTime @default(now()) @db.DateTime(0)
   updated_at DateTime @default(now()) @db.DateTime(0)
 }

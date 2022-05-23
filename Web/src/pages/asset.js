@@ -16,12 +16,15 @@ import {
   Select,
   chakra,
   VisuallyHidden,
+  useToast,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 
 const MotionBox = motion(Box);
 
 export default function Asset() {
+  const toast = useToast();
+
   const nameDB = useRef("");
   const [name, setName] = useState("");
 
@@ -38,9 +41,31 @@ export default function Asset() {
 
   const [eventDropdown, setEventDropdown] = useState([]);
 
+  const latitudeDB = useRef("");
+  const [latitude, setLatitude] = useState("");
+
+  const longitudeDB = useRef("");
+  const [longitude, setLongitude] = useState("");
+
   const [error, setError] = useState(null);
 
-  const reset = async () => {};
+  const reset = async () => {
+    nameDB.current = "";
+    descriptionDB.current = "";
+    eventIDDB.current = "";
+    selectedFileDB.current = null;
+    latitudeDB.current = "";
+    longitudeDB.current = ""
+    visibleDB.current = true;
+
+    setName("");
+    setDescription("");
+    setFileName(null);
+    setLatitude("");
+    setLongitude("");
+    setVisible(true);
+    setError(null);
+  };
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
@@ -49,7 +74,9 @@ export default function Asset() {
         nameDB.current,
         descriptionDB.current,
         eventIDDB.current,
-        selectedFileDB.current
+        selectedFileDB.current,
+        latitudeDB.current,
+        longitudeDB.current,
       )
     ) {
       try {
@@ -59,6 +86,8 @@ export default function Asset() {
         data.append("description", descriptionDB.current);
         data.append("visible", visibleDB.current);
         data.append("image", selectedFileDB.current);
+        data.append("latitude", latitudeDB.current);
+        data.append("longitude", longitudeDB.current);
 
         const rawResponse = await fetch("/api/asset/create", {
           method: "POST",
@@ -89,7 +118,7 @@ export default function Asset() {
     }
   };
 
-  const validateFields = (name, description, eventID, selectedFile) => {
+  const validateFields = (name, description, eventID, selectedFile, latitude, longitude) => {
     //super basic validation here
 
     if (!name) {
@@ -109,6 +138,16 @@ export default function Asset() {
 
     if (!selectedFile) {
       setError("Please upload an image!");
+      return false;
+    }
+
+    if (!latitude) {
+      setError("Please provide a latitude!");
+      return false;
+    }
+
+    if (!longitude) {
+      setError("Please provide a longitude");
       return false;
     }
 
@@ -221,6 +260,32 @@ export default function Asset() {
                     onChange={(event) => {
                       setDescription(event.currentTarget.value);
                       descriptionDB.current = event.currentTarget.value;
+                    }}
+                  />
+                </FormControl>
+
+                <FormControl id="latitude">
+                  <FormLabel>Latitude</FormLabel>
+                  <Input
+                    placeholder="Latitude"
+                    value={latitude}
+                    size="lg"
+                    onChange={(event) => {
+                      setLatitude(event.currentTarget.value);
+                      latitudeDB.current = event.currentTarget.value;
+                    }}
+                  />
+                </FormControl>
+
+                <FormControl id="longitude">
+                  <FormLabel>Longitude</FormLabel>
+                  <Input
+                    placeholder="Longitude"
+                    value={longitude}
+                    size="lg"
+                    onChange={(event) => {
+                      setLongitude(event.currentTarget.value);
+                      longitudeDB.current = event.currentTarget.value;
                     }}
                   />
                 </FormControl>
