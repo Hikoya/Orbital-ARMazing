@@ -26,10 +26,12 @@ export default function Sidebar({ onClose, ...rest }) {
       if (session.user.admin) {
         LinkItems = [
           { label: "Home", icon: FiHome, href: "/" },
+          { label: "Manage Events", icon: FiSettings, href: "/event" },
         ];
       } else {
         LinkItems = [
           { label: "Home", icon: FiHome, href: "/" },
+          { label: "Manage Events", icon: FiSettings, href: "/event" },
         ];
       }
 
