@@ -1,4 +1,4 @@
-name: Build
+name: Build, Danger
 
 on: 
   pull_request:
@@ -6,15 +6,28 @@ on:
     - main
 
 jobs:
+  danger:
+    name: Danger JS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Danger
+        uses: danger/danger-js@9.1.6
+        with:
+          args: "--dangerfile ./.github/workflows/dangerfile.js"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
   build:
     runs-on: ubuntu-latest
+    needs: danger
     defaults:
       run:
         working-directory: ./Web
     strategy:
       matrix:
         node-version: [18.x]
-    if: github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'assigned'
+    if: github.event.action == 'opened' && github.actor == "Hikoya"
 
     steps:    
     - name: Checkout
@@ -37,6 +50,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     needs: build
+    defaults:
+      run:
+        working-directory: ./Web
+    if: github.event.action == 'opened' && github.actor == "Hikoya"
 
     steps:
     - name: Restore cached artifacts
