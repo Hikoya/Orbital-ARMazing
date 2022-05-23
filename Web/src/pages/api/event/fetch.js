@@ -1,4 +1,4 @@
-import { currentSession } from "@constants/helper";
+import { currentSession, prettifyDate, convertUnixToDate } from "@constants/helper";
 import { fetchAllEvent } from "@constants/event";
 
 const handler = async (req, res) => {
@@ -15,14 +15,22 @@ const handler = async (req, res) => {
         if (eventData[ev]) {
           const event = eventData[ev];
 
+          const start = prettifyDate(convertUnixToDate(event.startDate));
+          const end = prettifyDate(convertUnixToDate(event.endDate));
+
+          const isPublic = event.isPublic ? "Yes" : "No"; 
+          const visible = event.visible ? "Yes": "No";
+          
           const data = {
             id: event.id,
             name: event.name,
             description: event.description,
-            startDate: event.start,
-            endDate: event.end,
+            startDate: start,
+            endDate: end,
             isPublic: event.isPublic,
             visible: event.visible,
+            isPublicText: isPublic,
+            visibleText: visible,
           };
 
           parsedEvent.push(data);
