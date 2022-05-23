@@ -23,22 +23,112 @@ export default function Event() {
   const descriptionDB = useRef("");
   const [description, setDescription] = useState("");
 
-  const visibleDB = useRef(true);
-  const [visible, setVisible] = useState(true);
-
-  const publicDB = useRef(true);
-  const [isPublic, setIsPublic] = useState(true);
-
   const startDateDB = useRef("");
   const [startDate, setStartDate] = useState("");
 
   const endDateDB = useRef("");
   const [endDate, setEndDate] = useState("");
 
+  const visibleDB = useRef(true);
+  const [visible, setVisible] = useState(true);
+
+  const publicDB = useRef(true);
+  const [isPublic, setIsPublic] = useState(true);
+
   const [error, setError] = useState(null);
+
+  const reset = async () => {
+    nameDB.current = "";
+    descriptionDB.current = "";
+    startDateDB.current = "";
+    endDateDB.current = "";
+    visibleDB.current = true;
+    publicDB.current = true;
+
+    setName("");
+    setDescription("");
+    setStartDate("");
+    setEndDate("");
+    setVisible("");
+    setIsPublic("");
+    setError(null);
+  }
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
+    if (validateFields(nameDB.current, descriptionDB.current, startDateDB.current, endDateDB.current)) {
+      try {
+        const rawResponse = await fetch("/api/event/create", {
+          method: "POST",
+          headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: nameDB.current,
+          description: descriptionDB.current,
+          startDate: startDateDB.current,
+          endDate: endDateDB.current,
+          visible: visibleDB.current,
+          isPublic: publicDB.current,
+        }),
+        });
+        const content = await rawResponse.json();
+        if (content.status) {
+          await reset();
+          toast({
+            title: "Success",
+            description: content.msg,
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        } else {
+          toast({
+            title: "Error",
+            description: content.error,
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const validateFields = (
+    name,
+    description,
+    startDate,
+    endDate,
+  ) => {
+    //super basic validation here
+    if (!name) {
+      setError("Please set a name!");
+      return false;
+    }
+
+    if (!description) {
+      setError("Please set a description!");
+      return false;
+    }
+
+    if (!startDate || !endDate) {
+      setError("Please set a date!");
+      return false;
+    }
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    if (end <= start) {
+      setError("End date cannot be earlier than start date!");
+      return false;
+    }
+
+    return true;
   };
 
   return (

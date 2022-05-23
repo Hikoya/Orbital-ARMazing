@@ -20,7 +20,7 @@ import { currentSession } from "@constants/helper";
 export default function UserProfile(props) {
   const [admin, setAdmin] = useState(null);
   const [name, setName] = useState(null);
-  const [url, setURL] = useState("https://vbs-kevii.vercel.app"); //default
+  const [url, setURL] = useState("https://localhost:3000"); //default
   const router = useRouter();
 
   useEffect(() => {

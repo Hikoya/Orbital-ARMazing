@@ -1,4 +1,6 @@
 import { getSession } from "next-auth/react";
+import { numberToWeekday } from "@constants/weekdays";
+import { monthNamesFull } from "@constants/months";
 
 export const currentSession = async (req = null) => {
   var session = null;
@@ -24,4 +26,20 @@ export const currentSession = async (req = null) => {
   }
 
   return session;
+};
+
+export const prettifyDate = (date) => {
+  if (date) {
+    const dateObj = new Date(date);
+    const day = numberToWeekday[dateObj.getDay()];
+    const month = monthNamesFull[dateObj.getMonth()];
+    const prettyDate = `${day}, ${dateObj.getDate()} ${month} ${dateObj.getFullYear()}`;
+    return prettyDate;
+  }
+};
+
+export const convertDateToUnix = (date) => {
+  const prettified = prettifyDate(date);
+  const parseDate = Date.parse(prettified);
+  return Math.floor(parseDate / 1000);
 };
