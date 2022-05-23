@@ -8,6 +8,7 @@ import {
   Input,
   FormLabel,
   Text,
+  Textarea,
   Stack,
   Checkbox,
   Flex,
@@ -47,14 +48,17 @@ export default function Asset() {
       validateFields(
         nameDB.current,
         descriptionDB.current,
-        startDateDB.current,
-        endDateDB.current
+        eventIDDB.current,
+        selectedFileDB.current
       )
     ) {
       try {
         const data = new FormData();
         data.append("eventID", eventIDDB.current);
         data.append("name", nameDB.current);
+        data.append("description", descriptionDB.current);
+        data.append("visible", visibleDB.current);
+        data.append("image", selectedFileDB.current);
 
         const rawResponse = await fetch("/api/asset/create", {
           method: "POST",
@@ -85,8 +89,28 @@ export default function Asset() {
     }
   };
 
-  const validateFields = () => {
+  const validateFields = (name, description, eventID, selectedFile) => {
     //super basic validation here
+
+    if (!name) {
+      setError("Please write a name!");
+      return false;
+    }
+
+    if (!description) {
+      setError("Please write a description!");
+      return false;
+    }
+
+    if (!eventID || eventID == "") {
+      setError("Please choose an event!");
+      return false;
+    }
+
+    if (!selectedFile) {
+      setError("Please upload an image!");
+      return false;
+    }
 
     return true;
   };
@@ -190,8 +214,7 @@ export default function Asset() {
                 </FormControl>
                 <FormControl id="description">
                   <FormLabel>Description</FormLabel>
-                  <Input
-                    type="text"
+                  <Textarea
                     placeholder="Description"
                     value={description}
                     size="lg"
