@@ -52,26 +52,33 @@ export default function Event() {
     setVisible("");
     setIsPublic("");
     setError(null);
-  }
+  };
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
-    if (validateFields(nameDB.current, descriptionDB.current, startDateDB.current, endDateDB.current)) {
+    if (
+      validateFields(
+        nameDB.current,
+        descriptionDB.current,
+        startDateDB.current,
+        endDateDB.current
+      )
+    ) {
       try {
         const rawResponse = await fetch("/api/event/create", {
           method: "POST",
           headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: nameDB.current,
-          description: descriptionDB.current,
-          startDate: startDateDB.current,
-          endDate: endDateDB.current,
-          visible: visibleDB.current,
-          isPublic: publicDB.current,
-        }),
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: nameDB.current,
+            description: descriptionDB.current,
+            startDate: startDateDB.current,
+            endDate: endDateDB.current,
+            visible: visibleDB.current,
+            isPublic: publicDB.current,
+          }),
         });
         const content = await rawResponse.json();
         if (content.status) {
@@ -98,12 +105,7 @@ export default function Event() {
     }
   };
 
-  const validateFields = (
-    name,
-    description,
-    startDate,
-    endDate,
-  ) => {
+  const validateFields = (name, description, startDate, endDate) => {
     //super basic validation here
     if (!name) {
       setError("Please set a name!");
@@ -139,7 +141,7 @@ export default function Event() {
             spacing={4}
             w={"full"}
             maxW={"md"}
-            bg={useColorModeValue("white", "gray.700")}
+            bg="white"
             rounded={"xl"}
             boxShadow={"lg"}
             p={6}

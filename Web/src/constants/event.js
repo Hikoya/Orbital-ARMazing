@@ -19,3 +19,17 @@ export const createEvent = async (data) => {
     return { status: false, error: error, msg: null };
   }
 };
+
+export const fetchAllEvent = async (session) => {
+  try {
+    const event = await prisma.event.findMany({
+      where: {
+        createdBy: session.user.email,
+      }
+    })
+
+    return { status: true, error: null, msg: event };
+  } catch (error) {
+    return { status: false, error: error, msg: null };
+  }
+}
