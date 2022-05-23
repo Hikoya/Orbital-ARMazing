@@ -1,5 +1,5 @@
 import Auth from "@components/Auth";
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import {
   Button,
   Box,
@@ -9,14 +9,15 @@ import {
   FormLabel,
   Text,
   Stack,
-  useColorModeValue,
+  useToast,
   Checkbox,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-
-const MotionBox = motion(Box);
+import TableWidget from "@components/TableWidget";
 
 export default function Event() {
+  const [loadingData, setLoading] = useState(true);
+  const toast = useToast();
+  
   const nameDB = useRef("");
   const [name, setName] = useState("");
 
@@ -37,6 +38,8 @@ export default function Event() {
 
   const [error, setError] = useState(null);
 
+  const [data, setData] = useState([]);
+
   const reset = async () => {
     nameDB.current = "";
     descriptionDB.current = "";
@@ -52,26 +55,33 @@ export default function Event() {
     setVisible("");
     setIsPublic("");
     setError(null);
-  }
+  };
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
-    if (validateFields(nameDB.current, descriptionDB.current, startDateDB.current, endDateDB.current)) {
+    if (
+      validateFields(
+        nameDB.current,
+        descriptionDB.current,
+        startDateDB.current,
+        endDateDB.current
+      )
+    ) {
       try {
         const rawResponse = await fetch("/api/event/create", {
           method: "POST",
           headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: nameDB.current,
-          description: descriptionDB.current,
-          startDate: startDateDB.current,
-          endDate: endDateDB.current,
-          visible: visibleDB.current,
-          isPublic: publicDB.current,
-        }),
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: nameDB.current,
+            description: descriptionDB.current,
+            startDate: startDateDB.current,
+            endDate: endDateDB.current,
+            visible: visibleDB.current,
+            isPublic: publicDB.current,
+          }),
         });
         const content = await rawResponse.json();
         if (content.status) {
@@ -98,12 +108,7 @@ export default function Event() {
     }
   };
 
-  const validateFields = (
-    name,
-    description,
-    startDate,
-    endDate,
-  ) => {
+  const validateFields = (name, description, startDate, endDate) => {
     //super basic validation here
     if (!name) {
       setError("Please set a name!");
@@ -131,15 +136,90 @@ export default function Event() {
     return true;
   };
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Name",
+        accessor: "name",
+      },
+      {
+        Header: "Description",
+        accessor: "description",
+      },
+      {
+        Header: "Start Date",
+        accessor: "startDate",
+      },
+      {
+        Header: "End Date",
+        accessor: "endDate",
+      },
+      {
+        Header: "Public",
+        accessor: "isPublicText",
+      },
+      {
+        Header: "Visible",
+        accessor: "visibleText",
+      },
+    ],
+    []
+  );
+
+  const includeActionButton = async (content) => {
+    for (let key in content) {
+      if (content[key]) {
+        const data = content[key];
+      }
+    }
+    setData(content);
+  };
+  
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch("/api/event/fetch", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    async function generate() {
+      await fetchData();
+    }
+
+    generate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Auth>
       <Box>
-        <MotionBox>
+      <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
+        {loadingData ? (
+              <Text>Loading Please wait...</Text>
+            ) : (
+              <TableWidget key={1} columns={columns} data={data} />
+            )}
+      </Box>
+
+        <Box>
           <Stack
             spacing={4}
             w={"full"}
             maxW={"md"}
-            bg={useColorModeValue("white", "gray.700")}
+            bg="white"
             rounded={"xl"}
             boxShadow={"lg"}
             p={6}
@@ -246,7 +326,7 @@ export default function Event() {
               </Stack>
             </form>
           </Stack>
-        </MotionBox>
+        </Box>
       </Box>
     </Auth>
   );

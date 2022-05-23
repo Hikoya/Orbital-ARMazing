@@ -43,3 +43,7 @@ export const convertDateToUnix = (date) => {
   const parseDate = Date.parse(prettified);
   return Math.floor(parseDate / 1000);
 };
+
+export const convertUnixToDate = (date) => {
+  return new Date(date * 1000);
+};

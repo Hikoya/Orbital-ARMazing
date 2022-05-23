@@ -18,6 +18,7 @@ let LinkItems = null;
 
 export default function Sidebar({ onClose, ...rest }) {
   const [loading, setLoading] = useState(false);
+  const [item, setItems] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -27,14 +28,17 @@ export default function Sidebar({ onClose, ...rest }) {
         LinkItems = [
           { label: "Home", icon: FiHome, href: "/" },
           { label: "Manage Events", icon: FiSettings, href: "/event" },
+          { label: "Manage Assets", icon: FiStar, href: "/asset" },
         ];
       } else {
         LinkItems = [
           { label: "Home", icon: FiHome, href: "/" },
           { label: "Manage Events", icon: FiSettings, href: "/event" },
+          { label: "Manage Assets", icon: FiStar, href: "/asset" },
         ];
       }
 
+      setItems(LinkItems);
       setLoading(true);
     }
     fetchData();
@@ -65,8 +69,9 @@ export default function Sidebar({ onClose, ...rest }) {
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
       {loading &&
-        LinkItems &&
-        LinkItems.map((link, i) => <NavLink key={i} link={link} />)}
+        item &&
+        item.map((link, i) => <NavLink key={i} link={link} />)}
+      {!loading && (<Text>Loading sidebar...</Text>)}
     </Box>
   );
 }

@@ -28,6 +28,16 @@ export default function Home() {
               }}
             />
           </MotionBox>
+
+          <MotionBox variants={cardVariant} key="1">
+            <Card
+              product={{
+                img: "/image/assets.png",
+                title: "Manage Assets",
+                link: "/asset",
+              }}
+            />
+          </MotionBox>
         </MotionSimpleGrid>
       </Box>
     </Auth>

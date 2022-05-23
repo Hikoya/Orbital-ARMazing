@@ -1,8 +1,8 @@
 import { prisma } from "@constants/db";
 
-export const createEvent = async (data) => {
+export const createAsset = async (data) => {
   try {
-    const event = await prisma.event.create({
+    const event = await prisma.assets.create({
       data: data,
     });
 
@@ -11,24 +11,25 @@ export const createEvent = async (data) => {
     } else {
       return {
         status: false,
-        error: "Failed to create event in database",
+        error: "Failed to create asset in database",
         msg: "",
       };
     }
   } catch (error) {
+    console.log(error);
     return { status: false, error: error, msg: null };
   }
 };
 
-export const fetchAllEvent = async (session) => {
+export const fetchAllAsset = async (session) => {
   try {
-    const event = await prisma.event.findMany({
+    const asset = await prisma.assets.findMany({
       where: {
         createdBy: session.user.email,
       }
     })
 
-    return { status: true, error: null, msg: event };
+    return { status: true, error: null, msg: asset };
   } catch (error) {
     return { status: false, error: error, msg: null };
   }

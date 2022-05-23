@@ -7,8 +7,6 @@ const handler = async (req, res) => {
   const { name, description, startDate, endDate, isPublic, visible } = req.body;
   let result = null;
 
-  console.log(req.body);
-  
   if (session) {
     if (name && description && startDate && endDate && isPublic && visible) {
       const start = convertDateToUnix(startDate);
