@@ -5,7 +5,6 @@ const PR = danger.github.pr
 const MODIFIED_FILES = danger.git.modified_files
 const CREATED_FILES = danger.git.created_files
 const FILES = [...MODIFIED_FILES, ...CREATED_FILES]
-const SRC_FILES = FILES.filter((filePath) => filePath.startsWith('src'))
 const BIG_PR_CODE_THRESHOLD = 600
 const BIG_PR_FILE_THRESHOLD = 15
 
@@ -37,7 +36,7 @@ if (PR.base.ref === 'main') {
 
 
   // -- SRC_FILES checks ------------------------------------------------------------------ //
-  SRC_FILES.forEach((file) => {
+  FILES.forEach((file) => {
     const content = fs.readFileSync(file).toString()
 
     // Check for TODO comment
@@ -47,4 +46,6 @@ if (PR.base.ref === 'main') {
 
   })
 
+  const modifiedMD = danger.git.modified_files.join("- ")
+  message("Changed Files in this PR: \n - " + modifiedMD)
 }
