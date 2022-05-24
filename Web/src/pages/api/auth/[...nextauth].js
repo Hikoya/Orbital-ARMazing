@@ -52,7 +52,7 @@ const options = {
   },
   callbacks: {
     async session({ session, token, user }) {
-      const userFromDB = await prisma.users.findUnique({
+      const userFromDB = await prisma.user.findUnique({
         where: {
           email: user.email,
         },
@@ -62,9 +62,8 @@ const options = {
         session.user.email = userFromDB.email;
         session.user.username = userFromDB.name;
         session.user.admin = userFromDB.admin;
-      } else {
-        return;
-      }
+      } 
+      
       return session;
     },
   },
@@ -303,7 +302,7 @@ function html({ url, host, email }) {
 
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">Thanks,</span></p>
-                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">KEWeb</span></p>
+                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">ARMazing</span></p>
                               </div>
 
                             </td>
