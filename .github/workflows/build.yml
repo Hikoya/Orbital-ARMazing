@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-    if: github.event.action == 'opened' && github.actor == "Hikoya"
+    if: ${{ github.actor == 'Hikoya' && github.event.action == 'opened' }}
 
     steps:    
     - name: Checkout
@@ -53,7 +53,7 @@ jobs:
     defaults:
       run:
         working-directory: ./Web
-    if: github.event.action == 'opened' && github.actor == "Hikoya"
+    if: ${{ github.actor == 'Hikoya' && github.event.action == 'opened' }}
 
     steps:
     - name: Restore cached artifacts
