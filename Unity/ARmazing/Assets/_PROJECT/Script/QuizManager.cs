@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuizManager : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class QuizManager : MonoBehaviour
     public void NextQuestion()
     {
         QnA.RemoveAt(currentQuestion);
+        if (QnA.Count <= 0)
+        {
+            SceneManager.LoadScene("AR");
+        }
         GenerateQuestion();
         EnableOptions();
     }
