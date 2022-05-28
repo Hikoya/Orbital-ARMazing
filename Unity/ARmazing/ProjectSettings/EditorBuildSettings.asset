@@ -4,7 +4,16 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_PROJECT/Scenes/EventJoin.unity
+    guid: a0d3bd2e691de414a9b98af069b31452
+  - enabled: 1
+    path: Assets/_PROJECT/Scenes/AR.unity
+    guid: 323e7c829f88fc341ba4698dfe9407a8
+  - enabled: 1
+    path: Assets/_PROJECT/Scenes/Quiz.unity
+    guid: fbc73f86f232b1b4da6511a01dcb4778
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 744b813df90924c169af73489b8325de,
       type: 2}

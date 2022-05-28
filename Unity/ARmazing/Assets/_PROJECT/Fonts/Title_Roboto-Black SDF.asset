@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: Title_Roboto-Black SDF
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: 465290255
   material: {fileID: 1794388633353711125}
-  materialHashCode: 0
+  materialHashCode: 1115438927
   m_Version: 1.1.0
   m_SourceFontFileGUID: cfdab92363eb24948ad97d0bf53c51a6
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: cfdab92363eb24948ad97d0bf53c51a6,
@@ -5569,7 +5569,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Title_Roboto-Black SDF Material
   m_Shader: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - UNDERLAY_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -5605,7 +5606,7 @@ Material:
     - _Ambient: 0.5
     - _Bevel: 0.5
     - _BevelClamp: 0
-    - _BevelOffset: 0
+    - _BevelOffset: 0.5
     - _BevelRoundness: 0
     - _BevelWidth: 0
     - _BumpFace: 0
@@ -5621,18 +5622,18 @@ Material:
     - _GlowOuter: 0.05
     - _GlowPower: 0.75
     - _GradientScale: 10
-    - _LightAngle: 3.1416
+    - _LightAngle: 3.46
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
     - _OutlineUVSpeedX: 0
     - _OutlineUVSpeedY: 0
-    - _OutlineWidth: 0
+    - _OutlineWidth: 0.039
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 1
-    - _ScaleRatioB: 1
-    - _ScaleRatioC: 1
+    - _ScaleRatioA: 0.9
+    - _ScaleRatioB: 0.73125
+    - _ScaleRatioC: 0.24375
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
@@ -5645,10 +5646,10 @@ Material:
     - _StencilWriteMask: 255
     - _TextureHeight: 1024
     - _TextureWidth: 1024
-    - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 0
-    - _UnderlayOffsetY: 0
-    - _UnderlaySoftness: 0
+    - _UnderlayDilate: 1
+    - _UnderlayOffsetX: 1
+    - _UnderlayOffsetY: -1
+    - _UnderlaySoftness: 1
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
     - _WeightBold: 0.75
