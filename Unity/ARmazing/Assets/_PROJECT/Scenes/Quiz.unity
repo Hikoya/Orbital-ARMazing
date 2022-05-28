@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 25536906}
   - component: {fileID: 25536905}
   - component: {fileID: 25536904}
+  - component: {fileID: 25536908}
   m_Layer: 5
   m_Name: AnswerButton1
   m_TagString: Untagged
@@ -222,7 +223,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 25536906}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 25536908}
+        m_TargetAssemblyTypeName: AnswerButtonBehaviour, Assembly-CSharp
+        m_MethodName: Answer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &25536906
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -261,6 +274,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 25536902}
   m_CullTransparentMesh: 1
+--- !u!114 &25536908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 25536902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a310c303f2f1f96469bf7192f6f0b39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCorrect: 0
+  quizManager: {fileID: 1267481526}
 --- !u!1 &286029196
 GameObject:
   m_ObjectHideFlags: 0
@@ -341,6 +368,7 @@ GameObject:
   - component: {fileID: 397717727}
   - component: {fileID: 397717726}
   - component: {fileID: 397717725}
+  - component: {fileID: 397717729}
   m_Layer: 5
   m_Name: AnswerButton4
   m_TagString: Untagged
@@ -427,7 +455,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 397717727}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 397717729}
+        m_TargetAssemblyTypeName: AnswerButtonBehaviour, Assembly-CSharp
+        m_MethodName: Answer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &397717727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,6 +506,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397717723}
   m_CullTransparentMesh: 1
+--- !u!114 &397717729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 397717723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a310c303f2f1f96469bf7192f6f0b39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCorrect: 0
+  quizManager: {fileID: 1267481526}
 --- !u!1 &825983921
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,6 +626,7 @@ GameObject:
   - component: {fileID: 833723968}
   - component: {fileID: 833723967}
   - component: {fileID: 833723966}
+  - component: {fileID: 833723970}
   m_Layer: 5
   m_Name: AnswerButton3
   m_TagString: Untagged
@@ -658,7 +713,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 833723968}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 833723970}
+        m_TargetAssemblyTypeName: AnswerButtonBehaviour, Assembly-CSharp
+        m_MethodName: Answer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &833723968
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,6 +764,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 833723964}
   m_CullTransparentMesh: 1
+--- !u!114 &833723970
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 833723964}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a310c303f2f1f96469bf7192f6f0b39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCorrect: 0
+  quizManager: {fileID: 1267481526}
 --- !u!1 &855821343
 GameObject:
   m_ObjectHideFlags: 0
@@ -1028,6 +1109,79 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228515093}
   m_CullTransparentMesh: 1
+--- !u!1 &1267481525
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1267481527}
+  - component: {fileID: 1267481526}
+  m_Layer: 0
+  m_Name: QuizManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1267481526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267481525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1441f85f2452fb4e93f45a0e0b387a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  QnA:
+  - Question: What does SOC stand for?
+    Answers:
+    - School of Culinary
+    - School of Computing
+    - School of Calculus
+    - School of Computers
+    CorrectAnswer: 2
+  - Question: What is 2 + 2
+    Answers:
+    - 2
+    - 3
+    - 4
+    - 5
+    CorrectAnswer: 3
+  - Question: What is the first programming language CS students learn?
+    Answers:
+    - C++
+    - C#
+    - Source
+    - Javascript
+    CorrectAnswer: 3
+  options:
+  - {fileID: 25536902}
+  - {fileID: 1769369958}
+  - {fileID: 833723964}
+  - {fileID: 397717723}
+  currentQuestion: 0
+  QuestionTxt: {fileID: 1797010167}
+--- !u!4 &1267481527
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1267481525}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 530, y: 440, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1534468283
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,6 +1650,7 @@ GameObject:
   - component: {fileID: 1769369962}
   - component: {fileID: 1769369961}
   - component: {fileID: 1769369960}
+  - component: {fileID: 1769369964}
   m_Layer: 5
   m_Name: AnswerButton2
   m_TagString: Untagged
@@ -1582,7 +1737,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1769369962}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1769369964}
+        m_TargetAssemblyTypeName: AnswerButtonBehaviour, Assembly-CSharp
+        m_MethodName: Answer
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1769369962
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1621,6 +1788,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1769369958}
   m_CullTransparentMesh: 1
+--- !u!114 &1769369964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1769369958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a310c303f2f1f96469bf7192f6f0b39e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCorrect: 0
+  quizManager: {fileID: 1267481526}
 --- !u!1 &1795175844
 GameObject:
   m_ObjectHideFlags: 0
