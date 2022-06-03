@@ -1,5 +1,5 @@
-import { currentSession } from "@constants/helper";
-import { fetchAllAsset } from "@constants/asset";
+import { currentSession } from "@helper/session";
+import { fetchAllAsset } from "@helper/asset";
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -15,8 +15,8 @@ const handler = async (req, res) => {
         if (assetData[as]) {
           const asset = assetData[as];
 
-          const visible = asset.visible ? "Yes": "No";
-          
+          const visible = asset.visible ? "Yes" : "No";
+
           const data = {
             id: asset.id,
             name: asset.name,
@@ -28,7 +28,6 @@ const handler = async (req, res) => {
           };
 
           parsedAsset.push(data);
-
         }
       }
 

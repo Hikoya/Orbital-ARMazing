@@ -1,5 +1,5 @@
-import { currentSession } from "@constants/helper";
-import { createAsset } from "@constants/asset";
+import { currentSession } from "@helper/session";
+import { createAsset } from "@helper/asset";
 import { IncomingForm } from "formidable";
 import { promises as fs } from "fs";
 
@@ -30,7 +30,8 @@ const handler = async (req, res) => {
       if (imageFile) {
         const imagePath = imageFile.filepath;
 
-        assetPath = "/assets/" + data.fields.eventID + "_" + imageFile.originalFilename;
+        assetPath =
+          "/assets/" + data.fields.eventID + "_" + imageFile.originalFilename;
         const pathToWriteImage = "public" + assetPath;
         const image = await fs.readFile(imagePath);
         await fs.writeFile(pathToWriteImage, image);

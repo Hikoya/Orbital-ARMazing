@@ -1,17 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Box, CloseButton, Flex, Text } from "@chakra-ui/react";
-import {
-  FiHome,
-  FiCompass,
-  FiStar,
-  FiSettings,
-  FiCalendar,
-  FiMapPin,
-} from "react-icons/fi";
+import { FiHome, FiStar, FiSettings } from "react-icons/fi";
 import NavLink from "./NavLink";
 import Link from "next/link";
-import { currentSession } from "@constants/helper";
+import { currentSession } from "@helper/session";
 import { useState } from "react";
 
 let LinkItems = null;
@@ -71,7 +64,7 @@ export default function Sidebar({ onClose, ...rest }) {
       {loading &&
         item &&
         item.map((link, i) => <NavLink key={i} link={link} />)}
-      {!loading && (<Text>Loading sidebar...</Text>)}
+      {!loading && <Text>Loading sidebar...</Text>}
     </Box>
   );
 }

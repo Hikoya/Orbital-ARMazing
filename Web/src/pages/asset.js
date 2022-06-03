@@ -56,7 +56,7 @@ export default function Asset() {
     eventIDDB.current = "";
     selectedFileDB.current = null;
     latitudeDB.current = "";
-    longitudeDB.current = ""
+    longitudeDB.current = "";
     visibleDB.current = true;
 
     setName("");
@@ -77,7 +77,7 @@ export default function Asset() {
         eventIDDB.current,
         selectedFileDB.current,
         latitudeDB.current,
-        longitudeDB.current,
+        longitudeDB.current
       )
     ) {
       try {
@@ -119,7 +119,14 @@ export default function Asset() {
     }
   };
 
-  const validateFields = (name, description, eventID, selectedFile, latitude, longitude) => {
+  const validateFields = (
+    name,
+    description,
+    eventID,
+    selectedFile,
+    latitude,
+    longitude
+  ) => {
     //super basic validation here
 
     if (!name) {
@@ -185,7 +192,7 @@ export default function Asset() {
     }
 
     setEventDropdown(selection);
-  }
+  };
 
   const fetchData = async () => {
     try {
@@ -271,13 +278,13 @@ export default function Asset() {
   return (
     <Auth>
       <Box>
-      <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-        {loadingData ? (
-              <Text>Loading Please wait...</Text>
-            ) : (
-              <TableWidget key={1} columns={columns} data={data} />
-            )}
-      </Box>
+        <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
+          {loadingData ? (
+            <Text>Loading Please wait...</Text>
+          ) : (
+            <TableWidget key={1} columns={columns} data={data} />
+          )}
+        </Box>
 
         <Box>
           <Stack
@@ -293,14 +300,12 @@ export default function Asset() {
             <Heading size="md">Create Asset</Heading>
             <form onSubmit={handleSubmitCreate}>
               <Stack spacing={4}>
-
                 <Stack spacing={5} w="full">
                   <Text>Select Event</Text>
                   <Select onChange={onEventChange} size="sm">
                     {eventDropdown}
                   </Select>
                 </Stack>
-         
 
                 <FormControl id="name">
                   <FormLabel>Name</FormLabel>

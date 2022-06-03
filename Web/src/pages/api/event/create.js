@@ -1,5 +1,5 @@
-import { currentSession, convertDateToUnix } from "@constants/helper";
-import { createEvent } from "@constants/event";
+import { currentSession, convertDateToUnix } from "@helper/session";
+import { createEvent } from "@helper/event";
 
 const handler = async (req, res) => {
   const session = await currentSession(req);

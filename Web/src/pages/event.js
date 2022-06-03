@@ -17,7 +17,7 @@ import TableWidget from "@components/TableWidget";
 export default function Event() {
   const [loadingData, setLoading] = useState(true);
   const toast = useToast();
-  
+
   const nameDB = useRef("");
   const [name, setName] = useState("");
 
@@ -174,7 +174,7 @@ export default function Event() {
     }
     setData(content);
   };
-  
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -206,13 +206,13 @@ export default function Event() {
   return (
     <Auth>
       <Box>
-      <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-        {loadingData ? (
-              <Text>Loading Please wait...</Text>
-            ) : (
-              <TableWidget key={1} columns={columns} data={data} />
-            )}
-      </Box>
+        <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
+          {loadingData ? (
+            <Text>Loading Please wait...</Text>
+          ) : (
+            <TableWidget key={1} columns={columns} data={data} />
+          )}
+        </Box>
 
         <Box>
           <Stack
