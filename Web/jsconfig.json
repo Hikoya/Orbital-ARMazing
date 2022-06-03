@@ -4,12 +4,12 @@
     "paths": {
       "@root/*": ["/*"],
       "@components/*": ["src/components/*"],
+      "@helper/*": ["src/helper/*"],
       "@constants/*": ["src/constants/*"],
       "@styles/*": ["src/styles/*"],
-      "@sections/*": ["src/sections/*"],
       "@layout/*": ["src/layout/*"],
       "@public/*": ["public/*"],
-      "@lib/*": ["src/lib/*"]
+      "@pages/*": ["src/pages/*"]
     }
   }
 }

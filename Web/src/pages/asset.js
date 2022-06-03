@@ -5,7 +5,6 @@ import {
   Box,
   Heading,
   FormControl,
-  Input,
   FormLabel,
   Text,
   Textarea,
@@ -17,6 +16,9 @@ import {
   chakra,
   VisuallyHidden,
   useToast,
+  Input,
+  InputGroup,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import TableWidget from "@components/TableWidget";
 
@@ -50,13 +52,16 @@ export default function Asset() {
 
   const [data, setData] = useState([]);
 
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(null);
+
   const reset = async () => {
     nameDB.current = "";
     descriptionDB.current = "";
     eventIDDB.current = "";
     selectedFileDB.current = null;
     latitudeDB.current = "";
-    longitudeDB.current = ""
+    longitudeDB.current = "";
     visibleDB.current = true;
 
     setName("");
@@ -77,7 +82,7 @@ export default function Asset() {
         eventIDDB.current,
         selectedFileDB.current,
         latitudeDB.current,
-        longitudeDB.current,
+        longitudeDB.current
       )
     ) {
       try {
@@ -119,7 +124,14 @@ export default function Asset() {
     }
   };
 
-  const validateFields = (name, description, eventID, selectedFile, latitude, longitude) => {
+  const validateFields = (
+    name,
+    description,
+    eventID,
+    selectedFile,
+    latitude,
+    longitude
+  ) => {
     //super basic validation here
 
     if (!name) {
@@ -185,7 +197,7 @@ export default function Asset() {
     }
 
     setEventDropdown(selection);
-  }
+  };
 
   const fetchData = async () => {
     try {
@@ -268,16 +280,68 @@ export default function Asset() {
     []
   );
 
+  const handleSearch = (event) => {
+    const searchInput = event.target.value;
+    setSearch(searchInput);
+
+    if (searchInput && searchInput != "") {
+      let filteredData = data.filter((value) => {
+        return (
+          value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+          value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+          value.latitude
+            .toString()
+            .toLowerCase()
+            .includes(searchInput.toLowerCase()) ||
+          value.longitude
+            .toString()
+            .toLowerCase()
+            .includes(searchInput.toLowerCase())
+        );
+      });
+
+      setFilteredData(filteredData);
+    } else {
+      setFilteredData(null);
+    }
+  };
+
   return (
     <Auth>
       <Box>
-      <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-        {loadingData ? (
+        <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
+          {loadingData && !data ? (
+            <Box align="center" justify="center" mt={30}>
               <Text>Loading Please wait...</Text>
-            ) : (
-              <TableWidget key={1} columns={columns} data={data} />
-            )}
-      </Box>
+            </Box>
+          ) : !loadingData && data.length == 0 ? (
+            <Box align="center" justify="center" mt={30}>
+              <Text>No bookings found</Text>
+            </Box>
+          ) : (
+            <Box align="center" justify="center" minWidth={"full"} mt={30}>
+              <Stack spacing={30}>
+                <InputGroup>
+                  <InputLeftAddon>Search:</InputLeftAddon>
+                  <Input
+                    type="text"
+                    placeholder=""
+                    value={search}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+
+                <TableWidget
+                  key={1}
+                  columns={columns}
+                  data={
+                    filteredData && filteredData.length ? filteredData : data
+                  }
+                />
+              </Stack>
+            </Box>
+          )}
+        </Box>
 
         <Box>
           <Stack
@@ -293,14 +357,12 @@ export default function Asset() {
             <Heading size="md">Create Asset</Heading>
             <form onSubmit={handleSubmitCreate}>
               <Stack spacing={4}>
-
                 <Stack spacing={5} w="full">
                   <Text>Select Event</Text>
                   <Select onChange={onEventChange} size="sm">
                     {eventDropdown}
                   </Select>
                 </Stack>
-         
 
                 <FormControl id="name">
                   <FormLabel>Name</FormLabel>

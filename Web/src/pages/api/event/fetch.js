@@ -1,5 +1,6 @@
-import { currentSession, prettifyDate, convertUnixToDate } from "@constants/helper";
-import { fetchAllEvent } from "@constants/event";
+import { prettifyDate, convertUnixToDate } from "@constants/helper";
+import { currentSession } from "@helper/session";
+import { fetchAllEvent } from "@helper/event";
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -18,9 +19,9 @@ const handler = async (req, res) => {
           const start = prettifyDate(convertUnixToDate(event.startDate));
           const end = prettifyDate(convertUnixToDate(event.endDate));
 
-          const isPublic = event.isPublic ? "Yes" : "No"; 
-          const visible = event.visible ? "Yes": "No";
-          
+          const isPublic = event.isPublic ? "Yes" : "No";
+          const visible = event.visible ? "Yes" : "No";
+
           const data = {
             id: event.id,
             name: event.name,
@@ -34,7 +35,6 @@ const handler = async (req, res) => {
           };
 
           parsedEvent.push(data);
-
         }
       }
 

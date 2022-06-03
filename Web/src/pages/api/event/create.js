@@ -1,5 +1,7 @@
-import { currentSession, convertDateToUnix } from "@constants/helper";
-import { createEvent } from "@constants/event";
+import { currentSession } from "@helper/session";
+import { convertDateToUnix } from "@constants/helper";
+import { createEvent } from "@helper/event";
+import { levels } from "@constants/admin";
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -8,38 +10,50 @@ const handler = async (req, res) => {
   let result = null;
 
   if (session) {
-    if (name && description && startDate && endDate && isPublic && visible) {
-      const start = convertDateToUnix(startDate);
-      const end = convertDateToUnix(endDate);
+    if (session.user.level == levels["ORGANIZER"]) {
+      if (name && description && startDate && endDate && isPublic && visible) {
+        const start = convertDateToUnix(startDate);
+        const end = convertDateToUnix(endDate);
 
-      const data = {
-        name: name,
-        description: description,
-        startDate: start,
-        endDate: end,
-        isPublic: isPublic,
-        visible: visible,
-        createdBy: session.user.email,
-      };
-
-      const event = await createEvent(data);
-
-      if (event.status) {
-        result = {
-          status: true,
-          error: null,
-          msg: "Event created",
+        const data = {
+          name: name,
+          description: description,
+          startDate: start,
+          endDate: end,
+          isPublic: isPublic,
+          visible: visible,
+          createdBy: session.user.email,
         };
 
-        res.status(200).send(result);
-        res.end();
-        return;
+        const event = await createEvent(data);
+
+        if (event.status) {
+          result = {
+            status: true,
+            error: null,
+            msg: "Event created",
+          };
+
+          res.status(200).send(result);
+          res.end();
+          return;
+        } else {
+          result = {
+            status: false,
+            error: "Event not created",
+            msg: "",
+          };
+          res.status(200).send(result);
+          res.end();
+          return;
+        }
       } else {
         result = {
           status: false,
-          error: "Event not created",
-          msg: "",
+          error: "Information incomplete!",
+          msg: null,
         };
+
         res.status(200).send(result);
         res.end();
         return;
@@ -47,7 +61,7 @@ const handler = async (req, res) => {
     } else {
       result = {
         status: false,
-        error: "Information incomplete!",
+        error: "Unauthorized access",
         msg: null,
       };
 

@@ -3,7 +3,8 @@ import EmailProvider from "next-auth/providers/email";
 import nodemailer from "nodemailer";
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@constants/db";
+import { prisma } from "@helper/db";
+import { levels } from "@constants/admin";
 
 const authHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
@@ -52,7 +53,7 @@ const options = {
   },
   callbacks: {
     async session({ session, token, user }) {
-      const userFromDB = await prisma.users.findUnique({
+      const userFromDB = await prisma.user.findUnique({
         where: {
           email: user.email,
         },
@@ -62,9 +63,13 @@ const options = {
         session.user.email = userFromDB.email;
         session.user.username = userFromDB.name;
         session.user.admin = userFromDB.admin;
+        session.user.level = userFromDB.level;
       } else {
-        return;
+        session.user.email = user.email;
+        session.user.admin = false;
+        session.user.level = levels["USER"];
       }
+
       return session;
     },
   },
@@ -303,7 +308,7 @@ function html({ url, host, email }) {
 
                               <div style="line-height: 160%; text-align: center; word-wrap: break-word;">
                                 <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">Thanks,</span></p>
-                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">KEWeb</span></p>
+                                <p style="line-height: 160%; font-size: 14px;"><span style="font-size: 18px; line-height: 28.8px;">ARMazing</span></p>
                               </div>
 
                             </td>
