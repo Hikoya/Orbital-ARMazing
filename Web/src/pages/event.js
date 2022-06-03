@@ -11,6 +11,8 @@ import {
   Stack,
   useToast,
   Checkbox,
+  InputGroup,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import TableWidget from "@components/TableWidget";
 
@@ -39,6 +41,9 @@ export default function Event() {
   const [error, setError] = useState(null);
 
   const [data, setData] = useState([]);
+
+  const [search, setSearch] = useState("");
+  const [filteredData, setFilteredData] = useState(null);
 
   const reset = async () => {
     nameDB.current = "";
@@ -203,14 +208,60 @@ export default function Event() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const handleSearch = (event) => {
+    const searchInput = event.target.value;
+    setSearch(searchInput);
+
+    if (searchInput && searchInput != "") {
+      let filteredData = data.filter((value) => {
+        return (
+          value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+          value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
+          value.startDate.toLowerCase().includes(searchInput.toLowerCase()) ||
+          value.endDate.toLowerCase().includes(searchInput.toLowerCase())
+        );
+      });
+
+      setFilteredData(filteredData);
+    } else {
+      setFilteredData(null);
+    }
+  };
+
   return (
     <Auth>
       <Box>
         <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-          {loadingData ? (
-            <Text>Loading Please wait...</Text>
+          {loadingData && !data ? (
+            <Box align="center" justify="center" mt={30}>
+              <Text>Loading Please wait...</Text>
+            </Box>
+          ) : !loadingData && data.length == 0 ? (
+            <Box align="center" justify="center" mt={30}>
+              <Text>No bookings found</Text>
+            </Box>
           ) : (
-            <TableWidget key={1} columns={columns} data={data} />
+            <Box align="center" justify="center" minWidth={"full"} mt={30}>
+              <Stack spacing={30}>
+                <InputGroup>
+                  <InputLeftAddon>Search:</InputLeftAddon>
+                  <Input
+                    type="text"
+                    placeholder=""
+                    value={search}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+
+                <TableWidget
+                  key={1}
+                  columns={columns}
+                  data={
+                    filteredData && filteredData.length ? filteredData : data
+                  }
+                />
+              </Stack>
+            </Box>
           )}
         </Box>
 

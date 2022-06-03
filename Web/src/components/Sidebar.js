@@ -5,34 +5,34 @@ import { FiHome, FiStar, FiSettings } from "react-icons/fi";
 import NavLink from "./NavLink";
 import Link from "next/link";
 import { currentSession } from "@helper/session";
-import { useState } from "react";
 
 let LinkItems = null;
 
+const adminMenu = [
+  { label: "Home", icon: FiHome, href: "/" },
+  { label: "Manage Events", icon: FiSettings, href: "/event" },
+  { label: "Manage Assets", icon: FiStar, href: "/asset" },
+];
+
+const userMenu = [
+  { label: "Home", icon: FiHome, href: "/" },
+  { label: "Manage Events", icon: FiSettings, href: "/event" },
+  { label: "Manage Assets", icon: FiStar, href: "/asset" },
+];
+
 export default function Sidebar({ onClose, ...rest }) {
-  const [loading, setLoading] = useState(false);
-  const [item, setItems] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
     async function fetchData() {
       const session = await currentSession();
-      if (session.user.admin) {
-        LinkItems = [
-          { label: "Home", icon: FiHome, href: "/" },
-          { label: "Manage Events", icon: FiSettings, href: "/event" },
-          { label: "Manage Assets", icon: FiStar, href: "/asset" },
-        ];
-      } else {
-        LinkItems = [
-          { label: "Home", icon: FiHome, href: "/" },
-          { label: "Manage Events", icon: FiSettings, href: "/event" },
-          { label: "Manage Assets", icon: FiStar, href: "/asset" },
-        ];
+      if (session) {
+        if (session.user.admin) {
+          LinkItems = adminMenu;
+        } else {
+          LinkItems = userMenu;
+        }
       }
-
-      setItems(LinkItems);
-      setLoading(true);
     }
     fetchData();
 
@@ -40,7 +40,7 @@ export default function Sidebar({ onClose, ...rest }) {
     return () => {
       router.events.off("routeChangeComplete", onClose);
     };
-  }, [router.events, onClose, loading]);
+  }, [router.events, onClose]);
 
   return (
     <Box
@@ -61,10 +61,7 @@ export default function Sidebar({ onClose, ...rest }) {
         </Link>
         <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
       </Flex>
-      {loading &&
-        item &&
-        item.map((link, i) => <NavLink key={i} link={link} />)}
-      {!loading && <Text>Loading sidebar...</Text>}
+      {LinkItems && LinkItems.map((link, i) => <NavLink key={i} link={link} />)}
     </Box>
   );
 }

@@ -33,3 +33,26 @@ export const fetchAllEvent = async (session) => {
     return { status: false, error: error, msg: null };
   }
 };
+
+export const joinEvent = async (session, eventID) => {
+  try {
+    const event = await prisma.eventsJoined.findMany({
+      data: {
+        userEmail: session.user.email,
+        eventIDname: eventID,
+      },
+    });
+
+    if (event) {
+      return { status: true, error: null, msg: event };
+    }
+
+    return {
+      status: false,
+      error: "Failed to insert into database!",
+      msg: null,
+    };
+  } catch (error) {
+    return { status: false, error: error, msg: null };
+  }
+};

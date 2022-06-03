@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@helper/db";
+import { levels } from "@constants/admin";
 
 const authHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
@@ -62,6 +63,11 @@ const options = {
         session.user.email = userFromDB.email;
         session.user.username = userFromDB.name;
         session.user.admin = userFromDB.admin;
+        session.user.level = userFromDB.level;
+      } else {
+        session.user.email = user.email;
+        session.user.admin = false;
+        session.user.level = levels["USER"];
       }
 
       return session;
