@@ -9,7 +9,7 @@ const handler = async (req, res) => {
   if (session) {
     if (session.user.level == levels["ORGANIZER"]) {
       const stat = await fetchStatistic(session);
-
+      console.log(stat);
       if (stat && stat.status) {
         result = {
           status: true,

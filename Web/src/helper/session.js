@@ -1,4 +1,5 @@
 import { getSession } from "next-auth/react";
+import { levels } from "@constants/admin";
 
 export const currentSession = async (req = null) => {
   var session = null;
@@ -9,6 +10,7 @@ export const currentSession = async (req = null) => {
         username: "Test user",
         email: "testing@test.com",
         admin: true,
+        level: levels["ORGANIZER"],
       },
     };
   } else {

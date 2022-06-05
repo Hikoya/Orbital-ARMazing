@@ -1,10 +1,4 @@
-import {
-  Flex,
-  Box,
-  Stack,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+import { Flex, Box, Stack, Heading, Text } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 
@@ -18,12 +12,7 @@ export default function Unauthorized() {
   }, [router]);
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={"gray.50"}
-    >
+    <Flex minH={"100vh"} align={"center"} justify={"center"} bg={"gray.50"}>
       <Stack mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Box
           rounded={"lg"}

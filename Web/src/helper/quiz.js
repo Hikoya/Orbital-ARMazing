@@ -2,6 +2,8 @@ import { prisma } from "@helper/db";
 
 export const createQuiz = async (data) => {
   try {
+    console.log(data);
+
     const qn = await prisma.questions.create({
       data: data,
     });
@@ -16,6 +18,22 @@ export const createQuiz = async (data) => {
       };
     }
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    console.log(error);
+    return { status: false, error: error.toString(), msg: null };
+  }
+};
+
+export const fetchAllQuiz = async (session) => {
+  try {
+    const qn = await prisma.questions.findMany({
+      where: {
+        createdBy: session.user.email,
+      },
+    });
+
+    return { status: true, error: null, msg: qn };
+  } catch (error) {
+    console.log(error);
+    return { status: false, error: error.toString(), msg: null };
   }
 };

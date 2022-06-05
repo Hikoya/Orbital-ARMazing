@@ -98,6 +98,7 @@ export default function Event() {
             duration: 5000,
             isClosable: true,
           });
+          await fetchData();
         } else {
           toast({
             title: "Error",
@@ -238,7 +239,7 @@ export default function Event() {
             </Box>
           ) : !loadingData && data.length == 0 ? (
             <Box align="center" justify="center" mt={30}>
-              <Text>No bookings found</Text>
+              <Text>No events found</Text>
             </Box>
           ) : (
             <Box align="center" justify="center" minWidth={"full"} mt={30}>

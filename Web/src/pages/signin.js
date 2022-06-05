@@ -48,22 +48,12 @@ export default function SignIn(props) {
   };
 
   return (
-    <Flex
-      minH={"100vh"}
-      align={"center"}
-      justify={"center"}
-      bg={"gray.50"}
-    >
+    <Flex minH={"100vh"} align={"center"} justify={"center"} bg={"gray.50"}>
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"}>ARMazing</Heading>
         </Stack>
-        <Box
-          rounded={"lg"}
-          bg={"white"}
-          boxShadow={"lg"}
-          p={8}
-        >
+        <Box rounded={"lg"} bg={"white"} boxShadow={"lg"} p={8}>
           <form onSubmit={handleSubmit}>
             <Stack spacing={4}>
               <FormControl id="email">

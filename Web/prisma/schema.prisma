@@ -67,7 +67,7 @@ model Questions {
   eventID String
   question String
   options String 
-  answer  String 
+  answer  Int 
   points  Int 
   createdBy String
   visible   Boolean @default(true)
