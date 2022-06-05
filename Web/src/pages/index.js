@@ -22,17 +22,25 @@ export default function Home() {
   const [user, setUser] = useState(0);
   const [asset, setAsset] = useState(0);
 
+  const [data, setData] = useState(null);
+
   const generateStatistic = async (content) => {
-    if (content.event) {
-      setEvent(content.event);
-    }
+    if (content) {
+      setData(true);
 
-    if (content.user) {
-      setUser(content.user);
-    }
+      if (content.event) {
+        setEvent(content.event);
+      }
 
-    if (content.asset) {
-      setAsset(content.asset);
+      if (content.user) {
+        setUser(content.user);
+      }
+
+      if (content.asset) {
+        setAsset(content.asset);
+      }
+    } else {
+      setData(null);
     }
   };
 
@@ -68,32 +76,45 @@ export default function Home() {
   return (
     <Auth>
       <Box>
-        <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-          <Stack direction={"horizontal"}>
-            {!loading && (
-              <>
-                <Stat>
-                  <StatLabel>Total Events</StatLabel>
-                  <StatNumber>{event}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Total Assets</StatLabel>
-                  <StatNumber>{asset}</StatNumber>
-                </Stat>
-                <Stat>
-                  <StatLabel>Total Users joined</StatLabel>
-                  <StatNumber>{user}</StatNumber>
-                </Stat>
-              </>
-            )}
+        {!loading && data && (
+          <Box
+            bg="white"
+            borderRadius="lg"
+            p={8}
+            color="gray.700"
+            shadow="base"
+          >
+            <Stack direction={"horizontal"}>
+              <Stat>
+                <StatLabel>Total Events</StatLabel>
+                <StatNumber>{event}</StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel>Total Assets</StatLabel>
+                <StatNumber>{asset}</StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel>Total Users joined</StatLabel>
+                <StatNumber>{user}</StatNumber>
+              </Stat>
+            </Stack>
+          </Box>
+        )}
 
-            {loading && (
-              <Box align="center" justify="center" mt={30}>
-                <Text>Loading Please wait...</Text>
-              </Box>
-            )}
-          </Stack>
-        </Box>
+        {loading && (
+          <Box
+            bg="white"
+            borderRadius="lg"
+            p={8}
+            color="gray.700"
+            shadow="base"
+            align="center"
+            justify="center"
+            mt={30}
+          >
+            <Text>Loading Please wait...</Text>
+          </Box>
+        )}
 
         <MotionSimpleGrid
           mt="3"
@@ -120,6 +141,16 @@ export default function Home() {
                 img: "/image/assets.png",
                 title: "Manage Assets",
                 link: "/asset",
+              }}
+            />
+          </MotionBox>
+
+          <MotionBox variants={cardVariant} key="1">
+            <Card
+              product={{
+                img: "/image/quiz.png",
+                title: "Manage Quiz Pool",
+                link: "/quiz",
               }}
             />
           </MotionBox>

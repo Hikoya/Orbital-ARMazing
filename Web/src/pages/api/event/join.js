@@ -1,5 +1,6 @@
 import { currentSession } from "@helper/session";
 import { joinEvent } from "@helper/event";
+import { levels } from "@constants/admin";
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -9,7 +10,7 @@ const handler = async (req, res) => {
   let result = "";
   if (session) {
     if (eventID) {
-      const join = await joinEvent(session, eventID);
+      const join = await joinEvent(session, eventID, levels["USER"]);
       if (join.status) {
         result = {
           status: true,

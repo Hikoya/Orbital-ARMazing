@@ -1,6 +1,6 @@
 import { currentSession } from "@helper/session";
 import { convertDateToUnix } from "@constants/helper";
-import { createEvent } from "@helper/event";
+import { createEvent, joinEvent } from "@helper/event";
 import { levels } from "@constants/admin";
 
 const handler = async (req, res) => {
@@ -28,19 +28,36 @@ const handler = async (req, res) => {
         const event = await createEvent(data);
 
         if (event.status) {
-          result = {
-            status: true,
-            error: null,
-            msg: "Event created",
-          };
+          const eventJoin = await joinEvent(
+            session,
+            event.msg.id,
+            levels["ORGANIZER"]
+          );
+          if (eventJoin.status) {
+            result = {
+              status: true,
+              error: null,
+              msg: "Event created",
+            };
 
-          res.status(200).send(result);
-          res.end();
-          return;
+            res.status(200).send(result);
+            res.end();
+            return;
+          } else {
+            result = {
+              status: false,
+              error: eventJoin.error,
+              msg: "",
+            };
+
+            res.status(200).send(result);
+            res.end();
+            return;
+          }
         } else {
           result = {
             status: false,
-            error: "Event not created",
+            error: event.error,
             msg: "",
           };
           res.status(200).send(result);
