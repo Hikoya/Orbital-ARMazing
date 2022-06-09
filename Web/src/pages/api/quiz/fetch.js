@@ -1,22 +1,22 @@
-import { currentSession } from "@helper/session";
-import { fetchAllQuiz } from "@helper/quiz";
-import { fetchEventByID } from "@helper/event";
+import { currentSession } from '@helper/session';
+import { fetchAllQuiz } from '@helper/quiz';
+import { fetchEventByID } from '@helper/event';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
 
-  let result = "";
+  let result = '';
   if (session) {
     const qn = await fetchAllQuiz(session);
     const parsedQuiz = [];
 
     if (qn && qn.status) {
       const questionData = qn.msg;
-      for (let q in questionData) {
+      for (let q = 0; q < questionData.length; q += 1) {
         if (questionData[q]) {
           const quiz = questionData[q];
 
-          const visible = quiz.visible ? "Yes" : "No";
+          const visible = quiz.visible ? 'Yes' : 'No';
           const event = await fetchEventByID(quiz.eventID);
 
           if (event.status) {
@@ -43,22 +43,19 @@ const handler = async (req, res) => {
       };
       res.status(200).send(result);
       res.end();
-      return;
     } else {
       result = {
         status: false,
-        error: "Cannot get all quiz",
-        msg: "",
+        error: 'Cannot get all quiz',
+        msg: '',
       };
       res.status(200).send(result);
       res.end();
-      return;
     }
   } else {
-    result = { status: false, error: "Unauthenticated", msg: "" };
+    result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);
     res.end();
-    return;
   }
 };
 

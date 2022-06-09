@@ -1,7 +1,7 @@
-import { currentSession } from "@helper/session";
-import { convertDateToUnix } from "@constants/helper";
-import { createEvent, joinEvent } from "@helper/event";
-import { levels } from "@constants/admin";
+import { currentSession } from '@helper/session';
+import { convertDateToUnix } from '@constants/helper';
+import { createEvent, joinEvent } from '@helper/event';
+import { levels } from '@constants/admin';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -10,7 +10,7 @@ const handler = async (req, res) => {
   let result = null;
 
   if (session) {
-    if (session.user.level == levels["ORGANIZER"]) {
+    if (session.user.level === levels.ORGANIZER) {
       if (name && description && startDate && endDate && isPublic && visible) {
         const start = convertDateToUnix(startDate);
         const end = convertDateToUnix(endDate);
@@ -31,60 +31,55 @@ const handler = async (req, res) => {
           const eventJoin = await joinEvent(
             session,
             event.msg.id,
-            levels["ORGANIZER"]
+            levels.ORGANIZER,
           );
           if (eventJoin.status) {
             result = {
               status: true,
               error: null,
-              msg: "Event created",
+              msg: 'Event created',
             };
 
             res.status(200).send(result);
             res.end();
-            return;
           } else {
             result = {
               status: false,
               error: eventJoin.error,
-              msg: "",
+              msg: '',
             };
 
             res.status(200).send(result);
             res.end();
-            return;
           }
         } else {
           result = {
             status: false,
             error: event.error,
-            msg: "",
+            msg: '',
           };
           res.status(200).send(result);
           res.end();
-          return;
         }
       } else {
         result = {
           status: false,
-          error: "Information incomplete!",
+          error: 'Information incomplete!',
           msg: null,
         };
 
         res.status(200).send(result);
         res.end();
-        return;
       }
     } else {
       result = {
         status: false,
-        error: "Unauthorized access",
+        error: 'Unauthorized access',
         msg: null,
       };
 
       res.status(200).send(result);
       res.end();
-      return;
     }
   }
 };

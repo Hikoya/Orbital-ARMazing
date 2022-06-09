@@ -1,21 +1,21 @@
-import { currentSession } from "@helper/session";
-import { fetchAllAsset } from "@helper/asset";
+import { currentSession } from '@helper/session';
+import { fetchAllAsset } from '@helper/asset';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
 
-  let result = "";
+  let result = '';
   if (session) {
     const assets = await fetchAllAsset(session);
     const parsedAsset = [];
 
     if (assets && assets.status) {
       const assetData = assets.msg;
-      for (let as in assetData) {
+      for (let as = 0; as < assetData.length; as += 1) {
         if (assetData[as]) {
           const asset = assetData[as];
 
-          const visible = asset.visible ? "Yes" : "No";
+          const visible = asset.visible ? 'Yes' : 'No';
 
           const data = {
             id: asset.id,
@@ -38,22 +38,19 @@ const handler = async (req, res) => {
       };
       res.status(200).send(result);
       res.end();
-      return;
     } else {
       result = {
         status: false,
-        error: "Cannot get all events",
-        msg: "",
+        error: 'Cannot get all events',
+        msg: '',
       };
       res.status(200).send(result);
       res.end();
-      return;
     }
   } else {
-    result = { status: false, error: "Unauthenticated", msg: "" };
+    result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);
     res.end();
-    return;
   }
 };
 

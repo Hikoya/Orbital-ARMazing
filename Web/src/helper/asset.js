@@ -1,4 +1,4 @@
-import { prisma } from "@helper/db";
+import { prisma } from '@helper/db';
 
 export const createAsset = async (data) => {
   try {
@@ -7,12 +7,12 @@ export const createAsset = async (data) => {
     });
 
     if (event) {
-      return { status: true, error: null, msg: "Success!" };
+      return { status: true, error: null, msg: 'Success!' };
     } else {
       return {
         status: false,
-        error: "Failed to create asset in database",
-        msg: "",
+        error: 'Failed to create asset in database',
+        msg: '',
       };
     }
   } catch (error) {

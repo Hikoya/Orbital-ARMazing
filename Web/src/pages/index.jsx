@@ -1,5 +1,6 @@
-import { cardVariant, parentVariant } from "@root/motion";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useCallback } from 'react';
+import { cardVariant, parentVariant } from '@root/motion';
+import { motion } from 'framer-motion';
 import {
   Box,
   SimpleGrid,
@@ -8,10 +9,10 @@ import {
   StatLabel,
   StatNumber,
   Text,
-} from "@chakra-ui/react";
-import { useState, useEffect } from "react";
-import Card from "@components/Card";
-import Auth from "@components/Auth";
+} from '@chakra-ui/react';
+import Card from '@components/Card';
+import Auth from '@components/Auth';
+
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
@@ -24,7 +25,7 @@ export default function Home() {
 
   const [data, setData] = useState(null);
 
-  const generateStatistic = async (content) => {
+  const generateStatistic = useCallback(async (content) => {
     if (content) {
       setData(true);
 
@@ -42,15 +43,15 @@ export default function Home() {
     } else {
       setData(null);
     }
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const rawResponse = await fetch("/api/dashboard/statistic", {
+      const rawResponse = await fetch('/api/dashboard/statistic', {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       });
       const content = await rawResponse.json();
@@ -58,11 +59,12 @@ export default function Home() {
         await generateStatistic(content.msg);
       }
     } catch (error) {
-      console.log(error);
+      return false;
     }
 
     setLoading(false);
-  };
+    return true;
+  }, [generateStatistic]);
 
   useEffect(() => {
     async function generate() {
@@ -70,21 +72,20 @@ export default function Home() {
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData]);
 
   return (
     <Auth>
       <Box>
         {!loading && data && (
           <Box
-            bg="white"
-            borderRadius="lg"
+            bg='white'
+            borderRadius='lg'
             p={8}
-            color="gray.700"
-            shadow="base"
+            color='gray.700'
+            shadow='base'
           >
-            <Stack direction={"horizontal"}>
+            <Stack direction='horizontal'>
               <Stat>
                 <StatLabel>Total Events</StatLabel>
                 <StatNumber>{event}</StatNumber>
@@ -103,13 +104,13 @@ export default function Home() {
 
         {loading && (
           <Box
-            bg="white"
-            borderRadius="lg"
+            bg='white'
+            borderRadius='lg'
             p={8}
-            color="gray.700"
-            shadow="base"
-            align="center"
-            justify="center"
+            color='gray.700'
+            shadow='base'
+            align='center'
+            justify='center'
             mt={30}
           >
             <Text>Loading Please wait...</Text>
@@ -117,40 +118,40 @@ export default function Home() {
         )}
 
         <MotionSimpleGrid
-          mt="3"
-          minChildWidth={{ base: "full", md: "500px", lg: "500px" }}
-          spacing="2em"
-          minH="full"
+          mt='3'
+          minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
+          spacing='2em'
+          minH='full'
           variants={parentVariant}
-          initial="initial"
-          animate="animate"
+          initial='initial'
+          animate='animate'
         >
-          <MotionBox variants={cardVariant} key="1">
+          <MotionBox variants={cardVariant} key='1'>
             <Card
               product={{
-                img: "/image/events.png",
-                title: "Manage Events",
-                link: "/event",
+                img: '/image/events.png',
+                title: 'Manage Events',
+                link: '/event',
               }}
             />
           </MotionBox>
 
-          <MotionBox variants={cardVariant} key="1">
+          <MotionBox variants={cardVariant} key='1'>
             <Card
               product={{
-                img: "/image/assets.png",
-                title: "Manage Assets",
-                link: "/asset",
+                img: '/image/assets.png',
+                title: 'Manage Assets',
+                link: '/asset',
               }}
             />
           </MotionBox>
 
-          <MotionBox variants={cardVariant} key="1">
+          <MotionBox variants={cardVariant} key='1'>
             <Card
               product={{
-                img: "/image/quiz.png",
-                title: "Manage Quiz Pool",
-                link: "/quiz",
+                img: '/image/quiz.png',
+                title: 'Manage Quiz Pool',
+                link: '/quiz',
               }}
             />
           </MotionBox>

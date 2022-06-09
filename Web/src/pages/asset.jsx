@@ -1,5 +1,11 @@
-import Auth from "@components/Auth";
-import { useRef, useState, useEffect, useMemo } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
+import Auth from '@components/Auth';
 import {
   Button,
   Box,
@@ -19,59 +25,132 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
-} from "@chakra-ui/react";
-import TableWidget from "@components/TableWidget";
+} from '@chakra-ui/react';
+import TableWidget from '@components/TableWidget';
 
 export default function Asset() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
-  const nameDB = useRef("");
-  const [name, setName] = useState("");
+  const nameDB = useRef('');
+  const [name, setName] = useState('');
 
-  const descriptionDB = useRef("");
-  const [description, setDescription] = useState("");
+  const descriptionDB = useRef('');
+  const [description, setDescription] = useState('');
 
   const visibleDB = useRef(true);
   const [visible, setVisible] = useState(true);
 
-  const eventIDDB = useRef("");
+  const eventIDDB = useRef('');
 
   const selectedFileDB = useRef(null);
   const [fileName, setFileName] = useState(null);
 
   const [eventDropdown, setEventDropdown] = useState([]);
 
-  const latitudeDB = useRef("");
-  const [latitude, setLatitude] = useState("");
+  const latitudeDB = useRef('');
+  const [latitude, setLatitude] = useState('');
 
-  const longitudeDB = useRef("");
-  const [longitude, setLongitude] = useState("");
+  const longitudeDB = useRef('');
+  const [longitude, setLongitude] = useState('');
 
-  const [error, setError] = useState(null);
+  const [errorMsg, setError] = useState(null);
 
   const [data, setData] = useState([]);
 
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState(null);
 
   const reset = async () => {
-    nameDB.current = "";
-    descriptionDB.current = "";
-    eventIDDB.current = "";
+    nameDB.current = '';
+    descriptionDB.current = '';
+    eventIDDB.current = '';
     selectedFileDB.current = null;
-    latitudeDB.current = "";
-    longitudeDB.current = "";
+    latitudeDB.current = '';
+    longitudeDB.current = '';
     visibleDB.current = true;
 
-    setName("");
-    setDescription("");
+    setName('');
+    setDescription('');
     setFileName(null);
-    setLatitude("");
-    setLongitude("");
+    setLatitude('');
+    setLongitude('');
     setVisible(true);
     setError(null);
   };
+
+  const validateFields = (
+    nameField,
+    descriptionField,
+    eventIDField,
+    selectedFileField,
+    latitudeField,
+    longitudeField,
+  ) => {
+    // super basic validation here
+
+    if (!nameField) {
+      setError('Please write a name!');
+      return false;
+    }
+
+    if (!descriptionField) {
+      setError('Please write a description!');
+      return false;
+    }
+
+    if (!eventIDField || eventIDField === '') {
+      setError('Please choose an event!');
+      return false;
+    }
+
+    if (!selectedFileField) {
+      setError('Please upload an image!');
+      return false;
+    }
+
+    if (!latitudeField) {
+      setError('Please provide a latitude!');
+      return false;
+    }
+
+    if (!longitudeField) {
+      setError('Please provide a longitude');
+      return false;
+    }
+
+    return true;
+  };
+
+  const includeActionButton = useCallback(async (content) => {
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        // const dataField = content[key];
+      }
+    }
+    setData(content);
+  }, []);
+
+  const fetchAssetData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch('/api/asset/fetch', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [includeActionButton]);
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
@@ -82,90 +161,50 @@ export default function Asset() {
         eventIDDB.current,
         selectedFileDB.current,
         latitudeDB.current,
-        longitudeDB.current
+        longitudeDB.current,
       )
     ) {
       try {
-        const data = new FormData();
-        data.append("eventID", eventIDDB.current);
-        data.append("name", nameDB.current);
-        data.append("description", descriptionDB.current);
-        data.append("visible", visibleDB.current);
-        data.append("image", selectedFileDB.current);
-        data.append("latitude", latitudeDB.current);
-        data.append("longitude", longitudeDB.current);
+        const dataField = new FormData();
+        dataField.append('eventID', eventIDDB.current);
+        dataField.append('name', nameDB.current);
+        dataField.append('description', descriptionDB.current);
+        dataField.append('visible', visibleDB.current);
+        dataField.append('image', selectedFileDB.current);
+        dataField.append('latitude', latitudeDB.current);
+        dataField.append('longitude', longitudeDB.current);
 
-        const rawResponse = await fetch("/api/asset/create", {
-          method: "POST",
-          body: data,
+        const rawResponse = await fetch('/api/asset/create', {
+          method: 'POST',
+          body: dataField,
         });
         const content = await rawResponse.json();
         if (content.status) {
           await reset();
           toast({
-            title: "Success",
+            title: 'Success',
             description: content.msg,
-            status: "success",
+            status: 'success',
             duration: 5000,
             isClosable: true,
           });
           await fetchAssetData();
         } else {
           toast({
-            title: "Error",
+            title: 'Error',
             description: content.error,
-            status: "error",
+            status: 'error',
             duration: 5000,
             isClosable: true,
           });
         }
+
+        return true;
       } catch (error) {
-        console.log(error);
+        return false;
       }
     }
-  };
-
-  const validateFields = (
-    name,
-    description,
-    eventID,
-    selectedFile,
-    latitude,
-    longitude
-  ) => {
-    //super basic validation here
-
-    if (!name) {
-      setError("Please write a name!");
-      return false;
-    }
-
-    if (!description) {
-      setError("Please write a description!");
-      return false;
-    }
-
-    if (!eventID || eventID == "") {
-      setError("Please choose an event!");
-      return false;
-    }
-
-    if (!selectedFile) {
-      setError("Please upload an image!");
-      return false;
-    }
-
-    if (!latitude) {
-      setError("Please provide a latitude!");
-      return false;
-    }
-
-    if (!longitude) {
-      setError("Please provide a longitude");
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const onFileChange = async (event) => {
@@ -176,23 +215,23 @@ export default function Asset() {
 
   const onEventChange = async (event) => {
     if (event.target.value) {
-      const value = event.target.value;
+      const { value } = event.target;
       eventIDDB.current = value;
     }
   };
 
   const eventDropDownMenu = async (content) => {
     const selection = [];
-    selection.push(<option key={""} value={""}></option>);
+    selection.push(<option key='' value='' aria-label='default' />);
 
-    for (let key in content) {
+    for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
-        const data = content[key];
+        const dataField = content[key];
 
         selection.push(
-          <option key={data.id} value={data.id}>
-            {data.name}
-          </option>
+          <option key={dataField.id} value={dataField.id}>
+            {dataField.name}
+          </option>,
         );
       }
     }
@@ -200,50 +239,24 @@ export default function Asset() {
     setEventDropdown(selection);
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const rawResponse = await fetch("/api/event/fetch", {
+      const rawResponse = await fetch('/api/event/fetch', {
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
       });
       const content = await rawResponse.json();
       if (content.status) {
         await eventDropDownMenu(content.msg);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const includeActionButton = async (content) => {
-    for (let key in content) {
-      if (content[key]) {
-        const data = content[key];
-      }
-    }
-    setData(content);
-  };
-
-  const fetchAssetData = async () => {
-    setLoading(true);
-    try {
-      const rawResponse = await fetch("/api/asset/fetch", {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      });
-      const content = await rawResponse.json();
-      if (content.status) {
-        await includeActionButton(content.msg);
-        setLoading(false);
-      }
+      return true;
     } catch (error) {
-      console.log(error);
+      return false;
     }
-  };
+  }, []);
 
   useEffect(() => {
     async function generate() {
@@ -252,42 +265,41 @@ export default function Asset() {
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData, fetchAssetData]);
 
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "name",
+        Header: 'Name',
+        accessor: 'name',
       },
       {
-        Header: "Description",
-        accessor: "description",
+        Header: 'Description',
+        accessor: 'description',
       },
       {
-        Header: "Latitude",
-        accessor: "latitude",
+        Header: 'Latitude',
+        accessor: 'latitude',
       },
       {
-        Header: "Longitude",
-        accessor: "longitude",
+        Header: 'Longitude',
+        accessor: 'longitude',
       },
       {
-        Header: "Visible",
-        accessor: "visibleText",
+        Header: 'Visible',
+        accessor: 'visibleText',
       },
     ],
-    []
+    [],
   );
 
   const handleSearch = (event) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
-    if (searchInput && searchInput != "") {
-      let filteredData = data.filter((value) => {
-        return (
+    if (searchInput && searchInput !== '') {
+      const filteredDataField = data.filter(
+        (value) =>
           value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.latitude
@@ -297,11 +309,10 @@ export default function Asset() {
           value.longitude
             .toString()
             .toLowerCase()
-            .includes(searchInput.toLowerCase())
-        );
-      });
+            .includes(searchInput.toLowerCase()),
+      );
 
-      setFilteredData(filteredData);
+      setFilteredData(filteredDataField);
     } else {
       setFilteredData(null);
     }
@@ -310,23 +321,27 @@ export default function Asset() {
   return (
     <Auth>
       <Box>
-        <Box bg="white" borderRadius="lg" p={8} color="gray.700" shadow="base">
-          {loadingData && !data ? (
-            <Box align="center" justify="center" mt={30}>
+        <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          {loadingData && !data && (
+            <Box align='center' justify='center' mt={30}>
               <Text>Loading Please wait...</Text>
             </Box>
-          ) : !loadingData && data.length == 0 ? (
-            <Box align="center" justify="center" mt={30}>
+          )}
+
+          {!loadingData && data.length === 0 && (
+            <Box align='center' justify='center' mt={30}>
               <Text>No assets found</Text>
             </Box>
-          ) : (
-            <Box align="center" justify="center" minWidth={"full"} mt={30}>
+          )}
+
+          {!loadingData && data.length > 0 && (
+            <Box align='center' justify='center' minWidth='full' mt={30}>
               <Stack spacing={30}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
-                    type="text"
-                    placeholder=""
+                    type='text'
+                    placeholder=''
                     value={search}
                     onChange={handleSearch}
                   />
@@ -347,43 +362,43 @@ export default function Asset() {
         <Box>
           <Stack
             spacing={4}
-            w={"full"}
-            maxW={"md"}
-            bg="white"
-            rounded={"xl"}
-            boxShadow={"lg"}
+            w='full'
+            maxW='md'
+            bg='white'
+            rounded='xl'
+            boxShadow='lg'
             p={6}
             my={12}
           >
-            <Heading size="md">Create Asset</Heading>
+            <Heading size='md'>Create Asset</Heading>
             <form onSubmit={handleSubmitCreate}>
               <Stack spacing={4}>
-                <Stack spacing={5} w="full">
+                <Stack spacing={5} w='full'>
                   <Text>Select Event</Text>
-                  <Select onChange={onEventChange} size="sm">
+                  <Select onChange={onEventChange} size='sm'>
                     {eventDropdown}
                   </Select>
                 </Stack>
 
-                <FormControl id="name">
+                <FormControl id='name'>
                   <FormLabel>Name</FormLabel>
                   <Input
-                    type="text"
-                    placeholder="Name"
+                    type='text'
+                    placeholder='Name'
                     value={name}
-                    size="lg"
+                    size='lg'
                     onChange={(event) => {
                       setName(event.currentTarget.value);
                       nameDB.current = event.currentTarget.value;
                     }}
                   />
                 </FormControl>
-                <FormControl id="description">
+                <FormControl id='description'>
                   <FormLabel>Description</FormLabel>
                   <Textarea
-                    placeholder="Description"
+                    placeholder='Description'
                     value={description}
-                    size="lg"
+                    size='lg'
                     onChange={(event) => {
                       setDescription(event.currentTarget.value);
                       descriptionDB.current = event.currentTarget.value;
@@ -391,12 +406,12 @@ export default function Asset() {
                   />
                 </FormControl>
 
-                <FormControl id="latitude">
+                <FormControl id='latitude'>
                   <FormLabel>Latitude</FormLabel>
                   <Input
-                    placeholder="Latitude"
+                    placeholder='Latitude'
                     value={latitude}
-                    size="lg"
+                    size='lg'
                     onChange={(event) => {
                       setLatitude(event.currentTarget.value);
                       latitudeDB.current = event.currentTarget.value;
@@ -404,12 +419,12 @@ export default function Asset() {
                   />
                 </FormControl>
 
-                <FormControl id="longitude">
+                <FormControl id='longitude'>
                   <FormLabel>Longitude</FormLabel>
                   <Input
-                    placeholder="Longitude"
+                    placeholder='Longitude'
                     value={longitude}
-                    size="lg"
+                    size='lg'
                     onChange={(event) => {
                       setLongitude(event.currentTarget.value);
                       longitudeDB.current = event.currentTarget.value;
@@ -417,7 +432,7 @@ export default function Asset() {
                   />
                 </FormControl>
 
-                <Stack spacing={5} direction="row">
+                <Stack spacing={5} direction='row'>
                   <Checkbox
                     isChecked={visible}
                     onChange={(event) => {
@@ -430,86 +445,86 @@ export default function Asset() {
                 </Stack>
 
                 <FormControl>
-                  <FormLabel fontSize="sm" fontWeight="md" color="gray.700">
+                  <FormLabel fontSize='sm' fontWeight='md' color='gray.700'>
                     Venue Photo
                   </FormLabel>
                   {fileName && <Text>File uploaded: {fileName}</Text>}
                   <Flex
                     mt={1}
-                    justify="center"
+                    justify='center'
                     px={6}
                     pt={5}
                     pb={6}
                     borderWidth={2}
-                    borderColor="gray.300"
-                    borderStyle="dashed"
-                    rounded="md"
+                    borderColor='gray.300'
+                    borderStyle='dashed'
+                    rounded='md'
                   >
-                    <Stack spacing={1} textAlign="center">
+                    <Stack spacing={1} textAlign='center'>
                       <Icon
-                        mx="auto"
+                        mx='auto'
                         boxSize={12}
-                        color="gray.400"
-                        stroke="currentColor"
-                        fill="none"
-                        viewBox="0 0 48 48"
-                        aria-hidden="true"
+                        color='gray.400'
+                        stroke='currentColor'
+                        fill='none'
+                        viewBox='0 0 48 48'
+                        aria-hidden='true'
                       >
                         <path
-                          d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                          strokeWidth='2'
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
                         />
                       </Icon>
                       <Flex
-                        fontSize="sm"
-                        color="gray.600"
-                        alignItems="baseline"
+                        fontSize='sm'
+                        color='gray.600'
+                        alignItems='baseline'
                       >
                         <chakra.label
-                          htmlFor="file-upload"
-                          cursor="pointer"
-                          rounded="md"
-                          fontSize="md"
-                          color="brand.600"
-                          pos="relative"
+                          htmlFor='file-upload'
+                          cursor='pointer'
+                          rounded='md'
+                          fontSize='md'
+                          color='brand.600'
+                          pos='relative'
                           _hover={{
-                            color: "brand.400",
+                            color: 'brand.400',
                           }}
                         >
                           <span>Upload a file</span>
                           <VisuallyHidden>
                             <input
-                              id="file-upload"
-                              name="file-upload"
-                              type="file"
+                              id='file-upload'
+                              name='file-upload'
+                              type='file'
                               onChange={onFileChange}
                             />
                           </VisuallyHidden>
                         </chakra.label>
                         <Text pl={1}>or drag and drop</Text>
                       </Flex>
-                      <Text fontSize="xs" color="gray.500">
+                      <Text fontSize='xs' color='gray.500'>
                         PNG, JPG, GIF up to 10MB
                       </Text>
                     </Stack>
                   </Flex>
                 </FormControl>
 
-                {error && (
-                  <Stack align={"center"}>
-                    <Text>{error}</Text>
+                {errorMsg && (
+                  <Stack align='center'>
+                    <Text>{errorMsg}</Text>
                   </Stack>
                 )}
 
                 <Stack spacing={10}>
                   <Button
-                    type="submit"
-                    bg={"blue.400"}
-                    color={"white"}
+                    type='submit'
+                    bg='blue.400'
+                    color='white'
                     _hover={{
-                      bg: "blue.500",
+                      bg: 'blue.500',
                     }}
                   >
                     Create

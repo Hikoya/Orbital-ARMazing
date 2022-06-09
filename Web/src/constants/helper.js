@@ -1,5 +1,5 @@
-import { numberToWeekday } from "@constants/weekdays";
-import { monthNamesFull } from "@constants/months";
+import { numberToWeekday } from '@constants/weekdays';
+import { monthNamesFull } from '@constants/months';
 
 export const prettifyDate = (date) => {
   if (date) {

@@ -1,4 +1,4 @@
-import { prisma } from "@helper/db";
+import { prisma } from '@helper/db';
 
 export const fetchStatistic = async (session) => {
   try {

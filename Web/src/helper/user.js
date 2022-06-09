@@ -1,4 +1,4 @@
-import { prisma } from "@helper/db";
+import { prisma } from '@helper/db';
 
 export const updateUserLevel = async (session, level) => {
   try {
@@ -12,12 +12,12 @@ export const updateUserLevel = async (session, level) => {
     });
 
     if (user) {
-      return { status: true, error: null, msg: "Success!" };
+      return { status: true, error: null, msg: 'Success!' };
     } else {
       return {
         status: false,
-        error: "Failed to update level",
-        msg: "",
+        error: 'Failed to update level',
+        msg: '',
       };
     }
   } catch (error) {
