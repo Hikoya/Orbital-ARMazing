@@ -1,4 +1,4 @@
-import { prisma } from "@helper/db";
+import { prisma } from '@helper/db';
 
 export const createQuiz = async (data) => {
   try {
@@ -13,8 +13,8 @@ export const createQuiz = async (data) => {
     } else {
       return {
         status: false,
-        error: "Failed to create question in database",
-        msg: "",
+        error: 'Failed to create question in database',
+        msg: '',
       };
     }
   } catch (error) {

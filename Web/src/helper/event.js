@@ -1,4 +1,4 @@
-import { prisma } from "@helper/db";
+import { prisma } from '@helper/db';
 
 export const createEvent = async (data) => {
   try {
@@ -11,8 +11,8 @@ export const createEvent = async (data) => {
     } else {
       return {
         status: false,
-        error: "Failed to create event in database",
-        msg: "",
+        error: 'Failed to create event in database',
+        msg: '',
       };
     }
   } catch (error) {
@@ -64,7 +64,7 @@ export const joinEvent = async (session, eventID, level) => {
 
     return {
       status: false,
-      error: "Failed to insert into database!",
+      error: 'Failed to insert into database!',
       msg: null,
     };
   } catch (error) {

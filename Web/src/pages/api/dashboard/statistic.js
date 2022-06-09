@@ -1,15 +1,14 @@
-import { currentSession } from "@helper/session";
-import { fetchStatistic } from "@helper/dashboard";
-import { levels } from "@constants/admin";
+import { currentSession } from '@helper/session';
+import { fetchStatistic } from '@helper/dashboard';
+import { levels } from '@constants/admin';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
 
-  let result = "";
+  let result = '';
   if (session) {
-    if (session.user.level == levels["ORGANIZER"]) {
+    if (session.user.level == levels.ORGANIZER) {
       const stat = await fetchStatistic(session);
-      console.log(stat);
       if (stat && stat.status) {
         result = {
           status: true,
@@ -18,32 +17,28 @@ const handler = async (req, res) => {
         };
         res.status(200).send(result);
         res.end();
-        return;
       } else {
         result = {
           status: false,
           error: stat.error,
-          msg: "",
+          msg: '',
         };
         res.status(200).send(result);
         res.end();
-        return;
       }
     } else {
       result = {
         status: false,
-        error: "Unauthorized",
-        msg: "",
+        error: 'Unauthorized',
+        msg: '',
       };
       res.status(200).send(result);
       res.end();
-      return;
     }
   } else {
-    result = { status: false, error: "Unauthenticated", msg: "" };
+    result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);
     res.end();
-    return;
   }
 };
 

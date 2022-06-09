@@ -1,26 +1,26 @@
-import { prettifyDate, convertUnixToDate } from "@constants/helper";
-import { currentSession } from "@helper/session";
-import { fetchAllEvent } from "@helper/event";
+import { prettifyDate, convertUnixToDate } from '@constants/helper';
+import { currentSession } from '@helper/session';
+import { fetchAllEvent } from '@helper/event';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
 
-  let result = "";
+  let result = '';
   if (session) {
     const events = await fetchAllEvent(session);
     const parsedEvent = [];
 
     if (events && events.status) {
       const eventData = events.msg;
-      for (let ev in eventData) {
+      for (const ev in eventData) {
         if (eventData[ev]) {
           const event = eventData[ev];
 
           const start = prettifyDate(convertUnixToDate(event.startDate));
           const end = prettifyDate(convertUnixToDate(event.endDate));
 
-          const isPublic = event.isPublic ? "Yes" : "No";
-          const visible = event.visible ? "Yes" : "No";
+          const isPublic = event.isPublic ? 'Yes' : 'No';
+          const visible = event.visible ? 'Yes' : 'No';
 
           const data = {
             id: event.id,
@@ -45,22 +45,19 @@ const handler = async (req, res) => {
       };
       res.status(200).send(result);
       res.end();
-      return;
     } else {
       result = {
         status: false,
-        error: "Cannot get all events",
-        msg: "",
+        error: 'Cannot get all events',
+        msg: '',
       };
       res.status(200).send(result);
       res.end();
-      return;
     }
   } else {
-    result = { status: false, error: "Unauthenticated", msg: "" };
+    result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);
     res.end();
-    return;
   }
 };
 

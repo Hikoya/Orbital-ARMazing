@@ -1,8 +1,8 @@
-import { currentSession } from "@helper/session";
-import { createAsset } from "@helper/asset";
-import { IncomingForm } from "formidable";
-import { promises as fs } from "fs";
-import { levels } from "@constants/admin";
+import { currentSession } from '@helper/session';
+import { createAsset } from '@helper/asset';
+import { IncomingForm } from 'formidable';
+import { promises as fs } from 'fs';
+import { levels } from '@constants/admin';
 
 // first we need to disable the default body parser
 export const config = {
@@ -16,7 +16,7 @@ const handler = async (req, res) => {
   let result = null;
 
   if (session) {
-    if (session.user.level == levels["ORGANIZER"]) {
+    if (session.user.level == levels.ORGANIZER) {
       const data = await new Promise((resolve, reject) => {
         const form = new IncomingForm();
         form.parse(req, (err, fields, files) => {
@@ -33,8 +33,8 @@ const handler = async (req, res) => {
           const imagePath = imageFile.filepath;
 
           assetPath =
-            "/assets/" + data.fields.eventID + "_" + imageFile.originalFilename;
-          const pathToWriteImage = "public" + assetPath;
+            `/assets/${data.fields.eventID}_${imageFile.originalFilename}`;
+          const pathToWriteImage = `public${assetPath}`;
           const image = await fs.readFile(imagePath);
           await fs.writeFile(pathToWriteImage, image);
         }
@@ -43,7 +43,7 @@ const handler = async (req, res) => {
           name: data.fields.name,
           description: data.fields.description,
           eventID: data.fields.eventID,
-          visible: data.fields.visible === "true",
+          visible: data.fields.visible === 'true',
           latitude: data.fields.latitude,
           longitude: data.fields.longitude,
           imagePath: assetPath,
@@ -54,40 +54,36 @@ const handler = async (req, res) => {
         if (createEventRequest.status) {
           result = {
             status: true,
-            error: "",
-            msg: "Successfully created asset",
-          };
-          res.status(200).send(result);
-          res.end();
-          return;
-        } else {
-          result = {
-            status: false,
-            error: createEventRequest.error,
-            msg: "",
+            error: '',
+            msg: 'Successfully created asset',
           };
           res.status(200).send(result);
           res.end();
           return;
         }
-      } catch (error) {
-        console.log(error);
-        result = { status: false, error: "Failed to create asset", msg: "" };
+        result = {
+          status: false,
+          error: createEventRequest.error,
+          msg: '',
+        };
         res.status(200).send(result);
         res.end();
         return;
+      } catch (error) {
+        console.log(error);
+        result = { status: false, error: 'Failed to create asset', msg: '' };
+        res.status(200).send(result);
+        res.end();
       }
     } else {
-      result = { status: false, error: "Unauthorized request", msg: "" };
+      result = { status: false, error: 'Unauthorized request', msg: '' };
       res.status(200).send(result);
       res.end();
-      return;
     }
   } else {
-    result = { status: false, error: "Unauthenticated request", msg: "" };
+    result = { status: false, error: 'Unauthenticated request', msg: '' };
     res.status(200).send(result);
     res.end();
-    return;
   }
 };
 

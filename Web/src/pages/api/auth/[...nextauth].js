@@ -1,10 +1,10 @@
-import NextAuth from "next-auth";
-import EmailProvider from "next-auth/providers/email";
-import nodemailer from "nodemailer";
+import NextAuth from 'next-auth';
+import EmailProvider from 'next-auth/providers/email';
+import nodemailer from 'nodemailer';
 
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { prisma } from "@helper/db";
-import { levels } from "@constants/admin";
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { prisma } from '@helper/db';
+import { levels } from '@constants/admin';
 
 const authHandler = (req, res) => NextAuth(req, res, options);
 export default authHandler;
@@ -31,7 +31,7 @@ const options = {
         await transport.sendMail({
           to: email,
           from,
-          subject: `ARMazing: Sign in`,
+          subject: 'ARMazing: Sign in',
           text: text({ url, host }),
           html: html({ url, host, email }),
         });
@@ -49,34 +49,39 @@ const options = {
     encryption: true,
   },
   pages: {
-    signIn: "/signin",
+    signIn: '/signin',
   },
   callbacks: {
     async session({ session, token, user }) {
-      const userFromDB = await prisma.user.findUnique({
-        where: {
-          email: user.email,
-        },
-      });
+      try {
+        const userFromDB = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+        });
 
-      if (userFromDB != null) {
-        session.user.email = userFromDB.email;
-        session.user.username = userFromDB.name;
-        session.user.admin = userFromDB.admin;
-        session.user.level = userFromDB.level;
-      } else {
-        session.user.email = user.email;
-        session.user.admin = false;
-        session.user.level = levels["USER"];
+        if (userFromDB != null) {
+          session.user.email = userFromDB.email;
+          session.user.username = userFromDB.name;
+          session.user.admin = userFromDB.admin;
+          session.user.level = userFromDB.level;
+        } else {
+          session.user.email = user.email;
+          session.user.admin = false;
+          session.user.level = levels.USER;
+        }
+
+        return session;
+      } catch (error) {
+        console.log(error);
+        return session;
       }
-
-      return session;
     },
   },
 };
 
 function html({ url, host, email }) {
-  const escapedEmail = `${email.replace(/\./g, "&#8203;.")}`;
+  const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
 
   return `
   <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

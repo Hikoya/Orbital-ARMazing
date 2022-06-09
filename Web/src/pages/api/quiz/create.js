@@ -1,6 +1,6 @@
-import { currentSession } from "@helper/session";
-import { levels } from "@constants/admin";
-import { createQuiz } from "@helper/quiz";
+import { currentSession } from '@helper/session';
+import { levels } from '@constants/admin';
+import { createQuiz } from '@helper/quiz';
 
 const handler = async (req, res) => {
   const session = await currentSession(req);
@@ -21,7 +21,7 @@ const handler = async (req, res) => {
 
   let result = null;
   if (session) {
-    if (session.user.level == levels["ORGANIZER"]) {
+    if (session.user.level == levels.ORGANIZER) {
       if (eventID && question && answer && points && visible) {
         const options = [option1, option2, option3, option4].toString();
         const data = {
@@ -40,44 +40,40 @@ const handler = async (req, res) => {
           result = {
             status: true,
             error: null,
-            msg: "Quiz created",
+            msg: 'Quiz created',
           };
 
           res.status(200).send(result);
           res.end();
-          return;
         } else {
           result = {
             status: false,
             error: qn.error,
-            msg: "",
+            msg: '',
           };
 
           res.status(200).send(result);
           res.end();
-          return;
         }
       } else {
         result = {
           status: false,
-          error: "Information incomplete!",
+          error: 'Information incomplete!',
           msg: null,
         };
 
         res.status(200).send(result);
         res.end();
-        return;
       }
     } else {
       result = {
         status: false,
-        error: "Unauthorized access",
+        error: 'Unauthorized access',
         msg: null,
       };
 
       res.status(200).send(result);
       res.end();
-      return;
     }
   }
 };
