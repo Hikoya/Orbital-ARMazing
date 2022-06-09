@@ -4,83 +4,8 @@ import nodemailer from 'nodemailer';
 
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@helper/db';
-import { levels } from '@constants/admin';
 
-const authHandler = (req, res) => NextAuth(req, res, options);
-export default authHandler;
-
-const options = {
-  providers: [
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
-      async sendVerificationRequest({
-        identifier: email,
-        url,
-        provider: { server, from },
-      }) {
-        const { host } = new URL(url);
-        const transport = nodemailer.createTransport(server);
-        await transport.sendMail({
-          to: email,
-          from,
-          subject: 'ARMazing: Sign in',
-          text: text({ url, host }),
-          html: html({ url, host, email }),
-        });
-      },
-    }),
-  ],
-  adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    jwt: true,
-    maxAge: 1 * 24 * 60 * 60, // 1 day
-  },
-  jwt: {
-    secret: process.env.NEXTAUTH_JWT_SIGNING_PRIVATE_KEY,
-    encryption: true,
-  },
-  pages: {
-    signIn: '/signin',
-  },
-  callbacks: {
-    async session({ session, token, user }) {
-      try {
-        const userFromDB = await prisma.user.findUnique({
-          where: {
-            email: user.email,
-          },
-        });
-
-        if (userFromDB != null) {
-          session.user.email = userFromDB.email;
-          session.user.username = userFromDB.name;
-          session.user.admin = userFromDB.admin;
-          session.user.level = userFromDB.level;
-        } else {
-          session.user.email = user.email;
-          session.user.admin = false;
-          session.user.level = levels.USER;
-        }
-
-        return session;
-      } catch (error) {
-        console.log(error);
-        return session;
-      }
-    },
-  },
-};
-
-function html({ url, host, email }) {
+function html({ url, email }) {
   const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
 
   return `
@@ -412,4 +337,83 @@ function html({ url, host, email }) {
 
 function text({ url, host }) {
   return `Sign in to ${host}\n${url}\n\n`;
+}
+
+const options = {
+  providers: [
+    EmailProvider({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: process.env.EMAIL_SERVER_PORT,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
+      async sendVerificationRequest({
+        identifier: email,
+        url,
+        provider: { server, from },
+      }) {
+        const { host } = new URL(url);
+        const transport = nodemailer.createTransport(server);
+        await transport.sendMail({
+          to: email,
+          from,
+          subject: 'ARMazing: Sign in',
+          text: text({ url, host }),
+          html: html({ url, email }),
+        });
+      },
+    }),
+  ],
+  adapter: PrismaAdapter(prisma),
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    jwt: true,
+    maxAge: 1 * 24 * 60 * 60, // 1 day
+  },
+  jwt: {
+    secret: process.env.NEXTAUTH_JWT_SIGNING_PRIVATE_KEY,
+    encryption: true,
+  },
+  pages: {
+    signIn: '/signin',
+    error: '/unauthorized',
+  },
+  callbacks: {
+    async session({ session, user }) {
+      try {
+        const userFromDB = await prisma.user.findUnique({
+          where: {
+            email: user.email,
+          },
+        });
+
+        if (userFromDB != null) {
+          const newSession = session;
+          newSession.user.email = userFromDB.email;
+          newSession.user.username = userFromDB.name;
+          newSession.user.admin = userFromDB.admin;
+          newSession.user.level = userFromDB.level;
+
+          return newSession;
+        }
+
+        return session;
+      } catch (error) {
+        return session;
+      }
+    },
+  },
+};
+
+export default async function auth(req, res) {
+  if (req.method === 'HEAD') {
+    return res.status(200);
+  }
+
+  const au = NextAuth(req, res, options);
+  return au;
 }

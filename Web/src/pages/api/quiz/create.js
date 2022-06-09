@@ -21,7 +21,7 @@ const handler = async (req, res) => {
 
   let result = null;
   if (session) {
-    if (session.user.level == levels.ORGANIZER) {
+    if (session.user.level === levels.ORGANIZER) {
       if (eventID && question && answer && points && visible) {
         const options = [option1, option2, option3, option4].toString();
         const data = {

@@ -7,7 +7,7 @@ const handler = async (req, res) => {
 
   let result = '';
   if (session) {
-    if (session.user.level == levels.ORGANIZER) {
+    if (session.user.level === levels.ORGANIZER) {
       const stat = await fetchStatistic(session);
       if (stat && stat.status) {
         result = {

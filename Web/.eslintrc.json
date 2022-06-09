@@ -7,7 +7,7 @@
     "react/jsx-props-no-spreading": "off",
     "react/no-array-index-key": "off",
     "jsx-a11y/media-has-caption": "off",
-    "no-console": "warn",
+    "no-console": "off",
     "no-await-in-loop": "off",
 
     "max-len": ["error", { "code": 650 }],

@@ -10,7 +10,7 @@ const handler = async (req, res) => {
   let result = null;
 
   if (session) {
-    if (session.user.level == levels.ORGANIZER) {
+    if (session.user.level === levels.ORGANIZER) {
       if (name && description && startDate && endDate && isPublic && visible) {
         const start = convertDateToUnix(startDate);
         const end = convertDateToUnix(endDate);

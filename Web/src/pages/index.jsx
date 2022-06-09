@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback } from 'react';
 import { cardVariant, parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
 import {
@@ -9,7 +10,6 @@ import {
   StatNumber,
   Text,
 } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
 import Card from '@components/Card';
 import Auth from '@components/Auth';
 
@@ -25,7 +25,7 @@ export default function Home() {
 
   const [data, setData] = useState(null);
 
-  const generateStatistic = async (content) => {
+  const generateStatistic = useCallback(async (content) => {
     if (content) {
       setData(true);
 
@@ -43,9 +43,9 @@ export default function Home() {
     } else {
       setData(null);
     }
-  };
+  }, []);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const rawResponse = await fetch('/api/dashboard/statistic', {
@@ -59,11 +59,12 @@ export default function Home() {
         await generateStatistic(content.msg);
       }
     } catch (error) {
-      console.log(error);
+      return false;
     }
 
     setLoading(false);
-  };
+    return true;
+  }, [generateStatistic]);
 
   useEffect(() => {
     async function generate() {
@@ -71,8 +72,7 @@ export default function Home() {
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData]);
 
   return (
     <Auth>

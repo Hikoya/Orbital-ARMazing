@@ -12,7 +12,7 @@ const handler = async (req, res) => {
 
     if (events && events.status) {
       const eventData = events.msg;
-      for (const ev in eventData) {
+      for (let ev = 0; ev < eventData.length; ev += 1) {
         if (eventData[ev]) {
           const event = eventData[ev];
 

@@ -36,8 +36,10 @@ export default function SignIn(props) {
         email: email,
         callbackUrl: `${url}/`,
       });
+
+      return true;
     } catch (error) {
-      setLoading(false);
+      return false;
     }
   };
 
@@ -98,7 +100,6 @@ export async function getServerSideProps() {
           data: process.env.NEXTAUTH_URL,
         };
       } catch (error) {
-        console.error(error);
         return {
           data: null,
         };

@@ -12,7 +12,7 @@ const handler = async (req, res) => {
 
     if (qn && qn.status) {
       const questionData = qn.msg;
-      for (const q in questionData) {
+      for (let q = 0; q < questionData.length; q += 1) {
         if (questionData[q]) {
           const quiz = questionData[q];
 

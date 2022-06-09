@@ -1,5 +1,11 @@
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import Auth from '@components/Auth';
-import { useRef, useState, useEffect, useMemo } from 'react';
 import {
   Button,
   Box,
@@ -21,7 +27,7 @@ export default function Quiz() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
-  const [error, setError] = useState(null);
+  const [errorMsg, setError] = useState(null);
 
   const eventIDDB = useRef('');
   const [eventDropdown, setEventDropdown] = useState([]);
@@ -78,6 +84,87 @@ export default function Quiz() {
     setError(null);
   };
 
+  const validateFields = (eventIDField, questionField, o1, o2, o3, o4, ans) => {
+    // super basic validation here
+
+    if (!eventIDField) {
+      setError('Please choose an event!');
+      return false;
+    }
+
+    if (!questionField) {
+      setError('Please write a question!');
+      return false;
+    }
+
+    if (!o1 && !o2 && !o3 && !o4) {
+      setError('Please write at least an option!');
+      return false;
+    }
+
+    if (!ans) {
+      setError('Please choose an answer!');
+      return false;
+    }
+
+    if (Number.isNaN(ans)) {
+      setError('Please write a number corresponding to the correct answer!');
+      return false;
+    }
+
+    if ((ans === 1 || ans === '1') && !o1) {
+      setError('Option does not exist!');
+      return false;
+    }
+
+    if ((ans === 2 || ans === '2') && !o2) {
+      setError('Option does not exist!');
+      return false;
+    }
+
+    if ((ans === 3 || ans === '3') && !o3) {
+      setError('Option does not exist!');
+      return false;
+    }
+
+    if ((ans === 4 || ans === '4') && !o4) {
+      setError('Option does not exist!');
+      return false;
+    }
+
+    return true;
+  };
+
+  const includeActionButton = useCallback(async (content) => {
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        // const dataField = content[key];
+      }
+    }
+    setData(content);
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch('/api/quiz/fetch', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [includeActionButton]);
+
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
     if (
@@ -131,60 +218,13 @@ export default function Quiz() {
           });
         }
       } catch (error) {
-        console.log(error);
+        return false;
       }
-    }
-  };
 
-  const validateFields = (eventID, question, o1, o2, o3, o4, ans) => {
-    // super basic validation here
-
-    if (!eventID) {
-      setError('Please choose an event!');
-      return false;
+      return true;
     }
 
-    if (!question) {
-      setError('Please write a question!');
-      return false;
-    }
-
-    if (!o1 && !o2 && !o3 && !o4) {
-      setError('Please write at least an option!');
-      return false;
-    }
-
-    if (!ans) {
-      setError('Please choose an answer!');
-      return false;
-    }
-
-    if (isNaN(ans)) {
-      setError('Please write a number corresponding to the correct answer!');
-      return false;
-    }
-
-    if ((ans == 1 || ans == '1') && !o1) {
-      setError('Option does not exist!');
-      return false;
-    }
-
-    if ((ans == 2 || ans == '2') && !o2) {
-      setError('Option does not exist!');
-      return false;
-    }
-
-    if ((ans == 3 || ans == '3') && !o3) {
-      setError('Option does not exist!');
-      return false;
-    }
-
-    if ((ans == 4 || ans == '4') && !o4) {
-      setError('Option does not exist!');
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const onEventChange = async (event) => {
@@ -194,26 +234,26 @@ export default function Quiz() {
     }
   };
 
-  const eventDropDownMenu = async (content) => {
+  const eventDropDownMenu = useCallback(async (content) => {
     const selection = [];
-    selection.push(<option key='' value='' />);
+    selection.push(<option key='' value='' aria-label='defualt' />);
 
-    for (const key in content) {
+    for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
-        const data = content[key];
+        const dataField = content[key];
 
         selection.push(
-          <option key={data.id} value={data.id}>
-            {data.name}
+          <option key={dataField.id} value={dataField.id}>
+            {dataField.name}
           </option>,
         );
       }
     }
 
     setEventDropdown(selection);
-  };
+  }, []);
 
-  const fetchEventData = async () => {
+  const fetchEventData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -225,38 +265,12 @@ export default function Quiz() {
       if (content.status) {
         await eventDropDownMenu(content.msg);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const includeActionButton = async (content) => {
-    for (const key in content) {
-      if (content[key]) {
-        const data = content[key];
-      }
-    }
-    setData(content);
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const rawResponse = await fetch('/api/quiz/fetch', {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const content = await rawResponse.json();
-      if (content.status) {
-        await includeActionButton(content.msg);
-        setLoading(false);
-      }
+      return true;
     } catch (error) {
-      console.log(error);
+      return false;
     }
-  };
+  }, [eventDropDownMenu]);
 
   useEffect(() => {
     async function generate() {
@@ -265,8 +279,7 @@ export default function Quiz() {
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData, fetchEventData]);
 
   const columns = useMemo(
     () => [
@@ -302,19 +315,20 @@ export default function Quiz() {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
-    if (searchInput && searchInput != '') {
-      const filteredData = data.filter((value) => (
-        value.event.toLowerCase().includes(searchInput.toLowerCase()) ||
+    if (searchInput && searchInput !== '') {
+      const filteredDataField = data.filter(
+        (value) =>
+          value.event.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.question.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.options.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.answer.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.points
             .toString()
             .toLowerCase()
-            .includes(searchInput.toLowerCase())
-      ));
+            .includes(searchInput.toLowerCase()),
+      );
 
-      setFilteredData(filteredData);
+      setFilteredData(filteredDataField);
     } else {
       setFilteredData(null);
     }
@@ -324,15 +338,19 @@ export default function Quiz() {
     <Auth>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data ? (
+          {loadingData && !data && (
             <Box align='center' justify='center' mt={30}>
               <Text>Loading Please wait...</Text>
             </Box>
-          ) : !loadingData && data.length == 0 ? (
+          )}
+
+          {!loadingData && data.length === 0 && (
             <Box align='center' justify='center' mt={30}>
-              <Text>No quiz found</Text>
+              <Text>No assets found</Text>
             </Box>
-          ) : (
+          )}
+
+          {!loadingData && data.length > 0 && (
             <Box align='center' justify='center' minWidth='full' mt={30}>
               <Stack spacing={30}>
                 <InputGroup>
@@ -483,9 +501,9 @@ export default function Quiz() {
                   </Checkbox>
                 </Stack>
 
-                {error && (
+                {errorMsg && (
                   <Stack align='center'>
-                    <Text>{error}</Text>
+                    <Text>{errorMsg}</Text>
                   </Stack>
                 )}
 

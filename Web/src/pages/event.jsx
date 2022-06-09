@@ -1,5 +1,11 @@
+import React, {
+  useRef,
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+} from 'react';
 import Auth from '@components/Auth';
-import { useRef, useState, useMemo, useEffect } from 'react';
 import {
   Button,
   Box,
@@ -38,7 +44,7 @@ export default function Event() {
   const publicDB = useRef(true);
   const [isPublic, setIsPublic] = useState(true);
 
-  const [error, setError] = useState(null);
+  const [errorMsg, setError] = useState(null);
 
   const [data, setData] = useState([]);
 
@@ -61,6 +67,70 @@ export default function Event() {
     setIsPublic('');
     setError(null);
   };
+
+  const validateFields = (
+    nameField,
+    descriptionField,
+    startDateField,
+    endDateField,
+  ) => {
+    // super basic validation here
+
+    if (!nameField) {
+      setError('Please set a name!');
+      return false;
+    }
+
+    if (!descriptionField) {
+      setError('Please set a description!');
+      return false;
+    }
+
+    if (!startDateField || !endDateField) {
+      setError('Please set a date!');
+      return false;
+    }
+
+    const start = new Date(startDateField);
+    const end = new Date(endDateField);
+
+    if (end <= start) {
+      setError('End date cannot be earlier than start date!');
+      return false;
+    }
+
+    return true;
+  };
+
+  const includeActionButton = useCallback(async (content) => {
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        // const dataField = content[key];
+      }
+    }
+    setData(content);
+  }, []);
+
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch('/api/event/fetch', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [includeActionButton]);
 
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
@@ -109,37 +179,13 @@ export default function Event() {
           });
         }
       } catch (error) {
-        console.log(error);
+        return false;
       }
-    }
-  };
 
-  const validateFields = (name, description, startDate, endDate) => {
-    // super basic validation here
-    if (!name) {
-      setError('Please set a name!');
-      return false;
+      return true;
     }
 
-    if (!description) {
-      setError('Please set a description!');
-      return false;
-    }
-
-    if (!startDate || !endDate) {
-      setError('Please set a date!');
-      return false;
-    }
-
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-
-    if (end <= start) {
-      setError('End date cannot be earlier than start date!');
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const columns = useMemo(
@@ -172,56 +218,28 @@ export default function Event() {
     [],
   );
 
-  const includeActionButton = async (content) => {
-    for (const key in content) {
-      if (content[key]) {
-        const data = content[key];
-      }
-    }
-    setData(content);
-  };
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const rawResponse = await fetch('/api/event/fetch', {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const content = await rawResponse.json();
-      if (content.status) {
-        await includeActionButton(content.msg);
-        setLoading(false);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     async function generate() {
       await fetchData();
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData]);
 
   const handleSearch = (event) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
-    if (searchInput && searchInput != '') {
-      const filteredData = data.filter((value) => (
-        value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+    if (searchInput && searchInput !== '') {
+      const filteredDataField = data.filter(
+        (value) =>
+          value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.startDate.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.endDate.toLowerCase().includes(searchInput.toLowerCase())
-      ));
+          value.endDate.toLowerCase().includes(searchInput.toLowerCase()),
+      );
 
-      setFilteredData(filteredData);
+      setFilteredData(filteredDataField);
     } else {
       setFilteredData(null);
     }
@@ -231,15 +249,19 @@ export default function Event() {
     <Auth>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data ? (
+          {loadingData && !data && (
             <Box align='center' justify='center' mt={30}>
               <Text>Loading Please wait...</Text>
             </Box>
-          ) : !loadingData && data.length == 0 ? (
+          )}
+
+          {!loadingData && data.length === 0 && (
             <Box align='center' justify='center' mt={30}>
-              <Text>No events found</Text>
+              <Text>No assets found</Text>
             </Box>
-          ) : (
+          )}
+
+          {!loadingData && data.length > 0 && (
             <Box align='center' justify='center' minWidth='full' mt={30}>
               <Stack spacing={30}>
                 <InputGroup>
@@ -355,9 +377,9 @@ export default function Event() {
                   </Checkbox>
                 </Stack>
 
-                {error && (
+                {errorMsg && (
                   <Stack align='center'>
-                    <Text>{error}</Text>
+                    <Text>{errorMsg}</Text>
                   </Stack>
                 )}
 

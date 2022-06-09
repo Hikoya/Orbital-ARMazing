@@ -11,7 +11,7 @@ const handler = async (req, res) => {
 
     if (assets && assets.status) {
       const assetData = assets.msg;
-      for (const as in assetData) {
+      for (let as = 0; as < assetData.length; as += 1) {
         if (assetData[as]) {
           const asset = assetData[as];
 

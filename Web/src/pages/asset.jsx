@@ -1,5 +1,11 @@
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import Auth from '@components/Auth';
-import { useRef, useState, useEffect, useMemo } from 'react';
 import {
   Button,
   Box,
@@ -48,7 +54,7 @@ export default function Asset() {
   const longitudeDB = useRef('');
   const [longitude, setLongitude] = useState('');
 
-  const [error, setError] = useState(null);
+  const [errorMsg, setError] = useState(null);
 
   const [data, setData] = useState([]);
 
@@ -73,6 +79,79 @@ export default function Asset() {
     setError(null);
   };
 
+  const validateFields = (
+    nameField,
+    descriptionField,
+    eventIDField,
+    selectedFileField,
+    latitudeField,
+    longitudeField,
+  ) => {
+    // super basic validation here
+
+    if (!nameField) {
+      setError('Please write a name!');
+      return false;
+    }
+
+    if (!descriptionField) {
+      setError('Please write a description!');
+      return false;
+    }
+
+    if (!eventIDField || eventIDField === '') {
+      setError('Please choose an event!');
+      return false;
+    }
+
+    if (!selectedFileField) {
+      setError('Please upload an image!');
+      return false;
+    }
+
+    if (!latitudeField) {
+      setError('Please provide a latitude!');
+      return false;
+    }
+
+    if (!longitudeField) {
+      setError('Please provide a longitude');
+      return false;
+    }
+
+    return true;
+  };
+
+  const includeActionButton = useCallback(async (content) => {
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        // const dataField = content[key];
+      }
+    }
+    setData(content);
+  }, []);
+
+  const fetchAssetData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const rawResponse = await fetch('/api/asset/fetch', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content = await rawResponse.json();
+      if (content.status) {
+        await includeActionButton(content.msg);
+        setLoading(false);
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [includeActionButton]);
+
   const handleSubmitCreate = async (event) => {
     event.preventDefault();
     if (
@@ -86,18 +165,18 @@ export default function Asset() {
       )
     ) {
       try {
-        const data = new FormData();
-        data.append('eventID', eventIDDB.current);
-        data.append('name', nameDB.current);
-        data.append('description', descriptionDB.current);
-        data.append('visible', visibleDB.current);
-        data.append('image', selectedFileDB.current);
-        data.append('latitude', latitudeDB.current);
-        data.append('longitude', longitudeDB.current);
+        const dataField = new FormData();
+        dataField.append('eventID', eventIDDB.current);
+        dataField.append('name', nameDB.current);
+        dataField.append('description', descriptionDB.current);
+        dataField.append('visible', visibleDB.current);
+        dataField.append('image', selectedFileDB.current);
+        dataField.append('latitude', latitudeDB.current);
+        dataField.append('longitude', longitudeDB.current);
 
         const rawResponse = await fetch('/api/asset/create', {
           method: 'POST',
-          body: data,
+          body: dataField,
         });
         const content = await rawResponse.json();
         if (content.status) {
@@ -119,53 +198,13 @@ export default function Asset() {
             isClosable: true,
           });
         }
+
+        return true;
       } catch (error) {
-        console.log(error);
+        return false;
       }
     }
-  };
-
-  const validateFields = (
-    name,
-    description,
-    eventID,
-    selectedFile,
-    latitude,
-    longitude,
-  ) => {
-    // super basic validation here
-
-    if (!name) {
-      setError('Please write a name!');
-      return false;
-    }
-
-    if (!description) {
-      setError('Please write a description!');
-      return false;
-    }
-
-    if (!eventID || eventID == '') {
-      setError('Please choose an event!');
-      return false;
-    }
-
-    if (!selectedFile) {
-      setError('Please upload an image!');
-      return false;
-    }
-
-    if (!latitude) {
-      setError('Please provide a latitude!');
-      return false;
-    }
-
-    if (!longitude) {
-      setError('Please provide a longitude');
-      return false;
-    }
-
-    return true;
+    return false;
   };
 
   const onFileChange = async (event) => {
@@ -183,15 +222,15 @@ export default function Asset() {
 
   const eventDropDownMenu = async (content) => {
     const selection = [];
-    selection.push(<option key='' value='' />);
+    selection.push(<option key='' value='' aria-label='default' />);
 
-    for (const key in content) {
+    for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
-        const data = content[key];
+        const dataField = content[key];
 
         selection.push(
-          <option key={data.id} value={data.id}>
-            {data.name}
+          <option key={dataField.id} value={dataField.id}>
+            {dataField.name}
           </option>,
         );
       }
@@ -200,7 +239,7 @@ export default function Asset() {
     setEventDropdown(selection);
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -212,38 +251,12 @@ export default function Asset() {
       if (content.status) {
         await eventDropDownMenu(content.msg);
       }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const includeActionButton = async (content) => {
-    for (const key in content) {
-      if (content[key]) {
-        const data = content[key];
-      }
-    }
-    setData(content);
-  };
-
-  const fetchAssetData = async () => {
-    setLoading(true);
-    try {
-      const rawResponse = await fetch('/api/asset/fetch', {
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-      });
-      const content = await rawResponse.json();
-      if (content.status) {
-        await includeActionButton(content.msg);
-        setLoading(false);
-      }
+      return true;
     } catch (error) {
-      console.log(error);
+      return false;
     }
-  };
+  }, []);
 
   useEffect(() => {
     async function generate() {
@@ -252,8 +265,7 @@ export default function Asset() {
     }
 
     generate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchData, fetchAssetData]);
 
   const columns = useMemo(
     () => [
@@ -285,9 +297,10 @@ export default function Asset() {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
-    if (searchInput && searchInput != '') {
-      const filteredData = data.filter((value) => (
-        value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+    if (searchInput && searchInput !== '') {
+      const filteredDataField = data.filter(
+        (value) =>
+          value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.latitude
             .toString()
@@ -296,10 +309,10 @@ export default function Asset() {
           value.longitude
             .toString()
             .toLowerCase()
-            .includes(searchInput.toLowerCase())
-      ));
+            .includes(searchInput.toLowerCase()),
+      );
 
-      setFilteredData(filteredData);
+      setFilteredData(filteredDataField);
     } else {
       setFilteredData(null);
     }
@@ -309,15 +322,19 @@ export default function Asset() {
     <Auth>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data ? (
+          {loadingData && !data && (
             <Box align='center' justify='center' mt={30}>
               <Text>Loading Please wait...</Text>
             </Box>
-          ) : !loadingData && data.length == 0 ? (
+          )}
+
+          {!loadingData && data.length === 0 && (
             <Box align='center' justify='center' mt={30}>
               <Text>No assets found</Text>
             </Box>
-          ) : (
+          )}
+
+          {!loadingData && data.length > 0 && (
             <Box align='center' justify='center' minWidth='full' mt={30}>
               <Stack spacing={30}>
                 <InputGroup>
@@ -495,9 +512,9 @@ export default function Asset() {
                   </Flex>
                 </FormControl>
 
-                {error && (
+                {errorMsg && (
                   <Stack align='center'>
-                    <Text>{error}</Text>
+                    <Text>{errorMsg}</Text>
                   </Stack>
                 )}
 

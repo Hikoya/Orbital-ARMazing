@@ -16,12 +16,15 @@ const handler = async (req, res) => {
   let result = null;
 
   if (session) {
-    if (session.user.level == levels.ORGANIZER) {
+    if (session.user.level === levels.ORGANIZER) {
       const data = await new Promise((resolve, reject) => {
         const form = new IncomingForm();
         form.parse(req, (err, fields, files) => {
-          if (err) return reject(err);
+          if (err) {
+            return reject(err);
+          }
           resolve({ fields, files });
+          return true;
         });
       });
 
@@ -32,8 +35,7 @@ const handler = async (req, res) => {
         if (imageFile) {
           const imagePath = imageFile.filepath;
 
-          assetPath =
-            `/assets/${data.fields.eventID}_${imageFile.originalFilename}`;
+          assetPath = `/assets/${data.fields.eventID}_${imageFile.originalFilename}`;
           const pathToWriteImage = `public${assetPath}`;
           const image = await fs.readFile(imagePath);
           await fs.writeFile(pathToWriteImage, image);
