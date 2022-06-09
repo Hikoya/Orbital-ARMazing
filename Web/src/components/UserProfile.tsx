@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import React, { useState, useEffect } from 'react';
 import {
   Avatar,
@@ -84,18 +85,16 @@ export default function UserProfile(props) {
   );
 }
 
-export async function getServerSideProps() {
-  return {
-    props: (async function Props() {
-      try {
-        return {
-          data: process.env.NEXTAUTH_URL,
-        };
-      } catch (error) {
-        return {
-          data: null,
-        };
-      }
-    })(),
-  };
-}
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: (async function Props() {
+    try {
+      return {
+        data: process.env.NEXTAUTH_URL,
+      };
+    } catch (error) {
+      return {
+        data: null,
+      };
+    }
+  })(),
+});

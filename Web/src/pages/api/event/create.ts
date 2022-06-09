@@ -1,13 +1,21 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { Event } from 'types/event';
+
 import { currentSession } from '@helper/session';
 import { convertDateToUnix } from '@constants/helper';
 import { createEvent, joinEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
   const { name, description, startDate, endDate, isPublic, visible } = req.body;
-  let result = null;
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
 
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
@@ -15,7 +23,7 @@ const handler = async (req, res) => {
         const start = convertDateToUnix(startDate);
         const end = convertDateToUnix(endDate);
 
-        const data = {
+        const data: Event = {
           name: name,
           description: description,
           startDate: start,

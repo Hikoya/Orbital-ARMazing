@@ -63,8 +63,8 @@ export default function Event() {
     setDescription('');
     setStartDate('');
     setEndDate('');
-    setVisible('');
-    setIsPublic('');
+    setVisible(true);
+    setIsPublic(true);
     setError(null);
   };
 
@@ -132,7 +132,7 @@ export default function Event() {
     }
   }, [includeActionButton]);
 
-  const handleSubmitCreate = async (event) => {
+  const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
       validateFields(
@@ -246,24 +246,28 @@ export default function Event() {
   };
 
   return (
-    <Auth>
+    <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
           {loadingData && !data && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>Loading Please wait...</Text>
+            <Box mt={30}>
+              <Stack justify='center' align='center'>
+                <Text>Loading Please wait...</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length === 0 && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>No assets found</Text>
+            <Box mt={30}>
+              <Stack justify='center' align='center'>
+                <Text>No assets found</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box align='center' justify='center' minWidth='full' mt={30}>
-              <Stack spacing={30}>
+            <Box minWidth='full' mt={30}>
+              <Stack justify='center' align='center' spacing={30}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -274,13 +278,15 @@ export default function Event() {
                   />
                 </InputGroup>
 
-                <TableWidget
-                  key={1}
-                  columns={columns}
-                  data={
-                    filteredData && filteredData.length ? filteredData : data
-                  }
-                />
+                <Box width='full'>
+                  <TableWidget
+                    key={1}
+                    columns={columns}
+                    data={
+                      filteredData && filteredData.length ? filteredData : data
+                    }
+                  />
+                </Box>
               </Stack>
             </Box>
           )}

@@ -2,6 +2,8 @@ import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
 import nodemailer from 'nodemailer';
 
+import type { NextApiRequest, NextApiResponse } from 'next';
+
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@helper/db';
 
@@ -344,7 +346,7 @@ const options = {
     EmailProvider({
       server: {
         host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
+        port: Number(process.env.EMAIL_SERVER_PORT),
         auth: {
           user: process.env.EMAIL_SERVER_USER,
           pass: process.env.EMAIL_SERVER_PASSWORD,
@@ -409,7 +411,7 @@ const options = {
   },
 };
 
-export default async function auth(req, res) {
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'HEAD') {
     return res.status(200);
   }

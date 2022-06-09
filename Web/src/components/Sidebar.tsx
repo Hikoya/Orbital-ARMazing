@@ -1,21 +1,18 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, CloseButton, Flex, Text } from '@chakra-ui/react';
-import { FiHome, FiStar, FiSettings } from 'react-icons/fi';
+import { FiHome, FiStar, FiSettings, FiPaperclip } from 'react-icons/fi';
 import NavLink from '@components/NavLink';
 import Link from 'next/link';
 import { currentSession } from '@helper/session';
 
-let LinkItems = [
-  { label: 'Home', icon: FiHome, href: '/' },
-  { label: 'Manage Events', icon: FiSettings, href: '/event' },
-  { label: 'Manage Assets', icon: FiStar, href: '/asset' },
-];
+let LinkItems = [{ label: 'Home', icon: FiHome, href: '/' }];
 
 const adminMenu = [
   { label: 'Home', icon: FiHome, href: '/' },
   { label: 'Manage Events', icon: FiSettings, href: '/event' },
   { label: 'Manage Assets', icon: FiStar, href: '/asset' },
+  { label: 'Manage Quiz', icon: FiPaperclip, href: '/quiz' },
 ];
 
 const userMenu = [

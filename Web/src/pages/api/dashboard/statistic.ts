@@ -1,11 +1,19 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+
 import { currentSession } from '@helper/session';
 import { fetchStatistic } from '@helper/dashboard';
 import { levels } from '@constants/admin';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  let result = '';
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
       const stat = await fetchStatistic(session);

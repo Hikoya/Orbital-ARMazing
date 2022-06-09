@@ -3,6 +3,7 @@ import { cardVariant, parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
 import {
   Box,
+  HStack,
   SimpleGrid,
   Stack,
   Stat,
@@ -75,7 +76,7 @@ export default function Home() {
   }, [fetchData]);
 
   return (
-    <Auth>
+    <Auth admin={undefined}>
       <Box>
         {!loading && data && (
           <Box
@@ -85,7 +86,7 @@ export default function Home() {
             color='gray.700'
             shadow='base'
           >
-            <Stack direction='horizontal'>
+            <HStack>
               <Stat>
                 <StatLabel>Total Events</StatLabel>
                 <StatNumber>{event}</StatNumber>
@@ -98,7 +99,7 @@ export default function Home() {
                 <StatLabel>Total Users joined</StatLabel>
                 <StatNumber>{user}</StatNumber>
               </Stat>
-            </Stack>
+            </HStack>
           </Box>
         )}
 
@@ -109,11 +110,11 @@ export default function Home() {
             p={8}
             color='gray.700'
             shadow='base'
-            align='center'
-            justify='center'
             mt={30}
           >
-            <Text>Loading Please wait...</Text>
+            <Stack align='center' justify='center'>
+              <Text>Loading Please wait...</Text>
+            </Stack>
           </Box>
         )}
 

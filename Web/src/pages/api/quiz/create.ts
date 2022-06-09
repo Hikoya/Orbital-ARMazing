@@ -1,8 +1,12 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { Quiz } from 'types/quiz';
+
 import { currentSession } from '@helper/session';
 import { levels } from '@constants/admin';
 import { createQuiz } from '@helper/quiz';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
   const {
@@ -17,14 +21,17 @@ const handler = async (req, res) => {
     visible,
   } = req.body;
 
-  console.log(req.body);
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
 
-  let result = null;
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
       if (eventID && question && answer && points && visible) {
         const options = [option1, option2, option3, option4].toString();
-        const data = {
+        const data: Quiz = {
           eventID: eventID,
           question: question,
           options: options,

@@ -1,28 +1,39 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { QuizFetch } from 'types/quiz';
+
 import { currentSession } from '@helper/session';
 import { fetchAllQuiz } from '@helper/quiz';
 import { fetchEventByID } from '@helper/event';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  let result = '';
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   if (session) {
     const qn = await fetchAllQuiz(session);
-    const parsedQuiz = [];
+    const parsedQuiz: QuizFetch[] = [];
 
     if (qn && qn.status) {
-      const questionData = qn.msg;
+      const questionData: QuizFetch[] = qn.msg;
       for (let q = 0; q < questionData.length; q += 1) {
         if (questionData[q]) {
-          const quiz = questionData[q];
+          const quiz: QuizFetch = questionData[q];
 
           const visible = quiz.visible ? 'Yes' : 'No';
           const event = await fetchEventByID(quiz.eventID);
+          const eventName: string = event.msg.name;
 
           if (event.status) {
-            const data = {
+            const data: QuizFetch = {
               id: quiz.id,
-              event: event.msg.name,
+              event: eventName,
+              eventID: quiz.eventID,
               question: quiz.question,
               options: quiz.options,
               answer: quiz.answer,
