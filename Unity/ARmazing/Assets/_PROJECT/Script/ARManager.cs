@@ -36,7 +36,7 @@ public class ARManager : MonoBehaviour
     {
         foreach(ARTrackedImage trackedImage in eventArgs.added)
         {
-            UpdateARUI(trackedImage);
+            trackedImage.destroyOnRemoval = false;
         }
 
         foreach(ARTrackedImage trackedImage in eventArgs.updated)
