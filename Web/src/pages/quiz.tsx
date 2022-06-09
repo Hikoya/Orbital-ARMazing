@@ -47,8 +47,8 @@ export default function Quiz() {
   const option4DB = useRef('');
   const [option4, setOption4] = useState('');
 
-  const answerDB = useRef('');
-  const [answer, setAnswer] = useState('');
+  const answerDB = useRef(0);
+  const [answer, setAnswer] = useState(0);
 
   const pointsDB = useRef(0);
   const [points, setPoints] = useState(0);
@@ -68,7 +68,7 @@ export default function Quiz() {
     option2DB.current = '';
     option3DB.current = '';
     option4DB.current = '';
-    answerDB.current = '';
+    answerDB.current = 0;
     pointsDB.current = 0;
 
     setQuestion('');
@@ -76,7 +76,7 @@ export default function Quiz() {
     setOption2('');
     setOption3('');
     setOption4('');
-    setAnswer('');
+    setAnswer(0);
     setPoints(0);
 
     setVisible(true);
@@ -102,7 +102,7 @@ export default function Quiz() {
       return false;
     }
 
-    if (!ans) {
+    if (!ans || ans === 0) {
       setError('Please choose an answer!');
       return false;
     }
@@ -165,7 +165,7 @@ export default function Quiz() {
     }
   }, [includeActionButton]);
 
-  const handleSubmitCreate = async (event) => {
+  const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
       validateFields(
@@ -335,24 +335,28 @@ export default function Quiz() {
   };
 
   return (
-    <Auth>
+    <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
           {loadingData && !data && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>Loading Please wait...</Text>
+            <Box mt={30}>
+              <Stack align='center' justify='center'>
+                <Text>Loading Please wait...</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length === 0 && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>No assets found</Text>
+            <Box mt={30}>
+              <Stack align='center' justify='center'>
+                <Text>No assets found</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box align='center' justify='center' minWidth='full' mt={30}>
-              <Stack spacing={30}>
+            <Box minWidth='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -469,8 +473,8 @@ export default function Quiz() {
                     size='lg'
                     type='number'
                     onChange={(event) => {
-                      setAnswer(event.currentTarget.value);
-                      answerDB.current = event.currentTarget.value;
+                      setAnswer(Number(event.currentTarget.value));
+                      answerDB.current = Number(event.currentTarget.value);
                     }}
                   />
                 </FormControl>
@@ -483,8 +487,8 @@ export default function Quiz() {
                     size='lg'
                     type='number'
                     onChange={(event) => {
-                      setPoints(event.currentTarget.value);
-                      pointsDB.current = event.currentTarget.value;
+                      setPoints(Number(event.currentTarget.value));
+                      pointsDB.current = Number(event.currentTarget.value);
                     }}
                   />
                 </FormControl>

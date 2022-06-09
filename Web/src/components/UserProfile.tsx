@@ -1,3 +1,4 @@
+import { GetServerSideProps } from 'next';
 import React, { useState, useEffect } from 'react';
 import {
   Avatar,
@@ -84,7 +85,7 @@ export default function UserProfile(props) {
   );
 }
 
-export async function getServerSideProps() {
+export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: (async function Props() {
       try {
@@ -98,4 +99,4 @@ export async function getServerSideProps() {
       }
     })(),
   };
-}
+};

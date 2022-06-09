@@ -1,20 +1,29 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { EventFetch } from 'types/event';
+
 import { prettifyDate, convertUnixToDate } from '@constants/helper';
 import { currentSession } from '@helper/session';
 import { fetchAllEvent } from '@helper/event';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  let result = '';
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   if (session) {
     const events = await fetchAllEvent(session);
-    const parsedEvent = [];
+    const parsedEvent: EventFetch[] = [];
 
     if (events && events.status) {
-      const eventData = events.msg;
+      const eventData: EventFetch[] = events.msg;
       for (let ev = 0; ev < eventData.length; ev += 1) {
         if (eventData[ev]) {
-          const event = eventData[ev];
+          const event: EventFetch = eventData[ev];
 
           const start = prettifyDate(convertUnixToDate(event.startDate));
           const end = prettifyDate(convertUnixToDate(event.endDate));
@@ -22,7 +31,7 @@ const handler = async (req, res) => {
           const isPublic = event.isPublic ? 'Yes' : 'No';
           const visible = event.visible ? 'Yes' : 'No';
 
-          const data = {
+          const data: EventFetch = {
             id: event.id,
             name: event.name,
             description: event.description,

@@ -80,12 +80,12 @@ export default function Asset() {
   };
 
   const validateFields = (
-    nameField,
-    descriptionField,
-    eventIDField,
-    selectedFileField,
-    latitudeField,
-    longitudeField,
+    nameField: string,
+    descriptionField: string,
+    eventIDField: string,
+    selectedFileField: any,
+    latitudeField: string,
+    longitudeField: string,
   ) => {
     // super basic validation here
 
@@ -169,7 +169,7 @@ export default function Asset() {
         dataField.append('eventID', eventIDDB.current);
         dataField.append('name', nameDB.current);
         dataField.append('description', descriptionDB.current);
-        dataField.append('visible', visibleDB.current);
+        dataField.append('visible', visibleDB.current.toString());
         dataField.append('image', selectedFileDB.current);
         dataField.append('latitude', latitudeDB.current);
         dataField.append('longitude', longitudeDB.current);
@@ -319,24 +319,28 @@ export default function Asset() {
   };
 
   return (
-    <Auth>
+    <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
           {loadingData && !data && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>Loading Please wait...</Text>
+            <Box mt={30}>
+              <Stack justify='center' align='center'>
+                <Text>Loading Please wait...</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length === 0 && (
-            <Box align='center' justify='center' mt={30}>
-              <Text>No assets found</Text>
+            <Box mt={30}>
+              <Stack justify='center' align='center'>
+                <Text>No assets found</Text>
+              </Stack>
             </Box>
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box align='center' justify='center' minWidth='full' mt={30}>
-              <Stack spacing={30}>
+            <Box minWidth='full' mt={30}>
+              <Stack justify='center' align='center' spacing={30}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -347,13 +351,15 @@ export default function Asset() {
                   />
                 </InputGroup>
 
-                <TableWidget
-                  key={1}
-                  columns={columns}
-                  data={
-                    filteredData && filteredData.length ? filteredData : data
-                  }
-                />
+                <Box width='full'>
+                  <TableWidget
+                    key={1}
+                    columns={columns}
+                    data={
+                      filteredData && filteredData.length ? filteredData : data
+                    }
+                  />
+                </Box>
               </Stack>
             </Box>
           )}

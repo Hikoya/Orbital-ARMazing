@@ -18,6 +18,8 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  OmitCommonProps,
+  TableRowProps,
 } from '@chakra-ui/react';
 import {
   ArrowRightIcon,
@@ -70,18 +72,34 @@ export default function TableWidget({ columns, data }) {
           ))}
         </Thead>
         <Tbody {...getTableBodyProps()}>
-          {page.map((row, idx) => {
-            prepareRow(row);
-            return (
-              <Tr key={idx} {...row.getRowProps()}>
-                {row.cells.map((cell, idxx) => (
-                  <Td key={idxx} {...cell.getCellProps()}>
-                    {cell.render('Cell')}
-                  </Td>
-                ))}
-              </Tr>
-            );
-          })}
+          {page.map(
+            (
+              row: {
+                getRowProps: () => JSX.IntrinsicAttributes &
+                  OmitCommonProps<
+                    React.DetailedHTMLProps<
+                      React.HTMLAttributes<HTMLTableRowElement>,
+                      HTMLTableRowElement
+                    >,
+                    keyof TableRowProps
+                  > &
+                  TableRowProps & { as?: 'tr' };
+                cells: any[];
+              },
+              idx: React.Key,
+            ) => {
+              prepareRow(row);
+              return (
+                <Tr key={idx} {...row.getRowProps()}>
+                  {row.cells.map((cell, idxx) => (
+                    <Td key={idxx} {...cell.getCellProps()}>
+                      {cell.render('Cell')}
+                    </Td>
+                  ))}
+                </Tr>
+              );
+            },
+          )}
         </Tbody>
       </Table>
 
@@ -93,6 +111,7 @@ export default function TableWidget({ columns, data }) {
               isDisabled={!canPreviousPage}
               icon={<ArrowLeftIcon h={3} w={3} />}
               mr={4}
+              aria-label=''
             />
           </Tooltip>
           <Tooltip label='Previous Page'>
@@ -100,6 +119,7 @@ export default function TableWidget({ columns, data }) {
               onClick={previousPage}
               isDisabled={!canPreviousPage}
               icon={<ChevronLeftIcon h={6} w={6} />}
+              aria-label=''
             />
           </Tooltip>
         </Flex>
@@ -123,7 +143,7 @@ export default function TableWidget({ columns, data }) {
             min={1}
             max={pageOptions.length}
             onChange={(value) => {
-              const pageID = value ? value - 1 : 0;
+              const pageID = Number(value) ? Number(value) - 1 : 0;
               gotoPage(pageID);
             }}
             defaultValue={pageIndex + 1}
@@ -155,14 +175,16 @@ export default function TableWidget({ columns, data }) {
               onClick={nextPage}
               isDisabled={!canNextPage}
               icon={<ChevronRightIcon h={6} w={6} />}
+              aria-label=''
             />
           </Tooltip>
           <Tooltip label='Last Page'>
             <IconButton
               onClick={() => gotoPage(pageCount - 1)}
               isDisabled={!canNextPage}
-              icon={<ArrowRightIcon h={3} w={3} />}
+              icon={<ArrowRightIcon h={3} w={3} aria-label='' />}
               ml={4}
+              aria-label=''
             />
           </Tooltip>
         </Flex>

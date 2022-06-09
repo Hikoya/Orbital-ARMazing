@@ -2,8 +2,6 @@ import { prisma } from '@helper/db';
 
 export const createQuiz = async (data) => {
   try {
-    console.log(data);
-
     const qn = await prisma.questions.create({
       data: data,
     });

@@ -1,39 +1,47 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { Asset } from 'types/asset';
+
 import { currentSession } from '@helper/session';
 import { createAsset } from '@helper/asset';
-import { IncomingForm } from 'formidable';
+import formidable, { IncomingForm } from 'formidable';
 import { promises as fs } from 'fs';
 import { levels } from '@constants/admin';
 
-// first we need to disable the default body parser
 export const config = {
   api: {
     bodyParser: false,
   },
 };
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
-  let result = null;
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
 
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
-      const data = await new Promise((resolve, reject) => {
-        const form = new IncomingForm();
-        form.parse(req, (err, fields, files) => {
-          if (err) {
-            return reject(err);
-          }
-          resolve({ fields, files });
-          return true;
+      const data: { fields: formidable.Fields; files: formidable.Files } =
+        await new Promise((resolve, reject) => {
+          const form = new IncomingForm();
+          form.parse(req, (err, fields, files) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve({ fields, files });
+            return true;
+          });
         });
-      });
 
       try {
-        const imageFile = data.files.image;
-        let assetPath = null;
+        const imageFile: formidable.File = data.files.image as formidable.File;
+        let assetPath: string = null;
 
         if (imageFile) {
-          const imagePath = imageFile.filepath;
+          const imagePath: string = imageFile.filepath;
 
           assetPath = `/assets/${data.fields.eventID}_${imageFile.originalFilename}`;
           const pathToWriteImage = `public${assetPath}`;
@@ -41,7 +49,7 @@ const handler = async (req, res) => {
           await fs.writeFile(pathToWriteImage, image);
         }
 
-        const assetData = {
+        const assetData: Asset = {
           name: data.fields.name,
           description: data.fields.description,
           eventID: data.fields.eventID,

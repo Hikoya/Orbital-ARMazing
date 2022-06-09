@@ -1,24 +1,34 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { Result } from 'types/api';
+import { AssetFetch } from 'types/asset';
+
 import { currentSession } from '@helper/session';
 import { fetchAllAsset } from '@helper/asset';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  let result = '';
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   if (session) {
     const assets = await fetchAllAsset(session);
-    const parsedAsset = [];
+    const parsedAsset: AssetFetch[] = [];
 
     if (assets && assets.status) {
-      const assetData = assets.msg;
+      const assetData: AssetFetch[] = assets.msg;
       for (let as = 0; as < assetData.length; as += 1) {
         if (assetData[as]) {
-          const asset = assetData[as];
+          const asset: AssetFetch = assetData[as];
 
           const visible = asset.visible ? 'Yes' : 'No';
 
-          const data = {
+          const data: AssetFetch = {
             id: asset.id,
+            eventID: asset.eventID,
             name: asset.name,
             description: asset.description,
             latitude: asset.latitude,

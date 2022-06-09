@@ -1,13 +1,21 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { EventResult } from 'types/api';
+
 import { currentSession } from '@helper/session';
 import { joinEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 
-const handler = async (req, res) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
   const { eventID } = req.body;
 
-  let result = '';
+  let result: EventResult = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   if (session) {
     if (eventID) {
       const join = await joinEvent(session, eventID, levels.USER);
