@@ -85,18 +85,16 @@ export default function UserProfile(props) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: (async function Props() {
-      try {
-        return {
-          data: process.env.NEXTAUTH_URL,
-        };
-      } catch (error) {
-        return {
-          data: null,
-        };
-      }
-    })(),
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: (async function Props() {
+    try {
+      return {
+        data: process.env.NEXTAUTH_URL,
+      };
+    } catch (error) {
+      return {
+        data: null,
+      };
+    }
+  })(),
+});

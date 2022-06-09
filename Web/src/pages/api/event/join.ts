@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { EventResult } from 'types/api';
+import { Result } from 'types/api';
 
 import { currentSession } from '@helper/session';
 import { joinEvent } from '@helper/event';
@@ -10,7 +10,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { eventID } = req.body;
 
-  let result: EventResult = {
+  let result: Result = {
     status: false,
     error: '',
     msg: '',
