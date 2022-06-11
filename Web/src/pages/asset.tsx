@@ -27,6 +27,9 @@ import {
   InputLeftAddon,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import { AssetFetch } from 'types/asset';
+import { Result } from 'types/api';
+import { EventFetch } from 'types/event';
 
 export default function Asset() {
   const [loadingData, setLoading] = useState(false);
@@ -122,7 +125,7 @@ export default function Asset() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content) => {
+  const includeActionButton = useCallback(async (content: AssetFetch[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -140,9 +143,9 @@ export default function Asset() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg);
+        await includeActionButton(content.msg as AssetFetch[]);
         setLoading(false);
       }
 
@@ -152,7 +155,7 @@ export default function Asset() {
     }
   }, [includeActionButton]);
 
-  const handleSubmitCreate = async (event) => {
+  const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
       validateFields(
@@ -207,20 +210,20 @@ export default function Asset() {
     return false;
   };
 
-  const onFileChange = async (event) => {
+  const onFileChange = async (event: { target: { files: FileList } }) => {
     const file = event.target.files[0];
     selectedFileDB.current = file;
     setFileName(file.name);
   };
 
-  const onEventChange = async (event) => {
+  const onEventChange = async (event: { target: { value: any } }) => {
     if (event.target.value) {
       const { value } = event.target;
       eventIDDB.current = value;
     }
   };
 
-  const eventDropDownMenu = async (content) => {
+  const eventDropDownMenu = async (content: EventFetch[]) => {
     const selection = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
@@ -247,9 +250,9 @@ export default function Asset() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await eventDropDownMenu(content.msg);
+        await eventDropDownMenu(content.msg as EventFetch[]);
       }
 
       return true;
@@ -293,7 +296,7 @@ export default function Asset() {
     [],
   );
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
 

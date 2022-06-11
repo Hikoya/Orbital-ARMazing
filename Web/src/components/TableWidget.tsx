@@ -61,15 +61,31 @@ export default function TableWidget({ columns, data }) {
     >
       <Table {...getTableProps()}>
         <Thead>
-          {headerGroups.map((headerGroup, i) => (
-            <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column, id) => (
-                <Th key={id} {...column.getHeaderProps()}>
-                  {column.render('Header')}
-                </Th>
-              ))}
-            </Tr>
-          ))}
+          {headerGroups.map(
+            (
+              headerGroup: {
+                getHeaderGroupProps: () => JSX.IntrinsicAttributes &
+                  OmitCommonProps<
+                    React.DetailedHTMLProps<
+                      React.HTMLAttributes<HTMLTableRowElement>,
+                      HTMLTableRowElement
+                    >,
+                    keyof TableRowProps
+                  > &
+                  TableRowProps & { as?: 'tr' };
+                headers: any[];
+              },
+              i: React.Key,
+            ) => (
+              <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column, id) => (
+                  <Th key={id} {...column.getHeaderProps()}>
+                    {column.render('Header')}
+                  </Th>
+                ))}
+              </Tr>
+            ),
+          )}
         </Thead>
         <Tbody {...getTableBodyProps()}>
           {page.map(

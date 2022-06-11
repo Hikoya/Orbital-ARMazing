@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 import { QuizFetch } from 'types/quiz';
+import { EventFetch } from 'types/event';
 
 import { fetchAllQuizByEvent } from '@helper/quiz';
 import { fetchEventByID } from '@helper/event';
@@ -22,9 +23,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       if (qn && qn.status) {
         const event = await fetchEventByID(eventID);
-        const eventName: string = event.msg.name;
+        const eventMsg = event.msg as EventFetch;
+        const eventName: string = eventMsg.name;
 
-        const questionData: QuizFetch[] = qn.msg;
+        const questionData: QuizFetch[] = qn.msg as QuizFetch[];
         for (let q = 0; q < questionData.length; q += 1) {
           if (questionData[q]) {
             const quiz: QuizFetch = questionData[q];

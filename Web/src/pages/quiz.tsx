@@ -22,6 +22,8 @@ import {
   InputLeftAddon,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import { Result } from 'types/api';
+import { EventFetch } from 'types/event';
 
 export default function Quiz() {
   const [loadingData, setLoading] = useState(false);
@@ -29,6 +31,7 @@ export default function Quiz() {
 
   const [errorMsg, setError] = useState(null);
 
+  const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
   const [eventDropdown, setEventDropdown] = useState([]);
 
@@ -84,7 +87,15 @@ export default function Quiz() {
     setError(null);
   };
 
-  const validateFields = (eventIDField, questionField, o1, o2, o3, o4, ans) => {
+  const validateFields = (
+    eventIDField: string,
+    questionField: string,
+    o1: string,
+    o2: string,
+    o3: string,
+    o4: string,
+    ans: number,
+  ) => {
     // super basic validation here
 
     if (!eventIDField) {
@@ -112,22 +123,22 @@ export default function Quiz() {
       return false;
     }
 
-    if ((ans === 1 || ans === '1') && !o1) {
+    if (ans === 1 && !o1) {
       setError('Option does not exist!');
       return false;
     }
 
-    if ((ans === 2 || ans === '2') && !o2) {
+    if (ans === 2 && !o2) {
       setError('Option does not exist!');
       return false;
     }
 
-    if ((ans === 3 || ans === '3') && !o3) {
+    if (ans === 3 && !o3) {
       setError('Option does not exist!');
       return false;
     }
 
-    if ((ans === 4 || ans === '4') && !o4) {
+    if (ans === 4 && !o4) {
       setError('Option does not exist!');
       return false;
     }
@@ -135,7 +146,7 @@ export default function Quiz() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content) => {
+  const includeActionButton = useCallback(async (content: EventFetch[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -153,9 +164,9 @@ export default function Quiz() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg);
+        await includeActionButton(content.msg as EventFetch[]);
         setLoading(false);
       }
 
@@ -197,12 +208,12 @@ export default function Quiz() {
             visible: visibleDB.current,
           }),
         });
-        const content = await rawResponse.json();
+        const content: Result = await rawResponse.json();
         if (content.status) {
           await reset();
           toast({
             title: 'Success',
-            description: content.msg,
+            description: content.msg as string,
             status: 'success',
             duration: 5000,
             isClosable: true,
@@ -227,16 +238,17 @@ export default function Quiz() {
     return false;
   };
 
-  const onEventChange = async (event) => {
+  const onEventChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
       eventIDDB.current = value;
+      setEventID(value);
     }
   };
 
-  const eventDropDownMenu = useCallback(async (content) => {
+  const eventDropDownMenu = useCallback(async (content: EventFetch[]) => {
     const selection = [];
-    selection.push(<option key='' value='' aria-label='defualt' />);
+    selection.push(<option key='' value='' aria-label='default' />);
 
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
@@ -261,9 +273,9 @@ export default function Quiz() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await eventDropDownMenu(content.msg);
+        await eventDropDownMenu(content.msg as EventFetch[]);
       }
 
       return true;
@@ -311,7 +323,7 @@ export default function Quiz() {
     [],
   );
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
@@ -395,7 +407,7 @@ export default function Quiz() {
               <Stack spacing={4}>
                 <Stack spacing={5} w='full'>
                   <Text>Select Event</Text>
-                  <Select onChange={onEventChange} size='sm'>
+                  <Select onChange={onEventChange} size='sm' value={eventID}>
                     {eventDropdown}
                   </Select>
                 </Stack>

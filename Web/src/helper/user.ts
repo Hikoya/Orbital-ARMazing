@@ -1,8 +1,19 @@
 import { prisma } from '@helper/db';
+import { Result } from 'types/api';
+import { Session } from 'next-auth/core/types';
 
-export const updateUserLevel = async (session, level) => {
+export const updateUserLevel = async (
+  session: Session,
+  level: number,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const user = await prisma.user.update({
+    await prisma.user.update({
       where: {
         email: session.user.email,
       },
@@ -11,16 +22,10 @@ export const updateUserLevel = async (session, level) => {
       },
     });
 
-    if (user) {
-      return { status: true, error: null, msg: 'Success!' };
-    } else {
-      return {
-        status: false,
-        error: 'Failed to update level',
-        msg: '',
-      };
-    }
+    result = { status: true, error: null, msg: 'Success!' };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };

@@ -13,13 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 
-export default function SignIn(props) {
+export default function SignIn(props: Promise<{ data: string }>) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [url, setURL] = useState('http://localhost:3000'); // default
 
   useEffect(() => {
-    async function fetchData(propsField) {
+    async function fetchData(propsField: Promise<{ data: string }>) {
       const propRes = await propsField;
       if (propRes.data) {
         setURL(propRes.data);
@@ -28,7 +28,7 @@ export default function SignIn(props) {
     fetchData(props);
   }, [url, props]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     try {
       setLoading(true);

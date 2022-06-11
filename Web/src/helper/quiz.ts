@@ -1,15 +1,24 @@
 import { prisma } from '@helper/db';
+import { Quiz, QuizFetch } from 'types/quiz';
+import { Result } from 'types/api';
+import { Session } from 'next-auth/core/types';
 
-export const createQuiz = async (data) => {
+export const createQuiz = async (data: Quiz): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const qn = await prisma.questions.create({
+    const qn: Quiz = await prisma.questions.create({
       data: data,
     });
 
     if (qn) {
-      return { status: true, error: null, msg: qn };
+      result = { status: true, error: null, msg: qn };
     } else {
-      return {
+      result = {
         status: false,
         error: 'Failed to create question in database',
         msg: '',
@@ -17,36 +26,54 @@ export const createQuiz = async (data) => {
     }
   } catch (error) {
     console.log(error);
-    return { status: false, error: error.toString(), msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllQuiz = async (session) => {
+export const fetchAllQuiz = async (session: Session): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const qn = await prisma.questions.findMany({
+    const qn: QuizFetch[] = await prisma.questions.findMany({
       where: {
         createdBy: session.user.email,
       },
     });
 
-    return { status: true, error: null, msg: qn };
+    result = { status: true, error: null, msg: qn };
   } catch (error) {
     console.log(error);
-    return { status: false, error: error.toString(), msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllQuizByEvent = async (eventID: string) => {
+export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const qn = await prisma.questions.findMany({
+    const qn: QuizFetch[] = await prisma.questions.findMany({
       where: {
         eventID: eventID,
       },
     });
 
-    return { status: true, error: null, msg: qn };
+    result = { status: true, error: null, msg: qn };
   } catch (error) {
     console.log(error);
-    return { status: false, error: error.toString(), msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
+
+  return result;
 };

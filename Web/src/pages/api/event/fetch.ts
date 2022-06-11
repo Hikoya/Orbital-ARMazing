@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const parsedEvent: EventFetch[] = [];
 
     if (events && events.status) {
-      const eventData: EventFetch[] = events.msg;
+      const eventData: EventFetch[] = events.msg as EventFetch[];
       for (let ev = 0; ev < eventData.length; ev += 1) {
         if (eventData[ev]) {
           const event: EventFetch = eventData[ev];

@@ -1,66 +1,113 @@
 import { prisma } from '@helper/db';
+import { Event, EventCreate, EventFetch, EventJoined } from 'types/event';
+import { Result } from 'types/api';
+import { Session } from 'next-auth/core/types';
 
-export const createEvent = async (data) => {
+export const createEvent = async (data: Event): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const event = await prisma.event.create({
+    const event: EventCreate = await prisma.event.create({
       data: data,
     });
 
     if (event) {
-      return { status: true, error: null, msg: event };
+      result = { status: true, error: null, msg: event };
     } else {
-      return {
+      result = {
         status: false,
         error: 'Failed to create event in database',
         msg: '',
       };
     }
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllEventByUser = async (session) => {
+export const fetchAllEventByUser = async (
+  session: Session,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const event = await prisma.event.findMany({
+    const event: EventFetch[] = await prisma.event.findMany({
       where: {
         createdBy: session.user.email,
       },
     });
 
-    return { status: true, error: null, msg: event };
+    result = { status: true, error: null, msg: event };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllEvent = async () => {
-  try {
-    const event = await prisma.event.findMany();
+export const fetchAllEvent = async (): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
 
-    return { status: true, error: null, msg: event };
+  try {
+    const event: EventFetch[] = await prisma.event.findMany();
+
+    result = { status: true, error: null, msg: event };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const fetchEventByID = async (id: string) => {
+export const fetchEventByID = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const event = await prisma.event.findUnique({
+    const event: EventFetch = await prisma.event.findUnique({
       where: {
         id: id,
       },
     });
 
-    return { status: true, error: null, msg: event };
+    result = { status: true, error: null, msg: event };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const joinEvent = async (session, eventID: string, level: number) => {
+export const joinEvent = async (
+  session: Session,
+  eventID: string,
+  level: number,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
-    const event = await prisma.eventsJoined.create({
+    const event: EventJoined = await prisma.eventsJoined.create({
       data: {
         userEmail: session.user.email,
         eventIDname: eventID,
@@ -69,15 +116,17 @@ export const joinEvent = async (session, eventID: string, level: number) => {
     });
 
     if (event) {
-      return { status: true, error: null, msg: event };
+      result = { status: true, error: null, msg: event };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to insert into database!',
+        msg: null,
+      };
     }
-
-    return {
-      status: false,
-      error: 'Failed to insert into database!',
-      msg: null,
-    };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
