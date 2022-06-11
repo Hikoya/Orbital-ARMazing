@@ -1,4 +1,4 @@
-const monthNamesFull = [
+const monthNamesFull: string[] = [
   'January',
   'February',
   'March',

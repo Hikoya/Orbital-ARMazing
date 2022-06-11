@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier --write .",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "code": "npm run prettier && npm run lint -- --fix",
+    "lazy": "npm run code && npm run build"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.0",

@@ -2,8 +2,8 @@ import { getSession } from 'next-auth/react';
 import { levels } from '@constants/admin';
 
 export const currentSession = async (req = null) => {
-  var session = null;
   if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    let session = null;
     session = {
       expires: '1',
       user: {
@@ -13,6 +13,8 @@ export const currentSession = async (req = null) => {
         level: levels['ORGANIZER'],
       },
     };
+
+    return session;
   } else {
     const isServer = typeof window === 'undefined';
     let session = null;
@@ -24,6 +26,4 @@ export const currentSession = async (req = null) => {
 
     return session;
   }
-
-  return session;
 };

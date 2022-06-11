@@ -20,7 +20,7 @@ export const createEvent = async (data) => {
   }
 };
 
-export const fetchAllEvent = async (session) => {
+export const fetchAllEventByUser = async (session) => {
   try {
     const event = await prisma.event.findMany({
       where: {
@@ -34,7 +34,17 @@ export const fetchAllEvent = async (session) => {
   }
 };
 
-export const fetchEventByID = async (id) => {
+export const fetchAllEvent = async () => {
+  try {
+    const event = await prisma.event.findMany();
+
+    return { status: true, error: null, msg: event };
+  } catch (error) {
+    return { status: false, error: error, msg: null };
+  }
+};
+
+export const fetchEventByID = async (id: string) => {
   try {
     const event = await prisma.event.findUnique({
       where: {
@@ -48,7 +58,7 @@ export const fetchEventByID = async (id) => {
   }
 };
 
-export const joinEvent = async (session, eventID, level) => {
+export const joinEvent = async (session, eventID: string, level: number) => {
   try {
     const event = await prisma.eventsJoined.create({
       data: {

@@ -35,3 +35,18 @@ export const fetchAllQuiz = async (session) => {
     return { status: false, error: error.toString(), msg: null };
   }
 };
+
+export const fetchAllQuizByEvent = async (eventID: string) => {
+  try {
+    const qn = await prisma.questions.findMany({
+      where: {
+        eventID: eventID,
+      },
+    });
+
+    return { status: true, error: null, msg: qn };
+  } catch (error) {
+    console.log(error);
+    return { status: false, error: error.toString(), msg: null };
+  }
+};
