@@ -3,7 +3,7 @@ import { Result } from 'types/api';
 import { AssetFetch } from 'types/asset';
 
 import { currentSession } from '@helper/session';
-import { fetchAllAsset } from '@helper/asset';
+import { fetchAllAssetByUser } from '@helper/asset';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (session) {
-    const assets = await fetchAllAsset(session);
+    const assets = await fetchAllAssetByUser(session);
     const parsedAsset: AssetFetch[] = [];
 
     if (assets && assets.status) {

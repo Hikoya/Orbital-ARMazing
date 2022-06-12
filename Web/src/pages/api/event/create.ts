@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { Event } from 'types/event';
+import { Event, EventCreate } from 'types/event';
 
 import { currentSession } from '@helper/session';
 import { convertDateToUnix } from '@constants/helper';
@@ -34,11 +34,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         };
 
         const event = await createEvent(data);
+        const eventMsg = event.msg as EventCreate;
 
         if (event.status) {
           const eventJoin = await joinEvent(
             session,
-            event.msg.id,
+            eventMsg.id,
             levels.ORGANIZER,
           );
           if (eventJoin.status) {

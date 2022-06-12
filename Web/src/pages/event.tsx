@@ -21,6 +21,8 @@ import {
   InputLeftAddon,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import { Result } from 'types/api';
+import { EventFetch } from 'types/event';
 
 export default function Event() {
   const [loadingData, setLoading] = useState(true);
@@ -69,10 +71,10 @@ export default function Event() {
   };
 
   const validateFields = (
-    nameField,
-    descriptionField,
-    startDateField,
-    endDateField,
+    nameField: string,
+    descriptionField: string,
+    startDateField: string,
+    endDateField: string,
   ) => {
     // super basic validation here
 
@@ -102,7 +104,7 @@ export default function Event() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content) => {
+  const includeActionButton = useCallback(async (content: EventFetch[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -120,9 +122,9 @@ export default function Event() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg);
+        await includeActionButton(content.msg as EventFetch[]);
         setLoading(false);
       }
 
@@ -158,12 +160,12 @@ export default function Event() {
             isPublic: publicDB.current,
           }),
         });
-        const content = await rawResponse.json();
+        const content: Result = await rawResponse.json();
         if (content.status) {
           await reset();
           toast({
             title: 'Success',
-            description: content.msg,
+            description: content.msg as string,
             status: 'success',
             duration: 5000,
             isClosable: true,
@@ -226,7 +228,7 @@ export default function Event() {
     generate();
   }, [fetchData]);
 
-  const handleSearch = (event) => {
+  const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
 

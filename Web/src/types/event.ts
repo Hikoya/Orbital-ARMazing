@@ -1,3 +1,14 @@
+export type EventCreate = {
+  id: string;
+  name: string;
+  description: string;
+  startDate: number;
+  endDate: number;
+  isPublic: boolean;
+  visible: boolean;
+  createdBy: string;
+};
+
 export type Event = {
   name: string;
   description: string;
@@ -18,4 +29,11 @@ export type EventFetch = {
   visible: boolean;
   isPublicText: string;
   visibleText: string;
+};
+
+export type EventJoined = {
+  id: string;
+  userEmail: string;
+  eventID: string;
+  level: number;
 };

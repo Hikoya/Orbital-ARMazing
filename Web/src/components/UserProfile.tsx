@@ -16,13 +16,13 @@ import { FiChevronDown } from 'react-icons/fi';
 import { signOut } from 'next-auth/react';
 import { currentSession } from '@helper/session';
 
-export default function UserProfile(props) {
+export default function UserProfile(props: any) {
   const [admin, setAdmin] = useState(null);
   const [name, setName] = useState(null);
   const [url, setURL] = useState('https://localhost:3000');
 
   useEffect(() => {
-    async function fetchData(propsField) {
+    async function fetchData(propsField: Promise<{ data: string }>) {
       const session = await currentSession();
       const adminField = session && session.user.admin ? 'Admin' : 'User';
       const nameField =

@@ -13,6 +13,8 @@ import {
 } from '@chakra-ui/react';
 import Card from '@components/Card';
 import Auth from '@components/Auth';
+import { Result } from 'types/api';
+import { Statistic } from 'types/dashboard';
 
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
@@ -26,7 +28,7 @@ export default function Home() {
 
   const [data, setData] = useState(null);
 
-  const generateStatistic = useCallback(async (content) => {
+  const generateStatistic = useCallback(async (content: Statistic) => {
     if (content) {
       setData(true);
 
@@ -55,9 +57,9 @@ export default function Home() {
           'Content-Type': 'application/json',
         },
       });
-      const content = await rawResponse.json();
+      const content: Result = await rawResponse.json();
       if (content.status) {
-        await generateStatistic(content.msg);
+        await generateStatistic(content.msg as Statistic);
       }
     } catch (error) {
       return false;

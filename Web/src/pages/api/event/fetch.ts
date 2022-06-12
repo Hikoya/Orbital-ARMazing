@@ -4,7 +4,7 @@ import { EventFetch } from 'types/event';
 
 import { prettifyDate, convertUnixToDate } from '@constants/helper';
 import { currentSession } from '@helper/session';
-import { fetchAllEvent } from '@helper/event';
+import { fetchAllEventByUser } from '@helper/event';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
@@ -16,17 +16,19 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (session) {
-    const events = await fetchAllEvent(session);
+    const events = await fetchAllEventByUser(session);
     const parsedEvent: EventFetch[] = [];
 
     if (events && events.status) {
-      const eventData: EventFetch[] = events.msg;
+      const eventData: EventFetch[] = events.msg as EventFetch[];
       for (let ev = 0; ev < eventData.length; ev += 1) {
         if (eventData[ev]) {
           const event: EventFetch = eventData[ev];
 
-          const start = prettifyDate(convertUnixToDate(event.startDate));
-          const end = prettifyDate(convertUnixToDate(event.endDate));
+          const start = prettifyDate(
+            convertUnixToDate(Number(event.startDate)),
+          );
+          const end = prettifyDate(convertUnixToDate(Number(event.endDate)));
 
           const isPublic = event.isPublic ? 'Yes' : 'No';
           const visible = event.visible ? 'Yes' : 'No';

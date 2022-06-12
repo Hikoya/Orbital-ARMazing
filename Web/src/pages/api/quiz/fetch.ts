@@ -5,6 +5,7 @@ import { QuizFetch } from 'types/quiz';
 import { currentSession } from '@helper/session';
 import { fetchAllQuiz } from '@helper/quiz';
 import { fetchEventByID } from '@helper/event';
+import { EventFetch } from 'types/event';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
@@ -20,14 +21,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const parsedQuiz: QuizFetch[] = [];
 
     if (qn && qn.status) {
-      const questionData: QuizFetch[] = qn.msg;
+      const questionData: QuizFetch[] = qn.msg as QuizFetch[];
       for (let q = 0; q < questionData.length; q += 1) {
         if (questionData[q]) {
           const quiz: QuizFetch = questionData[q];
 
           const visible = quiz.visible ? 'Yes' : 'No';
           const event = await fetchEventByID(quiz.eventID);
-          const eventName: string = event.msg.name;
+          const eventMsg = event.msg as EventFetch;
+          const eventName: string = eventMsg.name;
 
           if (event.status) {
             const data: QuizFetch = {

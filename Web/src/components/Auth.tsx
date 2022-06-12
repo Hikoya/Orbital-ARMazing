@@ -16,9 +16,8 @@ function Auth({ children, admin }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        devSession.current = await currentSession();
-
         if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+          devSession.current = await currentSession();
           if (isAdmin && !devSession.current.user.admin) {
             router.push('/unauthorized');
           }
