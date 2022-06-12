@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, CloseButton, Flex, Text } from '@chakra-ui/react';
-import { FiHome, FiStar, FiSettings, FiPaperclip } from 'react-icons/fi';
+import { FiHome, FiStar, FiSettings, FiPaperclip, FiAward } from 'react-icons/fi';
 import NavLink from '@components/NavLink';
 import Link from 'next/link';
 import { currentSession } from '@helper/session';
@@ -13,12 +13,11 @@ const adminMenu = [
   { label: 'Manage Events', icon: FiSettings, href: '/event' },
   { label: 'Manage Assets', icon: FiStar, href: '/asset' },
   { label: 'Manage Quiz', icon: FiPaperclip, href: '/quiz' },
+  { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
 ];
 
 const userMenu = [
   { label: 'Home', icon: FiHome, href: '/' },
-  { label: 'Manage Events', icon: FiSettings, href: '/event' },
-  { label: 'Manage Assets', icon: FiStar, href: '/asset' },
 ];
 
 export default function Sidebar({ onClose, ...rest }) {

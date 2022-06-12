@@ -1,9 +1,8 @@
 import { prisma } from '@helper/db';
 import { Result } from 'types/api';
-import { Session } from 'next-auth/core/types';
 
 export const updateUserLevel = async (
-  session: Session,
+  email: string,
   level: number,
 ): Promise<Result> => {
   let result: Result = {
@@ -15,7 +14,7 @@ export const updateUserLevel = async (
   try {
     await prisma.user.update({
       where: {
-        email: session.user.email,
+        email: email,
       },
       data: {
         user: level,

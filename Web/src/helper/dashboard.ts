@@ -1,47 +1,60 @@
-import { prisma } from '@helper/db';
+import { Session } from 'next-auth/core/types';
+import { Result } from 'types/api';
+import { Event } from 'types/event';
+import { Statistic } from 'types/dashboard';
 
-export const fetchStatistic = async (session) => {
+import { countUserInEvent } from '@helper/leaderboard';
+import { countAsset } from '@helper/asset';
+import { fetchAllEventByUser } from '@helper/event';
+
+export const fetchStatistic = async (session: Session): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  let numberOfAssets = 0;
+  let numberOfEvents = 0;
+  let numberOfUsers = 0;
+
   try {
-    const events = await prisma.event.findMany({
-      where: {
-        createdBy: session.user.email,
-      },
-    });
+    const eventsObj = await fetchAllEventByUser(session);
+    if (eventsObj.status) {
+      const events: Event[] = eventsObj.msg;
+      if (events) {
+        for (let ev in events) {
+          if (events[ev]) {
+            const event = events[ev];
+            const id = event.id;
 
-    let numberOfUsers = 0;
-    let numberOfEvents = 0;
-    if (events) {
-      for (let ev in events) {
-        if (events[ev]) {
-          const event = events[ev];
-          const id = event.id;
-
-          const users = await prisma.eventsJoined.count({
-            where: {
-              eventID: id,
-            },
-          });
-
-          numberOfUsers += users;
-          numberOfEvents += 1;
+            const countUsers: Result = await countUserInEvent(id);
+            if (countUsers.status) {
+              const users = countUsers.msg;
+              numberOfUsers += users;
+              numberOfEvents += 1;
+            }
+          }
         }
+      }
+
+      const countAssets: Result = await countAsset(session);
+      if (countAssets.status) {
+        numberOfAssets = countAssets.msg;
       }
     }
 
-    const numberOfAssets = await prisma.assets.count({
-      where: {
-        createdBy: session.user.email,
-      },
-    });
-
-    const result = {
+    const resultMsg: Statistic = {
       event: numberOfEvents,
       asset: numberOfAssets,
       user: numberOfUsers,
     };
-    return { status: true, error: null, msg: result };
+
+    result = { status: true, error: '', msg: resultMsg };
   } catch (error) {
     console.log(error);
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };

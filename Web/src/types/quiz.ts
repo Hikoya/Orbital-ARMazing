@@ -1,21 +1,18 @@
 export type Quiz = {
+  id?: string;
+  assetID?: string;
+  asset?: string;
+  event?: string;
   eventID: string;
   question: string;
-  options: string;
+  options?: string;
+  option1?: string;
+  option2?: string;
+  option3?: string;
+  option4?: string;
   answer: number;
   points: number;
   visible: boolean;
-  createdBy: string;
-};
-
-export type QuizFetch = {
-  id: string;
-  event: string;
-  eventID: string;
-  question: string;
-  options: string;
-  answer: number;
-  points: number;
-  visible: boolean;
-  isVisible: string;
+  isVisible?: string;
+  createdBy?: string;
 };
