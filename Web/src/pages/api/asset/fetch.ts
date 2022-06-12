@@ -19,15 +19,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (session.user.level === levels.ORGANIZER) {
       const assets = await fetchAllAssetByUser(session);
       const parsedAsset: Asset[] = [];
-  
+
       if (assets && assets.status) {
         const assetData: Asset[] = assets.msg;
         for (let as = 0; as < assetData.length; as += 1) {
           if (assetData[as]) {
             const asset: Asset = assetData[as];
-  
+
             const visible = asset.visible ? 'Yes' : 'No';
-  
+
             const data: Asset = {
               id: asset.id,
               eventID: asset.eventID,
@@ -38,11 +38,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               visible: asset.visible,
               visibleText: visible,
             };
-  
+
             parsedAsset.push(data);
           }
         }
-  
+
         result = {
           status: true,
           error: null,

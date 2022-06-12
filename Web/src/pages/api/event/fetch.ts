@@ -20,21 +20,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (session.user.level === levels.ORGANIZER) {
       const events = await fetchAllEventByUser(session);
       const parsedEvent: Event[] = [];
-  
+
       if (events && events.status) {
         const eventData: Event[] = events.msg as Event[];
         for (let ev = 0; ev < eventData.length; ev += 1) {
           if (eventData[ev]) {
             const event: Event = eventData[ev];
-  
+
             const start = prettifyDate(
               convertUnixToDate(Number(event.startDate)),
             );
             const end = prettifyDate(convertUnixToDate(Number(event.endDate)));
-  
+
             const isPublic = event.isPublic ? 'Yes' : 'No';
             const visible = event.visible ? 'Yes' : 'No';
-  
+
             const data: Event = {
               id: event.id,
               name: event.name,
@@ -46,11 +46,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               isPublicText: isPublic,
               visibleText: visible,
             };
-  
+
             parsedEvent.push(data);
           }
         }
-  
+
         result = {
           status: true,
           error: null,
@@ -72,7 +72,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).send(result);
       res.end();
     }
-
   } else {
     result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);

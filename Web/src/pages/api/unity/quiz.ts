@@ -19,17 +19,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.headers.authorization !== null || req.headers.authorization !== '') {
     const head: string = req.headers.authorization;
-    const secret: string = 'Bearer ' + process.env.AUTHORIZATION_HEADER;
+    const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
     if (head === secret) {
       if (eventID) {
         const qn = await fetchAllQuizByEvent(eventID);
         const parsedQuiz: Quiz[] = [];
-  
+
         if (qn && qn.status) {
           const event = await fetchEventByID(eventID);
           const eventMsg = event.msg as Event;
           const eventName: string = eventMsg.name;
-  
+
           const questionData: Quiz[] = qn.msg as Quiz[];
           for (let q = 0; q < questionData.length; q += 1) {
             if (questionData[q]) {
@@ -38,13 +38,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               const asset = await fetchAssetByID(assetID);
               const assetMsg = asset.msg as Asset;
               const assetName: string = assetMsg.name as string;
-  
+
               const questions: string[] = quiz.options.split(',');
               const option1 = questions[0];
               const option2 = questions[1];
               const option3 = questions[2];
               const option4 = questions[3];
-  
+
               if (event.status) {
                 const data: Quiz = {
                   id: quiz.id,
@@ -61,12 +61,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   points: quiz.points,
                   visible: quiz.visible,
                 };
-  
+
                 parsedQuiz.push(data);
               }
             }
           }
-  
+
           result = {
             status: true,
             error: null,

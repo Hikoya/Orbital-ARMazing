@@ -268,26 +268,24 @@ export default function EventComponent() {
           )}
 
           {!loadingData && data.length > 0 && (
-             <Box w='full' mt={30}>
-             <Stack align='center' justify='center' spacing={30} mb={10}>
-               <InputGroup>
-                 <InputLeftAddon>Search:</InputLeftAddon>
-                 <Input
-                   type='text'
-                   placeholder=''
-                   value={search}
-                   onChange={handleSearch}
-                 />
-               </InputGroup>
-             </Stack>
-           
+            <Box w='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30} mb={10}>
+                <InputGroup>
+                  <InputLeftAddon>Search:</InputLeftAddon>
+                  <Input
+                    type='text'
+                    placeholder=''
+                    value={search}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+              </Stack>
+
               <TableWidget
-                  key={1}
-                  columns={columns}
-                  data={
-                    filteredData && filteredData.length ? filteredData : data
-                  }
-                />
+                key={1}
+                columns={columns}
+                data={filteredData && filteredData.length ? filteredData : data}
+              />
             </Box>
           )}
         </Box>

@@ -21,18 +21,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (session.user.level === levels.ORGANIZER) {
       const qn = await fetchAllQuiz(session);
       const parsedQuiz: Quiz[] = [];
-  
+
       if (qn && qn.status) {
         const questionData: Quiz[] = qn.msg as Quiz[];
         for (let q = 0; q < questionData.length; q += 1) {
           if (questionData[q]) {
             const quiz: Quiz = questionData[q];
-  
+
             const visible = quiz.visible ? 'Yes' : 'No';
             const event = await fetchEventByID(quiz.eventID);
             const eventMsg = event.msg as Event;
             const eventName: string = eventMsg.name;
-  
+
             if (event.status) {
               const data: Quiz = {
                 id: quiz.id,
@@ -45,12 +45,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 visible: quiz.visible,
                 isVisible: visible,
               };
-  
+
               parsedQuiz.push(data);
             }
           }
         }
-  
+
         result = {
           status: true,
           error: null,
@@ -72,7 +72,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).send(result);
       res.end();
     }
-
   } else {
     result = { status: false, error: 'Unauthenticated', msg: '' };
     res.status(200).send(result);

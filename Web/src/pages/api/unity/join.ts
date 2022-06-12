@@ -13,9 +13,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { eventID, username } = req.body;
 
-    if (req.headers.authorization !== null || req.headers.authorization !== '') {
+    if (
+      req.headers.authorization !== null ||
+      req.headers.authorization !== ''
+    ) {
       const head: string = req.headers.authorization;
-      const secret: string = 'Bearer ' + process.env.AUTHORIZATION_HEADER;
+      const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
       if (head === secret) {
         if (eventID && username) {
           const join: Result = await joinEvent(eventID, username);

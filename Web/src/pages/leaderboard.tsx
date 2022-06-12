@@ -7,16 +7,10 @@ import React, {
 } from 'react';
 import Auth from '@components/Auth';
 import {
-  Button,
   Box,
-  Heading,
-  FormControl,
-  FormLabel,
   Text,
   Stack,
-  Checkbox,
   Select,
-  useToast,
   Input,
   InputGroup,
   InputLeftAddon,
@@ -28,7 +22,6 @@ import { Leaderboard } from 'types/leaderboard';
 
 export default function LeaderboardComponent() {
   const [loadingData, setLoading] = useState(false);
-  const toast = useToast();
 
   const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
@@ -48,30 +41,33 @@ export default function LeaderboardComponent() {
     setData(content);
   }, []);
 
-  const fetchData = useCallback(async (eventID: string) => {
-    setLoading(true);
-    try {
-      const rawResponse = await fetch('/api/leaderboard/fetch', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          eventID: eventID,
-        }),
-      });
-      const content: Result = await rawResponse.json();
-      if (content.status) {
-        await includeActionButton(content.msg as Leaderboard[]);
-        setLoading(false);
-      }
+  const fetchData = useCallback(
+    async (eventIDField: string) => {
+      setLoading(true);
+      try {
+        const rawResponse = await fetch('/api/leaderboard/fetch', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            eventID: eventIDField,
+          }),
+        });
+        const content: Result = await rawResponse.json();
+        if (content.status) {
+          await includeActionButton(content.msg as Leaderboard[]);
+          setLoading(false);
+        }
 
-      return true;
-    } catch (error) {
-      return false;
-    }
-  }, [includeActionButton]);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    [includeActionButton],
+  );
 
   const onEventChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
@@ -142,7 +138,6 @@ export default function LeaderboardComponent() {
         Header: 'Points',
         accessor: 'points',
       },
-
     ],
     [],
   );
@@ -172,7 +167,6 @@ export default function LeaderboardComponent() {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-
           <Stack spacing={5} w='full'>
             <Text>Select Event</Text>
             <Select onChange={onEventChange} size='sm' value={eventID}>
@@ -197,26 +191,24 @@ export default function LeaderboardComponent() {
           )}
 
           {!loadingData && data.length > 0 && (
-             <Box w='full' mt={30}>
-             <Stack align='center' justify='center' spacing={30} mb={10}>
-               <InputGroup>
-                 <InputLeftAddon>Search:</InputLeftAddon>
-                 <Input
-                   type='text'
-                   placeholder=''
-                   value={search}
-                   onChange={handleSearch}
-                 />
-               </InputGroup>
-             </Stack>
-           
+            <Box w='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30} mb={10}>
+                <InputGroup>
+                  <InputLeftAddon>Search:</InputLeftAddon>
+                  <Input
+                    type='text'
+                    placeholder=''
+                    value={search}
+                    onChange={handleSearch}
+                  />
+                </InputGroup>
+              </Stack>
+
               <TableWidget
-                  key={1}
-                  columns={columns}
-                  data={
-                    filteredData && filteredData.length ? filteredData : data
-                  }
-                />
+                key={1}
+                columns={columns}
+                data={filteredData && filteredData.length ? filteredData : data}
+              />
             </Box>
           )}
         </Box>

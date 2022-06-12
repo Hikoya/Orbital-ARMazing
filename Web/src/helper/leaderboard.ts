@@ -29,7 +29,11 @@ export const doesUserExist = async (
         msg: null,
       };
     } else {
-      result = { status: true, error: 'User already exists in database!', msg: user };
+      result = {
+        status: true,
+        error: 'User already exists in database!',
+        msg: user,
+      };
     }
   } catch (error) {
     console.log(error);
@@ -115,7 +119,7 @@ export const fetchLeaderBoardByEventID = async (
               eventName: eventName,
               points: leaderBoard.points,
               username: leaderBoard.username,
-            })
+            });
           }
         }
       }
