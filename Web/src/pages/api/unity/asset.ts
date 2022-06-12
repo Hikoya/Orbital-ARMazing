@@ -17,6 +17,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (head === secret) {
       const assets = await fetchAllAsset();
       const parsedAsset: Asset[] = [];
+      const url: string = process.env.NEXTAUTH_URL;
 
       if (assets && assets.status) {
         const assetData: Asset[] = assets.msg;
@@ -35,6 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               longitude: asset.longitude,
               visible: asset.visible,
               visibleText: visible,
+              imagePath: `${url}${asset.imagePath}`,
             };
 
             parsedAsset.push(data);
