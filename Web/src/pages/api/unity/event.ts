@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { EventFetch } from 'types/event';
+import { Event } from 'types/event';
 
 import { prettifyDate, convertUnixToDate } from '@constants/helper';
 import { fetchAllEvent } from '@helper/event';
@@ -13,16 +13,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (req.headers.authorization !== null || req.headers.authorization !== '') {
-    const head = req.headers.authorization;
-    if (head === process.env.AUTHORIZATION_HEADER) {
+    const head: string = req.headers.authorization;
+    const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
+    if (head === secret) {
       const events = await fetchAllEvent();
-      const parsedEvent: EventFetch[] = [];
+      const parsedEvent: Event[] = [];
 
       if (events && events.status) {
-        const eventData: EventFetch[] = events.msg as EventFetch[];
+        const eventData: Event[] = events.msg as Event[];
         for (let ev = 0; ev < eventData.length; ev += 1) {
           if (eventData[ev]) {
-            const event: EventFetch = eventData[ev];
+            const event: Event = eventData[ev];
 
             const start = prettifyDate(
               convertUnixToDate(Number(event.startDate)),
@@ -32,7 +33,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const isPublic = event.isPublic ? 'Yes' : 'No';
             const visible = event.visible ? 'Yes' : 'No';
 
-            const data: EventFetch = {
+            const data: Event = {
               id: event.id,
               name: event.name,
               description: event.description,

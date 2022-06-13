@@ -23,9 +23,10 @@ import {
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
 import { Result } from 'types/api';
-import { EventFetch } from 'types/event';
+import { Event } from 'types/event';
+import { Asset } from 'types/asset';
 
-export default function Quiz() {
+export default function QuizComponent() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
@@ -34,6 +35,10 @@ export default function Quiz() {
   const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
   const [eventDropdown, setEventDropdown] = useState([]);
+
+  const [assetID, setAssetID] = useState('');
+  const assetIDDB = useRef('');
+  const [assetDropdown, setAssetDropdown] = useState([]);
 
   const questionDB = useRef('');
   const [question, setQuestion] = useState('');
@@ -66,6 +71,7 @@ export default function Quiz() {
 
   const reset = async () => {
     eventIDDB.current = '';
+    assetIDDB.current = '';
     questionDB.current = '';
     option1DB.current = '';
     option2DB.current = '';
@@ -74,6 +80,8 @@ export default function Quiz() {
     answerDB.current = 0;
     pointsDB.current = 0;
 
+    setEventID('');
+    setAssetID('');
     setQuestion('');
     setOption1('');
     setOption2('');
@@ -89,6 +97,7 @@ export default function Quiz() {
 
   const validateFields = (
     eventIDField: string,
+    assetIDField: string,
     questionField: string,
     o1: string,
     o2: string,
@@ -98,12 +107,17 @@ export default function Quiz() {
   ) => {
     // super basic validation here
 
-    if (!eventIDField) {
+    if (!eventIDField || eventIDField === '') {
       setError('Please choose an event!');
       return false;
     }
 
-    if (!questionField) {
+    if (!assetIDField || assetIDField === '') {
+      setError('Please choose an asset!');
+      return false;
+    }
+
+    if (!questionField || questionField === '') {
       setError('Please write a question!');
       return false;
     }
@@ -113,7 +127,7 @@ export default function Quiz() {
       return false;
     }
 
-    if (!ans || ans === 0) {
+    if (!ans || ans === 0 || ans > 4 || ans < 0) {
       setError('Please choose an answer!');
       return false;
     }
@@ -123,22 +137,22 @@ export default function Quiz() {
       return false;
     }
 
-    if (ans === 1 && !o1) {
+    if (ans === 1 && (!o1 || o1 === '')) {
       setError('Option does not exist!');
       return false;
     }
 
-    if (ans === 2 && !o2) {
+    if (ans === 2 && (!o2 || o2 === '')) {
       setError('Option does not exist!');
       return false;
     }
 
-    if (ans === 3 && !o3) {
+    if (ans === 3 && (!o3 || o3 === '')) {
       setError('Option does not exist!');
       return false;
     }
 
-    if (ans === 4 && !o4) {
+    if (ans === 4 && (!o4 || o4 === '')) {
       setError('Option does not exist!');
       return false;
     }
@@ -146,7 +160,7 @@ export default function Quiz() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content: EventFetch[]) => {
+  const includeActionButton = useCallback(async (content: Event[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -166,7 +180,7 @@ export default function Quiz() {
       });
       const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg as EventFetch[]);
+        await includeActionButton(content.msg as Event[]);
         setLoading(false);
       }
 
@@ -181,6 +195,7 @@ export default function Quiz() {
     if (
       validateFields(
         eventIDDB.current,
+        assetIDDB.current,
         questionDB.current,
         option1DB.current,
         option2DB.current,
@@ -198,6 +213,7 @@ export default function Quiz() {
           },
           body: JSON.stringify({
             eventID: eventIDDB.current,
+            assetID: assetIDDB.current,
             question: questionDB.current,
             option1: option1DB.current,
             option2: option2DB.current,
@@ -246,7 +262,7 @@ export default function Quiz() {
     }
   };
 
-  const eventDropDownMenu = useCallback(async (content: EventFetch[]) => {
+  const eventDropDownMenu = useCallback(async (content: Event[]) => {
     const selection = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
@@ -275,7 +291,7 @@ export default function Quiz() {
       });
       const content: Result = await rawResponse.json();
       if (content.status) {
-        await eventDropDownMenu(content.msg as EventFetch[]);
+        await eventDropDownMenu(content.msg as Event[]);
       }
 
       return true;
@@ -284,14 +300,61 @@ export default function Quiz() {
     }
   }, [eventDropDownMenu]);
 
+  const onAssetChange = async (event: { target: { value: string } }) => {
+    if (event.target.value) {
+      const { value } = event.target;
+      assetIDDB.current = value;
+      setAssetID(value);
+    }
+  };
+
+  const assetDropDownMenu = useCallback(async (content: Asset[]) => {
+    const selection = [];
+    selection.push(<option key='' value='' aria-label='default' />);
+
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        const dataField = content[key];
+
+        selection.push(
+          <option key={dataField.id} value={dataField.id}>
+            {dataField.name}
+          </option>,
+        );
+      }
+    }
+
+    setAssetDropdown(selection);
+  }, []);
+
+  const fetchAssetData = useCallback(async () => {
+    try {
+      const rawResponse = await fetch('/api/asset/fetch', {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      });
+      const content: Result = await rawResponse.json();
+      if (content.status) {
+        await assetDropDownMenu(content.msg as Asset[]);
+      }
+
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }, [assetDropDownMenu]);
+
   useEffect(() => {
     async function generate() {
       await fetchData();
       await fetchEventData();
+      await fetchAssetData();
     }
 
     generate();
-  }, [fetchData, fetchEventData]);
+  }, [fetchData, fetchEventData, fetchAssetData]);
 
   const columns = useMemo(
     () => [
@@ -361,14 +424,14 @@ export default function Quiz() {
           {!loadingData && data.length === 0 && (
             <Box mt={30}>
               <Stack align='center' justify='center'>
-                <Text>No assets found</Text>
+                <Text>No quiz found</Text>
               </Stack>
             </Box>
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box minWidth='full' mt={30}>
-              <Stack align='center' justify='center' spacing={30}>
+            <Box w='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -378,15 +441,13 @@ export default function Quiz() {
                     onChange={handleSearch}
                   />
                 </InputGroup>
-
-                <TableWidget
-                  key={1}
-                  columns={columns}
-                  data={
-                    filteredData && filteredData.length ? filteredData : data
-                  }
-                />
               </Stack>
+
+              <TableWidget
+                key={1}
+                columns={columns}
+                data={filteredData && filteredData.length ? filteredData : data}
+              />
             </Box>
           )}
         </Box>
@@ -409,6 +470,13 @@ export default function Quiz() {
                   <Text>Select Event</Text>
                   <Select onChange={onEventChange} size='sm' value={eventID}>
                     {eventDropdown}
+                  </Select>
+                </Stack>
+
+                <Stack spacing={5} w='full'>
+                  <Text>Select Asset</Text>
+                  <Select onChange={onAssetChange} size='sm' value={assetID}>
+                    {assetDropdown}
                   </Select>
                 </Stack>
 

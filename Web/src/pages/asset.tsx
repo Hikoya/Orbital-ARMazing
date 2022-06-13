@@ -27,11 +27,11 @@ import {
   InputLeftAddon,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
-import { AssetFetch } from 'types/asset';
+import { Asset } from 'types/asset';
 import { Result } from 'types/api';
-import { EventFetch } from 'types/event';
+import { Event } from 'types/event';
 
-export default function Asset() {
+export default function AssetComponent() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
@@ -44,6 +44,7 @@ export default function Asset() {
   const visibleDB = useRef(true);
   const [visible, setVisible] = useState(true);
 
+  const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
 
   const selectedFileDB = useRef(null);
@@ -125,7 +126,7 @@ export default function Asset() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content: AssetFetch[]) => {
+  const includeActionButton = useCallback(async (content: Asset[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -145,7 +146,7 @@ export default function Asset() {
       });
       const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg as AssetFetch[]);
+        await includeActionButton(content.msg as Asset[]);
         setLoading(false);
       }
 
@@ -220,10 +221,11 @@ export default function Asset() {
     if (event.target.value) {
       const { value } = event.target;
       eventIDDB.current = value;
+      setEventID(value);
     }
   };
 
-  const eventDropDownMenu = async (content: EventFetch[]) => {
+  const eventDropDownMenu = async (content: Event[]) => {
     const selection = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
@@ -252,7 +254,7 @@ export default function Asset() {
       });
       const content: Result = await rawResponse.json();
       if (content.status) {
-        await eventDropDownMenu(content.msg as EventFetch[]);
+        await eventDropDownMenu(content.msg as Event[]);
       }
 
       return true;
@@ -342,8 +344,8 @@ export default function Asset() {
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box minWidth='full' mt={30}>
-              <Stack justify='center' align='center' spacing={30}>
+            <Box w='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -353,17 +355,13 @@ export default function Asset() {
                     onChange={handleSearch}
                   />
                 </InputGroup>
-
-                <Box width='full'>
-                  <TableWidget
-                    key={1}
-                    columns={columns}
-                    data={
-                      filteredData && filteredData.length ? filteredData : data
-                    }
-                  />
-                </Box>
               </Stack>
+
+              <TableWidget
+                key={1}
+                columns={columns}
+                data={filteredData && filteredData.length ? filteredData : data}
+              />
             </Box>
           )}
         </Box>
@@ -384,7 +382,7 @@ export default function Asset() {
               <Stack spacing={4}>
                 <Stack spacing={5} w='full'>
                   <Text>Select Event</Text>
-                  <Select onChange={onEventChange} size='sm'>
+                  <Select onChange={onEventChange} size='sm' value={eventID}>
                     {eventDropdown}
                   </Select>
                 </Stack>

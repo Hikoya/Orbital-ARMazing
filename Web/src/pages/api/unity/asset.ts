@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { AssetFetch } from 'types/asset';
+import { Asset } from 'types/asset';
 
 import { fetchAllAsset } from '@helper/asset';
 
@@ -12,20 +12,22 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (req.headers.authorization !== null || req.headers.authorization !== '') {
-    const head = req.headers.authorization;
-    if (head === process.env.AUTHORIZATION_HEADER) {
+    const head: string = req.headers.authorization;
+    const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
+    if (head === secret) {
       const assets = await fetchAllAsset();
-      const parsedAsset: AssetFetch[] = [];
+      const parsedAsset: Asset[] = [];
+      const url: string = process.env.NEXTAUTH_URL;
 
       if (assets && assets.status) {
-        const assetData: AssetFetch[] = assets.msg;
+        const assetData: Asset[] = assets.msg;
         for (let as = 0; as < assetData.length; as += 1) {
           if (assetData[as]) {
-            const asset: AssetFetch = assetData[as];
+            const asset: Asset = assetData[as];
 
             const visible = asset.visible ? 'Yes' : 'No';
 
-            const data: AssetFetch = {
+            const data: Asset = {
               id: asset.id,
               eventID: asset.eventID,
               name: asset.name,
@@ -34,6 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               longitude: asset.longitude,
               visible: asset.visible,
               visibleText: visible,
+              imagePath: `${url}${asset.imagePath}`,
             };
 
             parsedAsset.push(data);
@@ -57,12 +60,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthenticated', msg: '' };
+      result = { status: false, error: 'Unauthorized', msg: '' };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthenticated', msg: '' };
+    result = { status: false, error: 'Unauthorized', msg: '' };
     res.status(200).send(result);
     res.end();
   }

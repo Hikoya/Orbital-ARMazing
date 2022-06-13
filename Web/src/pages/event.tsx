@@ -22,9 +22,9 @@ import {
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
 import { Result } from 'types/api';
-import { EventFetch } from 'types/event';
+import { Event } from 'types/event';
 
-export default function Event() {
+export default function EventComponent() {
   const [loadingData, setLoading] = useState(true);
   const toast = useToast();
 
@@ -104,7 +104,7 @@ export default function Event() {
     return true;
   };
 
-  const includeActionButton = useCallback(async (content: EventFetch[]) => {
+  const includeActionButton = useCallback(async (content: Event[]) => {
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
         // const dataField = content[key];
@@ -124,7 +124,7 @@ export default function Event() {
       });
       const content: Result = await rawResponse.json();
       if (content.status) {
-        await includeActionButton(content.msg as EventFetch[]);
+        await includeActionButton(content.msg as Event[]);
         setLoading(false);
       }
 
@@ -262,14 +262,14 @@ export default function Event() {
           {!loadingData && data.length === 0 && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
-                <Text>No assets found</Text>
+                <Text>No events found</Text>
               </Stack>
             </Box>
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box minWidth='full' mt={30}>
-              <Stack justify='center' align='center' spacing={30}>
+            <Box w='full' mt={30}>
+              <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
                   <Input
@@ -279,17 +279,13 @@ export default function Event() {
                     onChange={handleSearch}
                   />
                 </InputGroup>
-
-                <Box width='full'>
-                  <TableWidget
-                    key={1}
-                    columns={columns}
-                    data={
-                      filteredData && filteredData.length ? filteredData : data
-                    }
-                  />
-                </Box>
               </Stack>
+
+              <TableWidget
+                key={1}
+                columns={columns}
+                data={filteredData && filteredData.length ? filteredData : data}
+              />
             </Box>
           )}
         </Box>

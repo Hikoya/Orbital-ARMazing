@@ -1,10 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { Event, EventCreate } from 'types/event';
+import { Event } from 'types/event';
 
 import { currentSession } from '@helper/session';
 import { convertDateToUnix } from '@constants/helper';
-import { createEvent, joinEvent } from '@helper/event';
+import { createEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -34,33 +34,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         };
 
         const event = await createEvent(data);
-        const eventMsg = event.msg as EventCreate;
-
         if (event.status) {
-          const eventJoin = await joinEvent(
-            session,
-            eventMsg.id,
-            levels.ORGANIZER,
-          );
-          if (eventJoin.status) {
-            result = {
-              status: true,
-              error: null,
-              msg: 'Event created',
-            };
+          result = {
+            status: true,
+            error: null,
+            msg: 'Event created',
+          };
 
-            res.status(200).send(result);
-            res.end();
-          } else {
-            result = {
-              status: false,
-              error: eventJoin.error,
-              msg: '',
-            };
-
-            res.status(200).send(result);
-            res.end();
-          }
+          res.status(200).send(result);
+          res.end();
         } else {
           result = {
             status: false,

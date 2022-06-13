@@ -11,6 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const {
     eventID,
+    assetID,
     question,
     option1,
     option2,
@@ -33,6 +34,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const options = [option1, option2, option3, option4].toString();
         const data: Quiz = {
           eventID: eventID,
+          assetID: assetID,
           question: question,
           options: options,
           answer: Number(answer),

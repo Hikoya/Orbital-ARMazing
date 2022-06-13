@@ -1,15 +1,24 @@
 import { prisma } from '@helper/db';
+import { Session } from 'next-auth/core/types';
+import { Asset } from 'types/asset';
+import { Result } from 'types/api';
 
-export const createAsset = async (data) => {
+export const createAsset = async (data: Asset): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
     const event = await prisma.assets.create({
       data: data,
     });
 
     if (event) {
-      return { status: true, error: null, msg: 'Success!' };
+      result = { status: true, error: null, msg: 'Success!' };
     } else {
-      return {
+      result = {
         status: false,
         error: 'Failed to create asset in database',
         msg: '',
@@ -17,11 +26,21 @@ export const createAsset = async (data) => {
     }
   } catch (error) {
     console.log(error);
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllAssetByUser = async (session) => {
+export const fetchAllAssetByUser = async (
+  session: Session,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
     const asset = await prisma.assets.findMany({
       where: {
@@ -29,18 +48,72 @@ export const fetchAllAssetByUser = async (session) => {
       },
     });
 
-    return { status: true, error: null, msg: asset };
+    result = { status: true, error: null, msg: asset };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
 };
 
-export const fetchAllAsset = async () => {
+export const fetchAllAsset = async (): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
   try {
     const asset = await prisma.assets.findMany();
 
-    return { status: true, error: null, msg: asset };
+    result = { status: true, error: null, msg: asset };
   } catch (error) {
-    return { status: false, error: error, msg: null };
+    result = { status: false, error: error, msg: null };
   }
+
+  return result;
+};
+
+export const fetchAssetByID = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const asset = await prisma.assets.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    result = { status: true, error: null, msg: asset };
+  } catch (error) {
+    result = { status: false, error: error, msg: null };
+  }
+
+  return result;
+};
+
+export const countAsset = async (session: Session): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const numberOfAssets: number = await prisma.assets.count({
+      where: {
+        createdBy: session.user.email,
+      },
+    });
+
+    result = { status: true, error: null, msg: numberOfAssets };
+  } catch (error) {
+    result = { status: false, error: error, msg: null };
+  }
+
+  return result;
 };

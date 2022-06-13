@@ -1,5 +1,5 @@
 import { prisma } from '@helper/db';
-import { Quiz, QuizFetch } from 'types/quiz';
+import { Quiz } from 'types/quiz';
 import { Result } from 'types/api';
 import { Session } from 'next-auth/core/types';
 
@@ -40,7 +40,7 @@ export const fetchAllQuiz = async (session: Session): Promise<Result> => {
   };
 
   try {
-    const qn: QuizFetch[] = await prisma.questions.findMany({
+    const qn: Quiz[] = await prisma.questions.findMany({
       where: {
         createdBy: session.user.email,
       },
@@ -63,7 +63,7 @@ export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
   };
 
   try {
-    const qn: QuizFetch[] = await prisma.questions.findMany({
+    const qn: Quiz[] = await prisma.questions.findMany({
       where: {
         eventID: eventID,
       },

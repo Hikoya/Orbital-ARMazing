@@ -1,39 +1,12 @@
-export type EventCreate = {
-  id: string;
-  name: string;
-  description: string;
-  startDate: number;
-  endDate: number;
-  isPublic: boolean;
-  visible: boolean;
-  createdBy: string;
-};
-
 export type Event = {
+  id?: string;
   name: string;
   description: string;
-  startDate: number;
-  endDate: number;
+  startDate: number | string;
+  endDate: number | string;
   isPublic: boolean;
   visible: boolean;
-  createdBy: string;
-};
-
-export type EventFetch = {
-  id: string;
-  name: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  isPublic: boolean;
-  visible: boolean;
-  isPublicText: string;
-  visibleText: string;
-};
-
-export type EventJoined = {
-  id: string;
-  userEmail: string;
-  eventID: string;
-  level: number;
+  createdBy?: string;
+  isPublicText?: string;
+  visibleText?: string;
 };
