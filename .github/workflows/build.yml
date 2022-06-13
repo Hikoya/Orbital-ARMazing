@@ -80,7 +80,7 @@ jobs:
   heroku:
     name: Deploy to Heroku
     runs-on: ubuntu-latest
-    if: ${{ github.event.action == 'closed' && github.event.pull_request.merged == true  }}
+    if: ${{ github.event.pull_request.merged == true  }}
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.12.12
