@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.XR.ARFoundation;
 
 public class QuizManager : MonoBehaviour
 {
@@ -23,7 +24,8 @@ public class QuizManager : MonoBehaviour
         QnA.RemoveAt(currentQuestion);
         if (QnA.Count <= 0)
         {
-            SceneManager.LoadScene("AR");
+            LoaderUtility.Initialize();
+            SceneManager.LoadScene("AR", LoadSceneMode.Single);
         }
         GenerateQuestion();
         EnableOptions();
