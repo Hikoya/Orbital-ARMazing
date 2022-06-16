@@ -48,7 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               if (event.status) {
                 const data: Quiz = {
                   id: quiz.id,
-                  event: eventName,
+                  eventName: eventName,
                   asset: assetName,
                   eventID: quiz.eventID,
                   assetID: quiz.assetID,

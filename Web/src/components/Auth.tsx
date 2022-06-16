@@ -22,7 +22,7 @@ function Auth({ children, admin }) {
             router.push('/unauthorized');
           }
         } else if (!loading && !hasUser) {
-          router.push('/sys/signin');
+          router.push('/signin');
         } else if (isAdmin && !session.user.admin) {
           router.push('/unauthorized');
         }

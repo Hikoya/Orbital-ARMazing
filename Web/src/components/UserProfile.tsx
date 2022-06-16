@@ -17,19 +17,10 @@ import { signOut } from 'next-auth/react';
 import { currentSession } from '@helper/session';
 
 export default function UserProfile(props: any) {
-  const [admin, setAdmin] = useState(null);
-  const [name, setName] = useState(null);
   const [url, setURL] = useState('https://localhost:3000');
 
   useEffect(() => {
     async function fetchData(propsField: Promise<{ data: string }>) {
-      const session = await currentSession();
-      const adminField = session && session.user.admin ? 'Admin' : 'User';
-      const nameField =
-        session && session.user.username ? session.user.username : 'Test User';
-      setAdmin(adminField);
-      setName(nameField);
-
       const propRes = await propsField;
       try {
         if (propRes.data) {
@@ -58,17 +49,6 @@ export default function UserProfile(props: any) {
                 size='md'
                 src='https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png'
               />
-              <VStack
-                display={{ base: 'none', md: 'flex' }}
-                alignItems='flex-start'
-                spacing='1px'
-                ml='2'
-              >
-                <Text fontSize='md'>{name}</Text>
-                <Text fontSize='sm' color='gray.600'>
-                  {admin}
-                </Text>
-              </VStack>
               <Box display={{ base: 'none', md: 'flex' }}>
                 <FiChevronDown />
               </Box>
