@@ -387,7 +387,8 @@ const options = {
   },
   pages: {
     signIn: '/signin',
-    error: '/unauthorized',
+    error: '/error',
+    verifyRequest: '/verify-request',
   },
   callbacks: {
     async session({ session, user }) {

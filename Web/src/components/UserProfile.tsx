@@ -5,8 +5,6 @@ import {
   Box,
   Flex,
   HStack,
-  VStack,
-  Text,
   Menu,
   MenuButton,
   MenuItem,
@@ -14,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { FiChevronDown } from 'react-icons/fi';
 import { signOut } from 'next-auth/react';
-import { currentSession } from '@helper/session';
 
 export default function UserProfile(props: any) {
   const [url, setURL] = useState('https://localhost:3000');
