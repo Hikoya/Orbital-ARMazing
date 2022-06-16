@@ -3,6 +3,7 @@ export type Quiz = {
   assetID?: string;
   asset?: string;
   event?: string;
+  eventName?: string;
   eventID: string;
   question: string;
   options?: string;
