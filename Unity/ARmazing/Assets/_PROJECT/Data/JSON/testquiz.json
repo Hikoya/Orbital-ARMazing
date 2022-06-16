@@ -1,0 +1,36 @@
+{
+  "status": true,
+  "error": "kek",
+  "msg": [
+    {
+      "id": "cl4bd8ash0273icdrnr941k8l",
+      "eventName": "NUS Open House",
+      "asset": "King Edward VII Mascot",
+      "eventID": "cl4b9auoo0018icdrn9aq2t8a",
+      "assetID": "cl4bd7cu70252icdr3w0gzyi0",
+      "question": "What does KEVII stand for?",
+      "option1": "King Edward VII",
+      "option2": "King Eugene VII",
+      "option3": "King Edwin VII",
+      "option4": "Kingfisher Education VII",
+      "answer": 1,
+      "points": 20,
+      "visible": true
+    },
+	{
+      "id": "cl4bd8ash0273icdrnr941k8l",
+      "eventName": "NUS Open House",
+      "asset": "King Edward VII Mascot",
+      "eventID": "cl4b9auoo0018icdrn9aq2t8a",
+      "assetID": "cl4bd7cu70252icdr3w0gzyi0",
+      "question": "What does SOC stand for?",
+      "option1": "School of Computers",
+      "option2": "School of Computing",
+      "option3": "School of Culinary",
+      "option4": "School of Calculus",
+      "answer": 2,
+      "points": 20,
+      "visible": true
+    }
+  ]
+}
