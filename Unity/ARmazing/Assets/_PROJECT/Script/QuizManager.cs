@@ -13,7 +13,7 @@ public class QuizManager : MonoBehaviour
     public List<QuestionAndAnswers> QnA;
     public GameObject[] options;
     public int currentQuestion;
-    string filename;
+    public string filename;
 
     public TMP_Text QuestionTxt;
 
@@ -88,9 +88,6 @@ public class QuizManager : MonoBehaviour
         }
 
         QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(content);
-        Debug.Log("Status: " + res.status);
-        Debug.Log("Error: " + res.error);
-        Debug.Log("Msg: " + res.msg);
         return res.msg;
     }
 
