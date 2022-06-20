@@ -9,17 +9,20 @@ const containerStyle = {
 function MapComponent({ location, zoomLevel, apiKey, markers }) {
   const toast = useToast();
 
-  const showToast = (data) => {
-    toast.closeAll();
+  const showToast = useCallback(
+    (data) => {
+      toast.closeAll();
 
-    toast({
-      title: data.title,
-      description: data.msg,
-      status: 'info',
-      duration: 5000,
-      isClosable: true,
-    });
-  };
+      toast({
+        title: data.title,
+        description: data.msg,
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+    [toast],
+  );
 
   const LocationPin = useCallback(
     ({ data, position }) => (
@@ -29,7 +32,7 @@ function MapComponent({ location, zoomLevel, apiKey, markers }) {
         onClick={() => showToast(data)}
       />
     ),
-    [],
+    [showToast],
   );
 
   return (

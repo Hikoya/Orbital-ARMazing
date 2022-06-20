@@ -198,7 +198,7 @@ export default function AssetComponent() {
       latitudeField === '' ||
       latitudeField === null ||
       latitudeField === undefined ||
-      isNaN(Number(latitudeField))
+      Number.isNaN(Number(latitudeField))
     ) {
       setError('Please provide a latitude!');
       return false;
@@ -208,7 +208,7 @@ export default function AssetComponent() {
       longitudeField === '' ||
       longitudeField === null ||
       longitudeField === undefined ||
-      isNaN(Number(latitudeField))
+      Number.isNaN(Number(latitudeField))
     ) {
       setError('Please provide a longitude');
       return false;
