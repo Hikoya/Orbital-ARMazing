@@ -124,12 +124,16 @@ export default function EventComponent() {
   };
 
   const validateFields = (
-    nameField: string,
-    descriptionField: string,
-    startDateField: string,
-    endDateField: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    startDateFieldDB: string,
+    endDateFieldDB: string,
   ) => {
     // super basic validation here
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const startDateField = startDateFieldDB.trim();
+    const endDateField = endDateFieldDB.trim();
 
     if (nameField === '' || nameField === null || nameField === undefined) {
       setError('Please set a name!');
@@ -175,13 +179,18 @@ export default function EventComponent() {
   };
 
   const validateFieldsEdit = (
-    idField: string,
-    nameField: string,
-    descriptionField: string,
-    startDateField: string,
-    endDateField: string,
+    idFieldDB: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    startDateFieldDB: string,
+    endDateFieldDB: string,
   ) => {
     // super basic validation here
+    const idField = idFieldDB.trim();
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const startDateField = startDateFieldDB.trim();
+    const endDateField = endDateFieldDB.trim();
 
     if (idField === '' || idField === null || idField === undefined) {
       setErrorEdit('Please select an event!');

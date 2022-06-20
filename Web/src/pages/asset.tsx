@@ -34,6 +34,8 @@ import { Result } from 'types/api';
 import { Event } from 'types/event';
 import { InfoOutlineIcon } from '@chakra-ui/icons';
 
+import Map from '@components/Map';
+
 import { parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
 
@@ -105,6 +107,12 @@ export default function AssetComponent() {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState(null);
 
+  const [markers, setMarkers] = useState(null);
+  const location = {
+    lat: 1.2925423384337875,
+    lng: 103.78102165309795,
+  };
+
   const reset = async () => {
     nameDB.current = '';
     descriptionDB.current = '';
@@ -144,14 +152,19 @@ export default function AssetComponent() {
   };
 
   const validateFields = (
-    nameField: string,
-    descriptionField: string,
-    eventIDField: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    eventIDFieldDB: string,
     selectedFileField: any,
-    latitudeField: string,
-    longitudeField: string,
+    latitudeFieldDB: string,
+    longitudeFieldDB: string,
   ) => {
     // super basic validation here
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const eventIDField = eventIDFieldDB.trim();
+    const latitudeField = latitudeFieldDB.trim();
+    const longitudeField = longitudeFieldDB.trim();
 
     if (nameField === '' || nameField === null || nameField === undefined) {
       setError('Please write a name!');
@@ -184,7 +197,8 @@ export default function AssetComponent() {
     if (
       latitudeField === '' ||
       latitudeField === null ||
-      latitudeField === undefined
+      latitudeField === undefined ||
+      isNaN(Number(latitudeField))
     ) {
       setError('Please provide a latitude!');
       return false;
@@ -193,7 +207,8 @@ export default function AssetComponent() {
     if (
       longitudeField === '' ||
       longitudeField === null ||
-      longitudeField === undefined
+      longitudeField === undefined ||
+      isNaN(Number(latitudeField))
     ) {
       setError('Please provide a longitude');
       return false;
@@ -203,14 +218,20 @@ export default function AssetComponent() {
   };
 
   const validateFieldsEdit = (
-    idField: string,
-    nameField: string,
-    descriptionField: string,
-    eventIDField: string,
-    latitudeField: string,
-    longitudeField: string,
+    idFieldDB: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    eventIDFieldDB: string,
+    latitudeFieldDB: string,
+    longitudeFieldDB: string,
   ) => {
     // super basic validation here
+    const idField = idFieldDB.trim();
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const eventIDField = eventIDFieldDB.trim();
+    const latitudeField = latitudeFieldDB.trim();
+    const longitudeField = longitudeFieldDB.trim();
 
     if (idField === '' || idField === null || idField === undefined) {
       setErrorEdit('Please select an asset!');
@@ -298,6 +319,8 @@ export default function AssetComponent() {
 
       const allAssets: Asset[] = [];
 
+      const marker = [];
+
       for (let key = 0; key < content.length; key += 1) {
         if (content[key]) {
           const dataField: Asset = content[key];
@@ -310,12 +333,25 @@ export default function AssetComponent() {
 
           const buttons = await generateActionButton(dataField);
           dataField.action = buttons;
+
+          const dataSet = {
+            title: dataField.name,
+            msg: dataField.description,
+            pos: {
+              lat: Number(dataField.latitude),
+              lng: Number(dataField.longitude),
+            },
+          };
+
+          marker.push(dataSet);
         }
       }
 
       assetData.current = allAssets;
       setAssetDropdown(selectionEdit);
       setData(content);
+
+      setMarkers(marker);
     },
     [generateActionButton],
   );
@@ -638,25 +674,37 @@ export default function AssetComponent() {
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box w='full' mt={30}>
-              <Stack align='center' justify='center' spacing={30} mb={10}>
-                <InputGroup>
-                  <InputLeftAddon>Search:</InputLeftAddon>
-                  <Input
-                    type='text'
-                    placeholder=''
-                    value={search}
-                    onChange={handleSearch}
-                  />
-                </InputGroup>
-              </Stack>
+            <Stack>
+              <Box w='full' mt={30}>
+                <Stack align='center' justify='center' spacing={30} mb={10}>
+                  <InputGroup>
+                    <InputLeftAddon>Search:</InputLeftAddon>
+                    <Input
+                      type='text'
+                      placeholder=''
+                      value={search}
+                      onChange={handleSearch}
+                    />
+                  </InputGroup>
+                </Stack>
 
-              <TableWidget
-                key={1}
-                columns={columns}
-                data={filteredData && filteredData.length ? filteredData : data}
-              />
-            </Box>
+                <TableWidget
+                  key={1}
+                  columns={columns}
+                  data={
+                    filteredData && filteredData.length ? filteredData : data
+                  }
+                />
+              </Box>
+              <Box>
+                <Map
+                  location={location}
+                  zoomLevel={15}
+                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}
+                  markers={markers}
+                />
+              </Box>
+            </Stack>
           )}
         </Box>
 
