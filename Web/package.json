@@ -11,7 +11,11 @@
     "prettier": "prettier --write .",
     "postinstall": "prisma generate",
     "code": "npm run prettier && npm run lint -- --fix",
-    "lazy": "npm run code && npm run build"
+    "lazy": "npm run code && npm run test && npm run build",
+    "test": "jest"
+  },
+  "engines": {
+    "node": "16.15.1"
   },
   "dependencies": {
     "@chakra-ui/icons": "2.0.0",
@@ -20,9 +24,9 @@
     "@emotion/styled": "11.8.1",
     "@next-auth/prisma-adapter": "1.0.3",
     "@prisma/client": "3.15.1",
-    "@types/formidable": "2.0.5",
     "formidable": "2.0.1",
     "framer-motion": "6.3.3",
+    "moment-timezone": "0.5.34",
     "next": "12.1.6",
     "next-auth": "4.3.4",
     "nodemailer": "6.7.5",
@@ -33,6 +37,8 @@
     "sharp": "0.30.5"
   },
   "devDependencies": {
+    "@types/formidable": "2.0.5",
+    "@types/jest": "28.1.2",
     "@types/node": "17.0.41",
     "@types/nodemailer": "6.4.4",
     "eslint": "8.2.0",
@@ -43,8 +49,11 @@
     "eslint-plugin-react": "7.28.0",
     "eslint-plugin-react-hooks": "4.3.0",
     "husky": "8.0.1",
+    "jest": "28.1.1",
     "prettier": "2.6.2",
-    "prisma": "3.15.1"
+    "prisma": "3.15.1",
+    "ts-jest": "28.0.5",
+    "typescript": "4.7.4"
   },
   "description": "A Orbital 2022 Project.",
   "main": "next.config.js",

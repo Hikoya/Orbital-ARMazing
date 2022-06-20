@@ -32,6 +32,38 @@ export const createAsset = async (data: Asset): Promise<Result> => {
   return result;
 };
 
+export const editAsset = async (data: Asset): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const asset = await prisma.assets.update({
+      where: {
+        id: data.id,
+      },
+      data: data,
+    });
+
+    if (asset) {
+      result = { status: true, error: null, msg: 'Success!' };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to create asset in database',
+        msg: '',
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    result = { status: false, error: error, msg: null };
+  }
+
+  return result;
+};
+
 export const fetchAllAssetByUser = async (
   session: Session,
 ): Promise<Result> => {

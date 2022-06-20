@@ -2,8 +2,10 @@ export type Event = {
   id?: string;
   name: string;
   description: string;
-  startDate: number | string;
-  endDate: number | string;
+  startDate: number;
+  endDate: number;
+  startDateStr?: string;
+  endDateStr?: string;
   isPublic: boolean;
   visible: boolean;
   createdBy?: string;

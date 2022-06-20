@@ -35,6 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               description: asset.description,
               latitude: asset.latitude,
               longitude: asset.longitude,
+              imagePath: asset.imagePath,
               visible: asset.visible,
               visibleText: visible,
             };

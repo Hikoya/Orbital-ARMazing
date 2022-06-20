@@ -1,12 +1,13 @@
 export type Asset = {
   id?: string;
-  eventID: string | string[];
-  name: string | string[];
-  description: string | string[];
-  latitude: string | string[];
-  longitude: string | string[];
+  eventID: string;
+  name: string;
+  description: string;
+  latitude: string;
+  longitude: string;
   visible: boolean;
   visibleText?: string;
   imagePath?: string;
   createdBy?: string;
+  action?: any;
 };
