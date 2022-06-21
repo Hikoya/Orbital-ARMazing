@@ -9,44 +9,78 @@ import Auth from '@components/Auth';
 import {
   Button,
   Box,
-  Heading,
-  FormControl,
-  Input,
-  FormLabel,
-  Text,
-  Stack,
-  useToast,
   Checkbox,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
   InputGroup,
   InputLeftAddon,
+  Text,
+  Stack,
+  Select,
+  SimpleGrid,
+  useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 
+import { parentVariant } from '@root/motion';
+import { motion } from 'framer-motion';
+
+const MotionSimpleGrid = motion(SimpleGrid);
+const MotionBox = motion(Box);
+
 export default function EventComponent() {
   const [loadingData, setLoading] = useState(true);
   const toast = useToast();
 
+  const eventIDDBEdit = useRef('');
+  const [eventIDEdit, setEventIDEdit] = useState('');
+
   const nameDB = useRef('');
   const [name, setName] = useState('');
+
+  const nameDBEdit = useRef('');
+  const [nameEdit, setNameEdit] = useState('');
 
   const descriptionDB = useRef('');
   const [description, setDescription] = useState('');
 
+  const descriptionDBEdit = useRef('');
+  const [descriptionEdit, setDescriptionEdit] = useState('');
+
   const startDateDB = useRef('');
   const [startDate, setStartDate] = useState('');
+
+  const startDateDBEdit = useRef('');
+  const [startDateEdit, setStartDateEdit] = useState('');
 
   const endDateDB = useRef('');
   const [endDate, setEndDate] = useState('');
 
+  const endDateDBEdit = useRef('');
+  const [endDateEdit, setEndDateEdit] = useState('');
+
   const visibleDB = useRef(true);
   const [visible, setVisible] = useState(true);
+
+  const visibleDBEdit = useRef(true);
+  const [visibleEdit, setVisibleEdit] = useState(true);
 
   const publicDB = useRef(true);
   const [isPublic, setIsPublic] = useState(true);
 
+  const publicDBEdit = useRef(true);
+  const [isPublicEdit, setIsPublicEdit] = useState(true);
+
   const [errorMsg, setError] = useState(null);
+  const [errorMsgEdit, setErrorEdit] = useState(null);
+
+  const eventData = useRef([]);
+
+  const [eventDropdown, setEventDropdown] = useState([]);
 
   const [data, setData] = useState([]);
 
@@ -70,25 +104,65 @@ export default function EventComponent() {
     setError(null);
   };
 
+  const resetEdit = async () => {
+    eventIDDBEdit.current = '';
+    nameDBEdit.current = '';
+    descriptionDBEdit.current = '';
+    startDateDBEdit.current = '';
+    endDateDBEdit.current = '';
+    visibleDBEdit.current = true;
+    publicDBEdit.current = true;
+
+    setEventIDEdit('');
+    setNameEdit('');
+    setDescriptionEdit('');
+    setStartDateEdit('');
+    setEndDateEdit('');
+    setVisibleEdit(true);
+    setIsPublicEdit(true);
+    setErrorEdit(null);
+  };
+
   const validateFields = (
-    nameField: string,
-    descriptionField: string,
-    startDateField: string,
-    endDateField: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    startDateFieldDB: string,
+    endDateFieldDB: string,
   ) => {
     // super basic validation here
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const startDateField = startDateFieldDB.trim();
+    const endDateField = endDateFieldDB.trim();
 
-    if (!nameField) {
+    if (nameField === '' || nameField === null || nameField === undefined) {
       setError('Please set a name!');
       return false;
     }
 
-    if (!descriptionField) {
+    if (
+      descriptionField === '' ||
+      descriptionField === null ||
+      descriptionField === undefined
+    ) {
       setError('Please set a description!');
       return false;
     }
 
-    if (!startDateField || !endDateField) {
+    if (
+      startDateField === '' ||
+      startDateField === null ||
+      startDateField === undefined
+    ) {
+      setError('Please set a date!');
+      return false;
+    }
+
+    if (
+      endDateField === '' ||
+      endDateField === null ||
+      endDateField === undefined
+    ) {
       setError('Please set a date!');
       return false;
     }
@@ -104,13 +178,90 @@ export default function EventComponent() {
     return true;
   };
 
+  const validateFieldsEdit = (
+    idFieldDB: string,
+    nameFieldDB: string,
+    descriptionFieldDB: string,
+    startDateFieldDB: string,
+    endDateFieldDB: string,
+  ) => {
+    // super basic validation here
+    const idField = idFieldDB.trim();
+    const nameField = nameFieldDB.trim();
+    const descriptionField = descriptionFieldDB.trim();
+    const startDateField = startDateFieldDB.trim();
+    const endDateField = endDateFieldDB.trim();
+
+    if (idField === '' || idField === null || idField === undefined) {
+      setErrorEdit('Please select an event!');
+      return false;
+    }
+
+    if (nameField === '' || nameField === null || nameField === undefined) {
+      setErrorEdit('Please set a name!');
+      return false;
+    }
+
+    if (
+      descriptionField === '' ||
+      descriptionField === null ||
+      descriptionField === undefined
+    ) {
+      setErrorEdit('Please set a description!');
+      return false;
+    }
+
+    if (
+      startDateField === '' ||
+      startDateField === null ||
+      startDateField === undefined
+    ) {
+      setErrorEdit('Please set a date!');
+      return false;
+    }
+
+    if (
+      endDateField === '' ||
+      endDateField === null ||
+      endDateField === undefined
+    ) {
+      setErrorEdit('Please set a date!');
+      return false;
+    }
+
+    const start = new Date(startDateField);
+    const end = new Date(endDateField);
+
+    if (end <= start) {
+      setErrorEdit('End date cannot be earlier than start date!');
+      return false;
+    }
+
+    return true;
+  };
+
   const includeActionButton = useCallback(async (content: Event[]) => {
+    const allEvent: Event[] = [];
+    const selectionEdit = [];
+
+    selectionEdit.push(<option key='' value='' aria-label='Default' />);
+
     for (let key = 0; key < content.length; key += 1) {
       if (content[key]) {
-        // const dataField = content[key];
+        const dataField: Event = content[key];
+        allEvent.push(dataField);
+
+        selectionEdit.push(
+          <option key={dataField.id} value={dataField.id}>
+            {dataField.name}
+          </option>,
+        );
       }
     }
+
+    eventData.current = allEvent;
     setData(content);
+    setEventDropdown(selectionEdit);
   }, []);
 
   const fetchData = useCallback(async () => {
@@ -190,6 +341,99 @@ export default function EventComponent() {
     return false;
   };
 
+  const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (
+      validateFieldsEdit(
+        eventIDDBEdit.current,
+        nameDBEdit.current,
+        descriptionDBEdit.current,
+        startDateDBEdit.current,
+        endDateDBEdit.current,
+      )
+    ) {
+      try {
+        const rawResponse = await fetch('/api/event/edit', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: eventIDDBEdit.current,
+            name: nameDBEdit.current,
+            description: descriptionDBEdit.current,
+            startDate: startDateDBEdit.current,
+            endDate: endDateDBEdit.current,
+            visible: visibleDBEdit.current,
+            isPublic: publicDBEdit.current,
+          }),
+        });
+        const content: Result = await rawResponse.json();
+        if (content.status) {
+          await resetEdit();
+          toast({
+            title: 'Success',
+            description: content.msg as string,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          await fetchData();
+        } else {
+          toast({
+            title: 'Error',
+            description: content.error,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
+  };
+
+  const changeDataEdit = (dataField: Event) => {
+    setNameEdit(dataField.name);
+    setDescriptionEdit(dataField.description);
+    setStartDateEdit(dataField.startDateStr);
+    setEndDateEdit(dataField.endDateStr);
+    setVisibleEdit(dataField.visible);
+    setIsPublicEdit(dataField.isPublic);
+
+    nameDBEdit.current = dataField.name;
+    descriptionDBEdit.current = dataField.description;
+    startDateDBEdit.current = dataField.startDateStr;
+    endDateDBEdit.current = dataField.endDateStr;
+    visibleDBEdit.current = dataField.visible;
+    publicDBEdit.current = dataField.isPublic;
+  };
+
+  const onEventChangeEdit = async (event: { target: { value: string } }) => {
+    if (event.target.value) {
+      const { value } = event.target;
+      eventIDDBEdit.current = value;
+      setEventIDEdit(value);
+
+      if (eventData.current !== []) {
+        for (let key = 0; key < eventData.current.length; key += 1) {
+          if (eventData.current[key]) {
+            const dataField: Event = eventData.current[key];
+            if (dataField.id === value) {
+              changeDataEdit(dataField);
+            }
+          }
+        }
+      }
+    }
+  };
+
   const columns = useMemo(
     () => [
       {
@@ -202,11 +446,11 @@ export default function EventComponent() {
       },
       {
         Header: 'Start Date',
-        accessor: 'startDate',
+        accessor: 'startDateStr',
       },
       {
         Header: 'End Date',
-        accessor: 'endDate',
+        accessor: 'endDateStr',
       },
       {
         Header: 'Public',
@@ -229,7 +473,7 @@ export default function EventComponent() {
   }, [fetchData]);
 
   const handleSearch = (event: { target: { value: string } }) => {
-    const searchInput = event.target.value;
+    const searchInput: string = event.target.value;
     setSearch(searchInput);
 
     if (searchInput && searchInput !== '') {
@@ -290,119 +534,255 @@ export default function EventComponent() {
           )}
         </Box>
 
-        <Box>
-          <Stack
-            spacing={4}
-            w='full'
-            maxW='md'
-            bg='white'
-            rounded='xl'
-            boxShadow='lg'
-            p={6}
-            my={12}
-          >
-            <Heading size='md'>Create Event</Heading>
-            <form onSubmit={handleSubmitCreate}>
-              <Stack spacing={4}>
-                <FormControl id='name'>
-                  <FormLabel>Name</FormLabel>
-                  <Input
-                    type='text'
-                    placeholder='Name'
-                    value={name}
-                    size='lg'
-                    onChange={(event) => {
-                      setName(event.currentTarget.value);
-                      nameDB.current = event.currentTarget.value;
-                    }}
-                  />
-                </FormControl>
-                <FormControl id='description'>
-                  <FormLabel>Description</FormLabel>
-                  <Input
-                    type='text'
-                    placeholder='Description'
-                    value={description}
-                    size='lg'
-                    onChange={(event) => {
-                      setDescription(event.currentTarget.value);
-                      descriptionDB.current = event.currentTarget.value;
-                    }}
-                  />
-                </FormControl>
+        <MotionSimpleGrid
+          mt='3'
+          minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
+          minH='full'
+          variants={parentVariant}
+          initial='initial'
+          animate='animate'
+        >
+          <MotionBox>
+            <Stack
+              spacing={4}
+              w='full'
+              maxW='md'
+              bg='white'
+              rounded='xl'
+              boxShadow='lg'
+              p={6}
+              my={12}
+            >
+              <Heading size='md'>Create Event</Heading>
+              <form onSubmit={handleSubmitCreate}>
+                <Stack spacing={4}>
+                  <FormControl id='name'>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type='text'
+                      placeholder='Name'
+                      value={name}
+                      size='lg'
+                      onChange={(event) => {
+                        setName(event.currentTarget.value);
+                        nameDB.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
+                  <FormControl id='description'>
+                    <FormLabel>Description</FormLabel>
+                    <Input
+                      type='text'
+                      placeholder='Description'
+                      value={description}
+                      size='lg'
+                      onChange={(event) => {
+                        setDescription(event.currentTarget.value);
+                        descriptionDB.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
 
-                <FormControl id='startDate'>
-                  <FormLabel>Start Date</FormLabel>
-                  <Input
-                    type='date'
-                    placeholder='Start Date'
-                    value={startDate}
-                    size='lg'
-                    onChange={(event) => {
-                      setStartDate(event.currentTarget.value);
-                      startDateDB.current = event.currentTarget.value;
-                    }}
-                  />
-                </FormControl>
+                  <FormControl id='startDate'>
+                    <FormLabel>Start Date</FormLabel>
+                    <Input
+                      type='date'
+                      placeholder='Start Date'
+                      value={startDate}
+                      size='lg'
+                      onChange={(event) => {
+                        setStartDate(event.currentTarget.value);
+                        startDateDB.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
 
-                <FormControl id='endDate'>
-                  <FormLabel>End Date</FormLabel>
-                  <Input
-                    type='date'
-                    placeholder='Start Date'
-                    value={endDate}
-                    size='lg'
-                    onChange={(event) => {
-                      setEndDate(event.currentTarget.value);
-                      endDateDB.current = event.currentTarget.value;
-                    }}
-                  />
-                </FormControl>
+                  <FormControl id='endDate'>
+                    <FormLabel>End Date</FormLabel>
+                    <Input
+                      type='date'
+                      placeholder='End Date'
+                      value={endDate}
+                      size='lg'
+                      onChange={(event) => {
+                        setEndDate(event.currentTarget.value);
+                        endDateDB.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
 
-                <Stack spacing={5} direction='row'>
-                  <Checkbox
-                    isChecked={visible}
-                    onChange={(event) => {
-                      setVisible(event.target.checked);
-                      visibleDB.current = event.target.checked;
-                    }}
-                  >
-                    Visible
-                  </Checkbox>
+                  <Stack spacing={5} direction='row'>
+                    <Checkbox
+                      isChecked={visible}
+                      onChange={(event) => {
+                        setVisible(event.target.checked);
+                        visibleDB.current = event.target.checked;
+                      }}
+                    >
+                      Visible
+                    </Checkbox>
 
-                  <Checkbox
-                    isChecked={isPublic}
-                    onChange={(event) => {
-                      setIsPublic(event.target.checked);
-                      publicDB.current = event.target.checked;
-                    }}
-                  >
-                    Public
-                  </Checkbox>
+                    <Checkbox
+                      isChecked={isPublic}
+                      onChange={(event) => {
+                        setIsPublic(event.target.checked);
+                        publicDB.current = event.target.checked;
+                      }}
+                    >
+                      Public
+                    </Checkbox>
+                  </Stack>
+
+                  {errorMsg && (
+                    <Stack align='center'>
+                      <Text>{errorMsg}</Text>
+                    </Stack>
+                  )}
+
+                  <Stack spacing={10}>
+                    <Button
+                      type='submit'
+                      bg='blue.400'
+                      color='white'
+                      _hover={{
+                        bg: 'blue.500',
+                      }}
+                    >
+                      Create
+                    </Button>
+                  </Stack>
                 </Stack>
+              </form>
+            </Stack>
+          </MotionBox>
 
-                {errorMsg && (
-                  <Stack align='center'>
-                    <Text>{errorMsg}</Text>
+          <MotionBox>
+            <Stack
+              spacing={4}
+              w='full'
+              maxW='md'
+              bg='white'
+              rounded='xl'
+              boxShadow='lg'
+              p={6}
+              my={12}
+            >
+              <Heading size='md'>Edit Event</Heading>
+              <form onSubmit={handleSubmitEdit}>
+                {eventDropdown && (
+                  <Stack spacing={3} w='full'>
+                    <FormLabel>Select Venue</FormLabel>
+                    <Select
+                      value={eventIDEdit}
+                      onChange={onEventChangeEdit}
+                      size='sm'
+                    >
+                      {eventDropdown}
+                    </Select>
                   </Stack>
                 )}
 
-                <Stack spacing={10}>
-                  <Button
-                    type='submit'
-                    bg='blue.400'
-                    color='white'
-                    _hover={{
-                      bg: 'blue.500',
-                    }}
-                  >
-                    Create
-                  </Button>
+                <Stack spacing={4}>
+                  <FormControl id='nameEdit'>
+                    <FormLabel>Name</FormLabel>
+                    <Input
+                      type='text'
+                      placeholder='Name'
+                      value={nameEdit}
+                      size='lg'
+                      onChange={(event) => {
+                        setNameEdit(event.currentTarget.value);
+                        nameDBEdit.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
+                  <FormControl id='descriptionEdit'>
+                    <FormLabel>Description</FormLabel>
+                    <Input
+                      type='text'
+                      placeholder='Description'
+                      value={descriptionEdit}
+                      size='lg'
+                      onChange={(event) => {
+                        setDescriptionEdit(event.currentTarget.value);
+                        descriptionDBEdit.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
+
+                  <FormControl id='startDateEdit'>
+                    <FormLabel>Start Date</FormLabel>
+                    <Input
+                      type='date'
+                      placeholder='Start Date'
+                      value={startDateEdit}
+                      size='lg'
+                      onChange={(event) => {
+                        setStartDateEdit(event.currentTarget.value);
+                        startDateDBEdit.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
+
+                  <FormControl id='endDateEdit'>
+                    <FormLabel>End Date</FormLabel>
+                    <Input
+                      type='date'
+                      placeholder='End Date'
+                      value={endDateEdit}
+                      size='lg'
+                      onChange={(event) => {
+                        setEndDateEdit(event.currentTarget.value);
+                        endDateDBEdit.current = event.currentTarget.value;
+                      }}
+                    />
+                  </FormControl>
+
+                  <Stack spacing={5} direction='row'>
+                    <Checkbox
+                      isChecked={visibleEdit}
+                      onChange={(event) => {
+                        setVisibleEdit(event.target.checked);
+                        visibleDBEdit.current = event.target.checked;
+                      }}
+                    >
+                      Visible
+                    </Checkbox>
+
+                    <Checkbox
+                      isChecked={isPublicEdit}
+                      onChange={(event) => {
+                        setIsPublicEdit(event.target.checked);
+                        publicDBEdit.current = event.target.checked;
+                      }}
+                    >
+                      Public
+                    </Checkbox>
+                  </Stack>
+
+                  {errorMsgEdit && (
+                    <Stack align='center'>
+                      <Text>{errorMsgEdit}</Text>
+                    </Stack>
+                  )}
+
+                  <Stack spacing={10}>
+                    <Button
+                      type='submit'
+                      bg='blue.400'
+                      color='white'
+                      _hover={{
+                        bg: 'blue.500',
+                      }}
+                    >
+                      Update
+                    </Button>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </form>
-          </Stack>
-        </Box>
+              </form>
+            </Stack>
+          </MotionBox>
+        </MotionSimpleGrid>
       </Box>
     </Auth>
   );

@@ -141,7 +141,7 @@ export default function TableWidget({ columns, data }) {
         </Flex>
 
         <Flex alignItems='center'>
-          <Text flexShrink='0' mr={8}>
+          <Text flexShrink={0} mr={8}>
             Page{' '}
             <Text fontWeight='bold' as='span'>
               {pageIndex + 1}
@@ -151,7 +151,7 @@ export default function TableWidget({ columns, data }) {
               {pageOptions.length}
             </Text>
           </Text>
-          <Text flexShrink='0'>Go to page:</Text>{' '}
+          <Text flexShrink={0}>Go to page:</Text>{' '}
           <NumberInput
             ml={2}
             mr={8}

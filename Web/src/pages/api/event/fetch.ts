@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 
-import { prettifyDate, convertUnixToDate } from '@constants/helper';
+import { formatDateToString, convertUnixToDate } from '@constants/date';
 import { currentSession } from '@helper/session';
 import { fetchAllEventByUser } from '@helper/event';
 import { levels } from '@constants/admin';
@@ -27,10 +27,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           if (eventData[ev]) {
             const event: Event = eventData[ev];
 
-            const start = prettifyDate(
+            const start = formatDateToString(
               convertUnixToDate(Number(event.startDate)),
             );
-            const end = prettifyDate(convertUnixToDate(Number(event.endDate)));
+            const end = formatDateToString(
+              convertUnixToDate(Number(event.endDate)),
+            );
 
             const isPublic = event.isPublic ? 'Yes' : 'No';
             const visible = event.visible ? 'Yes' : 'No';
@@ -39,8 +41,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               id: event.id,
               name: event.name,
               description: event.description,
-              startDate: start,
-              endDate: end,
+              startDate: event.startDate,
+              endDate: event.endDate,
+              startDateStr: start,
+              endDateStr: end,
               isPublic: event.isPublic,
               visible: event.visible,
               isPublicText: isPublic,

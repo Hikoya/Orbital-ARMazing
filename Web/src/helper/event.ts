@@ -31,6 +31,37 @@ export const createEvent = async (data: Event): Promise<Result> => {
   return result;
 };
 
+export const editEvent = async (data: Event): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const event: Event = await prisma.event.update({
+      where: {
+        id: data.id,
+      },
+      data: data,
+    });
+
+    if (event) {
+      result = { status: true, error: null, msg: event };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to update event in database',
+        msg: '',
+      };
+    }
+  } catch (error) {
+    result = { status: false, error: error, msg: null };
+  }
+
+  return result;
+};
+
 export const fetchAllEventByUser = async (
   session: Session,
 ): Promise<Result> => {
