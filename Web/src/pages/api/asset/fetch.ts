@@ -1,9 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 import { Asset } from 'types/asset';
+import { Event } from 'types/event';
 
 import { currentSession } from '@helper/session';
 import { fetchAllAssetByUser } from '@helper/asset';
+import { fetchEventByID } from '@helper/event';
+
 import { levels } from '@constants/admin';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -16,31 +19,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (session) {
-    if (session.user.level === levels.ORGANIZER) {
+    if (
+      session.user.level === levels.ORGANIZER ||
+      session.user.level === levels.FACILITATOR
+    ) {
       const assets = await fetchAllAssetByUser(session);
       const parsedAsset: Asset[] = [];
 
-      if (assets && assets.status) {
-        const assetData: Asset[] = assets.msg;
-        for (let as = 0; as < assetData.length; as += 1) {
-          if (assetData[as]) {
-            const asset: Asset = assetData[as];
+      if (assets.status) {
+        if (assets.msg !== null) {
+          const assetData: Asset[] = assets.msg;
+          for (let as = 0; as < assetData.length; as += 1) {
+            if (assetData[as]) {
+              const asset: Asset = assetData[as];
 
-            const visible = asset.visible ? 'Yes' : 'No';
+              const visible = asset.visible ? 'Yes' : 'No';
+              const eventRes: Result = await fetchEventByID(asset.eventID);
+              if (eventRes.status) {
+                const event: Event = eventRes.msg;
 
-            const data: Asset = {
-              id: asset.id,
-              eventID: asset.eventID,
-              name: asset.name,
-              description: asset.description,
-              latitude: asset.latitude,
-              longitude: asset.longitude,
-              imagePath: asset.imagePath,
-              visible: asset.visible,
-              visibleText: visible,
-            };
+                const data: Asset = {
+                  id: asset.id,
+                  eventName: event.name,
+                  eventID: asset.eventID,
+                  name: asset.name,
+                  description: asset.description,
+                  latitude: asset.latitude,
+                  longitude: asset.longitude,
+                  imagePath: asset.imagePath,
+                  visible: asset.visible,
+                  visibleText: visible,
+                };
 
-            parsedAsset.push(data);
+                parsedAsset.push(data);
+              }
+            }
           }
         }
 

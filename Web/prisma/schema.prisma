@@ -17,6 +17,13 @@ model Session {
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model EventPermission {
+  id            String    @id @default(cuid())
+  email         String 
+  eventID     String
+  level       Int     @default(1)
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?

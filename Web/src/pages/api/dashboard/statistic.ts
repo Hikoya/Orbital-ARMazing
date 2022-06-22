@@ -15,7 +15,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (session) {
-    if (session.user.level === levels.ORGANIZER) {
+    if (
+      session.user.level === levels.ORGANIZER ||
+      session.user.level === levels.FACILITATOR
+    ) {
       const stat = await fetchStatistic(session);
       if (stat && stat.status) {
         result = {

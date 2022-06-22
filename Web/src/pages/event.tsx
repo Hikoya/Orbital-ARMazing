@@ -29,10 +29,19 @@ import { Event } from 'types/event';
 import { parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
 
+import { checkerNumber, checkerString } from '@helper/common';
+import { isValidDate } from '@constants/date';
+
+import safeJsonStringify from 'safe-json-stringify';
+import { GetServerSideProps } from 'next';
+import { currentSession } from '@helper/session';
+import { Session } from 'next-auth/core/types';
+import { levels } from '@constants/admin';
+
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
-export default function EventComponent() {
+export default function EventComponent(props: any) {
   const [loadingData, setLoading] = useState(true);
   const toast = useToast();
 
@@ -87,6 +96,8 @@ export default function EventComponent() {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState(null);
 
+  const [organizer, setOrganizer] = useState(false);
+
   const reset = async () => {
     nameDB.current = '';
     descriptionDB.current = '';
@@ -135,40 +146,33 @@ export default function EventComponent() {
     const startDateField = startDateFieldDB.trim();
     const endDateField = endDateFieldDB.trim();
 
-    if (nameField === '' || nameField === null || nameField === undefined) {
+    if (!checkerString(nameField)) {
       setError('Please set a name!');
       return false;
     }
 
-    if (
-      descriptionField === '' ||
-      descriptionField === null ||
-      descriptionField === undefined
-    ) {
+    if (!checkerString(descriptionField)) {
       setError('Please set a description!');
       return false;
     }
 
-    if (
-      startDateField === '' ||
-      startDateField === null ||
-      startDateField === undefined
-    ) {
+    if (!checkerString(startDateField)) {
       setError('Please set a date!');
       return false;
     }
 
-    if (
-      endDateField === '' ||
-      endDateField === null ||
-      endDateField === undefined
-    ) {
+    if (!checkerString(endDateField)) {
       setError('Please set a date!');
       return false;
     }
 
     const start = new Date(startDateField);
     const end = new Date(endDateField);
+
+    if (!isValidDate(start) || !isValidDate(end)) {
+      setError('Incorrect date format');
+      return false;
+    }
 
     if (end <= start) {
       setError('End date cannot be earlier than start date!');
@@ -179,58 +183,44 @@ export default function EventComponent() {
   };
 
   const validateFieldsEdit = (
-    idFieldDB: string,
-    nameFieldDB: string,
-    descriptionFieldDB: string,
-    startDateFieldDB: string,
-    endDateFieldDB: string,
+    idField: string,
+    nameField: string,
+    descriptionField: string,
+    startDateField: string,
+    endDateField: string,
   ) => {
-    // super basic validation here
-    const idField = idFieldDB.trim();
-    const nameField = nameFieldDB.trim();
-    const descriptionField = descriptionFieldDB.trim();
-    const startDateField = startDateFieldDB.trim();
-    const endDateField = endDateFieldDB.trim();
-
-    if (idField === '' || idField === null || idField === undefined) {
+    if (!checkerString(idField)) {
       setErrorEdit('Please select an event!');
       return false;
     }
 
-    if (nameField === '' || nameField === null || nameField === undefined) {
+    if (!checkerString(nameField)) {
       setErrorEdit('Please set a name!');
       return false;
     }
 
-    if (
-      descriptionField === '' ||
-      descriptionField === null ||
-      descriptionField === undefined
-    ) {
+    if (!checkerString(descriptionField)) {
       setErrorEdit('Please set a description!');
       return false;
     }
 
-    if (
-      startDateField === '' ||
-      startDateField === null ||
-      startDateField === undefined
-    ) {
+    if (!checkerString(startDateField)) {
       setErrorEdit('Please set a date!');
       return false;
     }
 
-    if (
-      endDateField === '' ||
-      endDateField === null ||
-      endDateField === undefined
-    ) {
+    if (!checkerString(endDateField)) {
       setErrorEdit('Please set a date!');
       return false;
     }
 
     const start = new Date(startDateField);
     const end = new Date(endDateField);
+
+    if (!isValidDate(start) || !isValidDate(end)) {
+      setError('Incorrect date format');
+      return false;
+    }
 
     if (end <= start) {
       setErrorEdit('End date cannot be earlier than start date!');
@@ -465,12 +455,25 @@ export default function EventComponent() {
   );
 
   useEffect(() => {
-    async function generate() {
+    async function generate(propsField) {
       await fetchData();
+
+      const propRes = await propsField;
+      if (propRes.sess) {
+        const user: Session = propRes.sess;
+        const { level } = user.user;
+        if (checkerNumber(level)) {
+          if (level === levels.FACILITATOR) {
+            setOrganizer(false);
+          } else if (level === levels.ORGANIZER) {
+            setOrganizer(true);
+          }
+        }
+      }
     }
 
-    generate();
-  }, [fetchData]);
+    generate(props);
+  }, [fetchData, props]);
 
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput: string = event.target.value;
@@ -512,7 +515,7 @@ export default function EventComponent() {
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box w='full' mt={30}>
+            <Box w='full' mt={30} overflow='auto'>
               <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>
@@ -534,256 +537,276 @@ export default function EventComponent() {
           )}
         </Box>
 
-        <MotionSimpleGrid
-          mt='3'
-          minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
-          minH='full'
-          variants={parentVariant}
-          initial='initial'
-          animate='animate'
-        >
-          <MotionBox>
-            <Stack
-              spacing={4}
-              w='full'
-              maxW='md'
-              bg='white'
-              rounded='xl'
-              boxShadow='lg'
-              p={6}
-              my={12}
-            >
-              <Heading size='md'>Create Event</Heading>
-              <form onSubmit={handleSubmitCreate}>
-                <Stack spacing={4}>
-                  <FormControl id='name'>
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Name'
-                      value={name}
-                      size='lg'
-                      onChange={(event) => {
-                        setName(event.currentTarget.value);
-                        nameDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-                  <FormControl id='description'>
-                    <FormLabel>Description</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Description'
-                      value={description}
-                      size='lg'
-                      onChange={(event) => {
-                        setDescription(event.currentTarget.value);
-                        descriptionDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+        {organizer && (
+          <MotionSimpleGrid
+            mt='3'
+            minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
+            minH='full'
+            variants={parentVariant}
+            initial='initial'
+            animate='animate'
+          >
+            <MotionBox>
+              <Stack
+                spacing={4}
+                w='full'
+                maxW='md'
+                bg='white'
+                rounded='xl'
+                boxShadow='lg'
+                p={6}
+                my={12}
+              >
+                <Heading size='md'>Create Event</Heading>
+                <form onSubmit={handleSubmitCreate}>
+                  <Stack spacing={4}>
+                    <FormControl id='name'>
+                      <FormLabel>Name</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Name'
+                        value={name}
+                        size='lg'
+                        onChange={(event) => {
+                          setName(event.currentTarget.value);
+                          nameDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl id='description'>
+                      <FormLabel>Description</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Description'
+                        value={description}
+                        size='lg'
+                        onChange={(event) => {
+                          setDescription(event.currentTarget.value);
+                          descriptionDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <FormControl id='startDate'>
-                    <FormLabel>Start Date</FormLabel>
-                    <Input
-                      type='date'
-                      placeholder='Start Date'
-                      value={startDate}
-                      size='lg'
-                      onChange={(event) => {
-                        setStartDate(event.currentTarget.value);
-                        startDateDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+                    <FormControl id='startDate'>
+                      <FormLabel>Start Date</FormLabel>
+                      <Input
+                        type='date'
+                        placeholder='Start Date'
+                        value={startDate}
+                        size='lg'
+                        onChange={(event) => {
+                          setStartDate(event.currentTarget.value);
+                          startDateDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <FormControl id='endDate'>
-                    <FormLabel>End Date</FormLabel>
-                    <Input
-                      type='date'
-                      placeholder='End Date'
-                      value={endDate}
-                      size='lg'
-                      onChange={(event) => {
-                        setEndDate(event.currentTarget.value);
-                        endDateDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+                    <FormControl id='endDate'>
+                      <FormLabel>End Date</FormLabel>
+                      <Input
+                        type='date'
+                        placeholder='End Date'
+                        value={endDate}
+                        size='lg'
+                        onChange={(event) => {
+                          setEndDate(event.currentTarget.value);
+                          endDateDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <Stack spacing={5} direction='row'>
-                    <Checkbox
-                      isChecked={visible}
-                      onChange={(event) => {
-                        setVisible(event.target.checked);
-                        visibleDB.current = event.target.checked;
-                      }}
-                    >
-                      Visible
-                    </Checkbox>
+                    <Stack spacing={5} direction='row'>
+                      <Checkbox
+                        isChecked={visible}
+                        onChange={(event) => {
+                          setVisible(event.target.checked);
+                          visibleDB.current = event.target.checked;
+                        }}
+                      >
+                        Visible
+                      </Checkbox>
 
-                    <Checkbox
-                      isChecked={isPublic}
-                      onChange={(event) => {
-                        setIsPublic(event.target.checked);
-                        publicDB.current = event.target.checked;
-                      }}
-                    >
-                      Public
-                    </Checkbox>
+                      <Checkbox
+                        isChecked={isPublic}
+                        onChange={(event) => {
+                          setIsPublic(event.target.checked);
+                          publicDB.current = event.target.checked;
+                        }}
+                      >
+                        Public
+                      </Checkbox>
+                    </Stack>
+
+                    {errorMsg && (
+                      <Stack align='center'>
+                        <Text>{errorMsg}</Text>
+                      </Stack>
+                    )}
+
+                    <Stack spacing={10}>
+                      <Button
+                        type='submit'
+                        bg='blue.400'
+                        color='white'
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                      >
+                        Create
+                      </Button>
+                    </Stack>
                   </Stack>
+                </form>
+              </Stack>
+            </MotionBox>
 
-                  {errorMsg && (
-                    <Stack align='center'>
-                      <Text>{errorMsg}</Text>
+            <MotionBox>
+              <Stack
+                spacing={4}
+                w='full'
+                maxW='md'
+                bg='white'
+                rounded='xl'
+                boxShadow='lg'
+                p={6}
+                my={12}
+              >
+                <Heading size='md'>Edit Event</Heading>
+                <form onSubmit={handleSubmitEdit}>
+                  {eventDropdown && (
+                    <Stack spacing={3} w='full'>
+                      <FormLabel>Select Venue</FormLabel>
+                      <Select
+                        value={eventIDEdit}
+                        onChange={onEventChangeEdit}
+                        size='sm'
+                      >
+                        {eventDropdown}
+                      </Select>
                     </Stack>
                   )}
 
-                  <Stack spacing={10}>
-                    <Button
-                      type='submit'
-                      bg='blue.400'
-                      color='white'
-                      _hover={{
-                        bg: 'blue.500',
-                      }}
-                    >
-                      Create
-                    </Button>
-                  </Stack>
-                </Stack>
-              </form>
-            </Stack>
-          </MotionBox>
+                  <Stack spacing={4}>
+                    <FormControl id='nameEdit'>
+                      <FormLabel>Name</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Name'
+                        value={nameEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setNameEdit(event.currentTarget.value);
+                          nameDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl id='descriptionEdit'>
+                      <FormLabel>Description</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Description'
+                        value={descriptionEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setDescriptionEdit(event.currentTarget.value);
+                          descriptionDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-          <MotionBox>
-            <Stack
-              spacing={4}
-              w='full'
-              maxW='md'
-              bg='white'
-              rounded='xl'
-              boxShadow='lg'
-              p={6}
-              my={12}
-            >
-              <Heading size='md'>Edit Event</Heading>
-              <form onSubmit={handleSubmitEdit}>
-                {eventDropdown && (
-                  <Stack spacing={3} w='full'>
-                    <FormLabel>Select Venue</FormLabel>
-                    <Select
-                      value={eventIDEdit}
-                      onChange={onEventChangeEdit}
-                      size='sm'
-                    >
-                      {eventDropdown}
-                    </Select>
-                  </Stack>
-                )}
+                    <FormControl id='startDateEdit'>
+                      <FormLabel>Start Date</FormLabel>
+                      <Input
+                        type='date'
+                        placeholder='Start Date'
+                        value={startDateEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setStartDateEdit(event.currentTarget.value);
+                          startDateDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                <Stack spacing={4}>
-                  <FormControl id='nameEdit'>
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Name'
-                      value={nameEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setNameEdit(event.currentTarget.value);
-                        nameDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-                  <FormControl id='descriptionEdit'>
-                    <FormLabel>Description</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Description'
-                      value={descriptionEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setDescriptionEdit(event.currentTarget.value);
-                        descriptionDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+                    <FormControl id='endDateEdit'>
+                      <FormLabel>End Date</FormLabel>
+                      <Input
+                        type='date'
+                        placeholder='End Date'
+                        value={endDateEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setEndDateEdit(event.currentTarget.value);
+                          endDateDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <FormControl id='startDateEdit'>
-                    <FormLabel>Start Date</FormLabel>
-                    <Input
-                      type='date'
-                      placeholder='Start Date'
-                      value={startDateEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setStartDateEdit(event.currentTarget.value);
-                        startDateDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+                    <Stack spacing={5} direction='row'>
+                      <Checkbox
+                        isChecked={visibleEdit}
+                        onChange={(event) => {
+                          setVisibleEdit(event.target.checked);
+                          visibleDBEdit.current = event.target.checked;
+                        }}
+                      >
+                        Visible
+                      </Checkbox>
 
-                  <FormControl id='endDateEdit'>
-                    <FormLabel>End Date</FormLabel>
-                    <Input
-                      type='date'
-                      placeholder='End Date'
-                      value={endDateEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setEndDateEdit(event.currentTarget.value);
-                        endDateDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <Stack spacing={5} direction='row'>
-                    <Checkbox
-                      isChecked={visibleEdit}
-                      onChange={(event) => {
-                        setVisibleEdit(event.target.checked);
-                        visibleDBEdit.current = event.target.checked;
-                      }}
-                    >
-                      Visible
-                    </Checkbox>
-
-                    <Checkbox
-                      isChecked={isPublicEdit}
-                      onChange={(event) => {
-                        setIsPublicEdit(event.target.checked);
-                        publicDBEdit.current = event.target.checked;
-                      }}
-                    >
-                      Public
-                    </Checkbox>
-                  </Stack>
-
-                  {errorMsgEdit && (
-                    <Stack align='center'>
-                      <Text>{errorMsgEdit}</Text>
+                      <Checkbox
+                        isChecked={isPublicEdit}
+                        onChange={(event) => {
+                          setIsPublicEdit(event.target.checked);
+                          publicDBEdit.current = event.target.checked;
+                        }}
+                      >
+                        Public
+                      </Checkbox>
                     </Stack>
-                  )}
 
-                  <Stack spacing={10}>
-                    <Button
-                      type='submit'
-                      bg='blue.400'
-                      color='white'
-                      _hover={{
-                        bg: 'blue.500',
-                      }}
-                    >
-                      Update
-                    </Button>
+                    {errorMsgEdit && (
+                      <Stack align='center'>
+                        <Text>{errorMsgEdit}</Text>
+                      </Stack>
+                    )}
+
+                    <Stack spacing={10}>
+                      <Button
+                        type='submit'
+                        bg='blue.400'
+                        color='white'
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </form>
-            </Stack>
-          </MotionBox>
-        </MotionSimpleGrid>
+                </form>
+              </Stack>
+            </MotionBox>
+          </MotionSimpleGrid>
+        )}
       </Box>
     </Auth>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: (async function Props() {
+    try {
+      const session: Session = await currentSession(context);
+      const stringifiedData = safeJsonStringify(session);
+      const data: Session = JSON.parse(stringifiedData);
+      return {
+        sess: data,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        sess: null,
+      };
+    }
+  })(),
+});

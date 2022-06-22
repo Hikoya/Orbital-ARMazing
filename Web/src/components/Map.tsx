@@ -1,16 +1,17 @@
 import React, { useCallback, memo } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { useToast } from '@chakra-ui/react';
+import { Box, useToast } from '@chakra-ui/react';
+import { checkerString } from '@helper/common';
 
 const containerStyle = {
   height: '60vh',
 };
 
-function MapComponent({ location, zoomLevel, apiKey, markers }) {
+function MapComponent({ location, zoomLevel, apiKey, markers, dataHandler }) {
   const toast = useToast();
 
   const showToast = useCallback(
-    (data) => {
+    (data: { title: string; msg: string }) => {
       toast.closeAll();
 
       toast({
@@ -36,18 +37,27 @@ function MapComponent({ location, zoomLevel, apiKey, markers }) {
   );
 
   return (
-    <LoadScript googleMapsApiKey={apiKey}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={location}
-        zoom={zoomLevel}
-      >
-        {markers &&
-          markers.map((mark) => (
-            <LocationPin data={mark} position={mark.pos} />
-          ))}
-      </GoogleMap>
-    </LoadScript>
+    <Box>
+      {checkerString(apiKey) && (
+        <LoadScript googleMapsApiKey={apiKey}>
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={location}
+            zoom={zoomLevel}
+            onClick={(ev) => {
+              if (dataHandler) {
+                dataHandler({ lat: ev.latLng.lat(), lng: ev.latLng.lng() });
+              }
+            }}
+          >
+            {markers &&
+              markers.map((mark) => (
+                <LocationPin key={mark.id} data={mark} position={mark.pos} />
+              ))}
+          </GoogleMap>
+        </LoadScript>
+      )}
+    </Box>
   );
 }
 

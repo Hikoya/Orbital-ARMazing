@@ -16,42 +16,47 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     msg: '',
   };
 
-  if (session) {
-    if (session.user.level === levels.ORGANIZER) {
-      const events = await fetchAllEventByUser(session);
+  if (session !== null && session !== undefined) {
+    if (
+      session.user.level === levels.ORGANIZER ||
+      session.user.level === levels.FACILITATOR
+    ) {
+      const events: Result = await fetchAllEventByUser(session);
       const parsedEvent: Event[] = [];
 
-      if (events && events.status) {
-        const eventData: Event[] = events.msg as Event[];
-        for (let ev = 0; ev < eventData.length; ev += 1) {
-          if (eventData[ev]) {
-            const event: Event = eventData[ev];
+      if (events.status) {
+        if (events.msg !== null) {
+          const eventData: Event[] = events.msg as Event[];
+          for (let ev = 0; ev < eventData.length; ev += 1) {
+            if (eventData[ev]) {
+              const event: Event = eventData[ev];
 
-            const start = formatDateToString(
-              convertUnixToDate(Number(event.startDate)),
-            );
-            const end = formatDateToString(
-              convertUnixToDate(Number(event.endDate)),
-            );
+              const start = formatDateToString(
+                convertUnixToDate(Number(event.startDate)),
+              );
+              const end = formatDateToString(
+                convertUnixToDate(Number(event.endDate)),
+              );
 
-            const isPublic = event.isPublic ? 'Yes' : 'No';
-            const visible = event.visible ? 'Yes' : 'No';
+              const isPublic = event.isPublic ? 'Yes' : 'No';
+              const visible = event.visible ? 'Yes' : 'No';
 
-            const data: Event = {
-              id: event.id,
-              name: event.name,
-              description: event.description,
-              startDate: event.startDate,
-              endDate: event.endDate,
-              startDateStr: start,
-              endDateStr: end,
-              isPublic: event.isPublic,
-              visible: event.visible,
-              isPublicText: isPublic,
-              visibleText: visible,
-            };
+              const data: Event = {
+                id: event.id,
+                name: event.name,
+                description: event.description,
+                startDate: event.startDate,
+                endDate: event.endDate,
+                startDateStr: start,
+                endDateStr: end,
+                isPublic: event.isPublic,
+                visible: event.visible,
+                isPublicText: isPublic,
+                visibleText: visible,
+              };
 
-            parsedEvent.push(data);
+              parsedEvent.push(data);
+            }
           }
         }
 
