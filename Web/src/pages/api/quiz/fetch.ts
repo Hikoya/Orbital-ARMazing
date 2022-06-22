@@ -18,35 +18,41 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (session) {
-    if (session.user.level === levels.ORGANIZER) {
+    if (
+      session.user.level === levels.ORGANIZER ||
+      session.user.level === levels.FACILITATOR
+    ) {
       const qn = await fetchAllQuiz(session);
       const parsedQuiz: Quiz[] = [];
 
-      if (qn && qn.status) {
-        const questionData: Quiz[] = qn.msg as Quiz[];
-        for (let q = 0; q < questionData.length; q += 1) {
-          if (questionData[q]) {
-            const quiz: Quiz = questionData[q];
+      if (qn.status) {
+        if (qn.msg !== null) {
+          const questionData: Quiz[] = qn.msg as Quiz[];
+          for (let q = 0; q < questionData.length; q += 1) {
+            if (questionData[q]) {
+              const quiz: Quiz = questionData[q];
 
-            const visible = quiz.visible ? 'Yes' : 'No';
-            const event = await fetchEventByID(quiz.eventID);
-            const eventMsg = event.msg as Event;
-            const eventName: string = eventMsg.name;
+              const visible = quiz.visible ? 'Yes' : 'No';
+              const event = await fetchEventByID(quiz.eventID);
+              const eventMsg = event.msg as Event;
+              const eventName: string = eventMsg.name;
 
-            if (event.status) {
-              const data: Quiz = {
-                id: quiz.id,
-                event: eventName,
-                eventID: quiz.eventID,
-                question: quiz.question,
-                options: quiz.options,
-                answer: quiz.answer,
-                points: quiz.points,
-                visible: quiz.visible,
-                isVisible: visible,
-              };
+              if (event.status) {
+                const data: Quiz = {
+                  id: quiz.id,
+                  event: eventName,
+                  assetID: quiz.assetID,
+                  eventID: quiz.eventID,
+                  question: quiz.question,
+                  options: quiz.options,
+                  answer: quiz.answer,
+                  points: quiz.points,
+                  visible: quiz.visible,
+                  isVisible: visible,
+                };
 
-              parsedQuiz.push(data);
+                parsedQuiz.push(data);
+              }
             }
           }
         }
@@ -68,7 +74,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized request', msg: '' };
+      result = { status: true, error: null, msg: [] };
       res.status(200).send(result);
       res.end();
     }

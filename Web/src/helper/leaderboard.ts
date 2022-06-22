@@ -36,7 +36,7 @@ export const doesUserExist = async (
       };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     result = { status: false, error: error, msg: null };
   }
 
@@ -75,7 +75,7 @@ export const joinEvent = async (
         };
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       result = { status: false, error: error, msg: null };
     }
   }
@@ -132,7 +132,7 @@ export const fetchLeaderBoardByEventID = async (
       };
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     result = { status: false, error: error.toString(), msg: null };
   }
 
@@ -178,7 +178,7 @@ export const updateUserPoints = async (
       }
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     result = { status: false, error: error.toString(), msg: null };
   }
 
@@ -201,7 +201,7 @@ export const countUserInEvent = async (eventID: string): Promise<Result> => {
 
     result = { status: true, error: null, msg: users };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     result = { status: false, error: error.toString(), msg: null };
   }
 

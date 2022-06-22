@@ -19,6 +19,7 @@ import TableWidget from '@components/TableWidget';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 import { Leaderboard } from 'types/leaderboard';
+import { checkerString } from '@helper/common';
 
 export default function LeaderboardComponent() {
   const [loadingData, setLoading] = useState(false);
@@ -182,7 +183,15 @@ export default function LeaderboardComponent() {
             </Box>
           )}
 
-          {!loadingData && data.length === 0 && (
+          {!loadingData && !checkerString(eventID) && (
+            <Box mt={30}>
+              <Stack align='center' justify='center'>
+                <Text>Select an event</Text>
+              </Stack>
+            </Box>
+          )}
+
+          {!loadingData && checkerString(eventID) && data.length === 0 && (
             <Box mt={30}>
               <Stack align='center' justify='center'>
                 <Text>No leaderboard found</Text>
@@ -191,7 +200,7 @@ export default function LeaderboardComponent() {
           )}
 
           {!loadingData && data.length > 0 && (
-            <Box w='full' mt={30}>
+            <Box w='full' mt={30} overflow='auto'>
               <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
                   <InputLeftAddon>Search:</InputLeftAddon>

@@ -18,8 +18,6 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  OmitCommonProps,
-  TableRowProps,
 } from '@chakra-ui/react';
 import {
   ArrowRightIcon,
@@ -56,66 +54,33 @@ export default function TableWidget({ columns, data }) {
     <Box
       style={{
         maxHeight: '600px',
-        overflow: 'scroll',
       }}
     >
       <Table {...getTableProps()}>
         <Thead>
-          {headerGroups.map(
-            (
-              headerGroup: {
-                getHeaderGroupProps: () => JSX.IntrinsicAttributes &
-                  OmitCommonProps<
-                    React.DetailedHTMLProps<
-                      React.HTMLAttributes<HTMLTableRowElement>,
-                      HTMLTableRowElement
-                    >,
-                    keyof TableRowProps
-                  > &
-                  TableRowProps & { as?: 'tr' };
-                headers: any[];
-              },
-              i: React.Key,
-            ) => (
-              <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column, id) => (
-                  <Th key={id} {...column.getHeaderProps()}>
-                    {column.render('Header')}
-                  </Th>
-                ))}
-              </Tr>
-            ),
-          )}
+          {headerGroups.map((headerGroup, i) => (
+            <Tr key={i} {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column, id) => (
+                <Th key={id} {...column.getHeaderProps()}>
+                  {column.render('Header')}
+                </Th>
+              ))}
+            </Tr>
+          ))}
         </Thead>
         <Tbody {...getTableBodyProps()}>
-          {page.map(
-            (
-              row: {
-                getRowProps: () => JSX.IntrinsicAttributes &
-                  OmitCommonProps<
-                    React.DetailedHTMLProps<
-                      React.HTMLAttributes<HTMLTableRowElement>,
-                      HTMLTableRowElement
-                    >,
-                    keyof TableRowProps
-                  > &
-                  TableRowProps & { as?: 'tr' };
-                cells: any[];
-              },
-              idx: React.Key,
-            ) => {
-              prepareRow(row);
-              return (
-                <Tr key={idx} {...row.getRowProps()}>
-                  {row.cells.map((cell, idxx) => (
-                    <Td key={idxx} {...cell.getCellProps()}>
-                      {cell.render('Cell')}
-                    </Td>
-                  ))}
-                </Tr>
-              );
-            },
-          )}
+          {page.map((row, idx) => {
+            prepareRow(row);
+            return (
+              <Tr key={idx} {...row.getRowProps()}>
+                {row.cells.map((cell, idxx) => (
+                  <Td key={idxx} {...cell.getCellProps()}>
+                    {cell.render('Cell')}
+                  </Td>
+                ))}
+              </Tr>
+            );
+          })}
         </Tbody>
       </Table>
 
@@ -141,7 +106,7 @@ export default function TableWidget({ columns, data }) {
         </Flex>
 
         <Flex alignItems='center'>
-          <Text flexShrink={0} mr={8}>
+          <Text mr={8}>
             Page{' '}
             <Text fontWeight='bold' as='span'>
               {pageIndex + 1}
@@ -151,7 +116,7 @@ export default function TableWidget({ columns, data }) {
               {pageOptions.length}
             </Text>
           </Text>
-          <Text flexShrink={0}>Go to page:</Text>{' '}
+          <Text>Go to page:</Text>{' '}
           <NumberInput
             ml={2}
             mr={8}
@@ -198,7 +163,7 @@ export default function TableWidget({ columns, data }) {
             <IconButton
               onClick={() => gotoPage(pageCount - 1)}
               isDisabled={!canNextPage}
-              icon={<ArrowRightIcon h={3} w={3} aria-label='' />}
+              icon={<ArrowRightIcon h={3} w={3} />}
               ml={4}
               aria-label=''
             />

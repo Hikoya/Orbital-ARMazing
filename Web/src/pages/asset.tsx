@@ -39,10 +39,18 @@ import Map from '@components/Map';
 import { parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
 
+import { checkerString, checkerNumber } from '@helper/common';
+
+import safeJsonStringify from 'safe-json-stringify';
+import { GetServerSideProps } from 'next';
+import { currentSession } from '@helper/session';
+import { Session } from 'next-auth/core/types';
+import { levels } from '@constants/admin';
+
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
-export default function AssetComponent() {
+export default function AssetComponent(props: any) {
   const router = useRouter();
 
   const [loadingData, setLoading] = useState(false);
@@ -107,10 +115,19 @@ export default function AssetComponent() {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState(null);
 
+  const [API_KEY, setAPIKEY] = useState('');
   const [markers, setMarkers] = useState(null);
   const location = {
     lat: 1.2925423384337875,
     lng: 103.78102165309795,
+  };
+  const [coordinate, setCoordinate] = useState('');
+
+  const [organizer, setOrganizer] = useState(false);
+
+  const onLocationChange = (locationC: { lat: number; lng: number }) => {
+    const text = `Latitude: ${locationC.lat} , Longitude: ${locationC.lng}`;
+    setCoordinate(text);
   };
 
   const reset = async () => {
@@ -152,39 +169,24 @@ export default function AssetComponent() {
   };
 
   const validateFields = (
-    nameFieldDB: string,
-    descriptionFieldDB: string,
-    eventIDFieldDB: string,
+    nameField: string,
+    descriptionField: string,
+    eventIDField: string,
     selectedFileField: any,
-    latitudeFieldDB: string,
-    longitudeFieldDB: string,
+    latitudeField: string,
+    longitudeField: string,
   ) => {
-    // super basic validation here
-    const nameField = nameFieldDB.trim();
-    const descriptionField = descriptionFieldDB.trim();
-    const eventIDField = eventIDFieldDB.trim();
-    const latitudeField = latitudeFieldDB.trim();
-    const longitudeField = longitudeFieldDB.trim();
-
-    if (nameField === '' || nameField === null || nameField === undefined) {
+    if (!checkerString(nameField)) {
       setError('Please write a name!');
       return false;
     }
 
-    if (
-      descriptionField === '' ||
-      descriptionField === null ||
-      descriptionField === undefined
-    ) {
+    if (!checkerString(descriptionField)) {
       setError('Please write a description!');
       return false;
     }
 
-    if (
-      eventIDField === '' ||
-      eventIDField === null ||
-      eventIDField === undefined
-    ) {
+    if (!checkerString(eventIDField)) {
       setError('Please choose an event!');
       return false;
     }
@@ -195,20 +197,16 @@ export default function AssetComponent() {
     }
 
     if (
-      latitudeField === '' ||
-      latitudeField === null ||
-      latitudeField === undefined ||
-      Number.isNaN(Number(latitudeField))
+      !checkerString(latitudeField) ||
+      !checkerNumber(Number(latitudeField))
     ) {
       setError('Please provide a latitude!');
       return false;
     }
 
     if (
-      longitudeField === '' ||
-      longitudeField === null ||
-      longitudeField === undefined ||
-      Number.isNaN(Number(latitudeField))
+      !checkerString(longitudeField) ||
+      !checkerNumber(Number(latitudeField))
     ) {
       setError('Please provide a longitude');
       return false;
@@ -218,62 +216,44 @@ export default function AssetComponent() {
   };
 
   const validateFieldsEdit = (
-    idFieldDB: string,
-    nameFieldDB: string,
-    descriptionFieldDB: string,
-    eventIDFieldDB: string,
-    latitudeFieldDB: string,
-    longitudeFieldDB: string,
+    idField: string,
+    nameField: string,
+    descriptionField: string,
+    eventIDField: string,
+    latitudeField: string,
+    longitudeField: string,
   ) => {
-    // super basic validation here
-    const idField = idFieldDB.trim();
-    const nameField = nameFieldDB.trim();
-    const descriptionField = descriptionFieldDB.trim();
-    const eventIDField = eventIDFieldDB.trim();
-    const latitudeField = latitudeFieldDB.trim();
-    const longitudeField = longitudeFieldDB.trim();
-
-    if (idField === '' || idField === null || idField === undefined) {
+    if (!checkerString(idField)) {
       setErrorEdit('Please select an asset!');
       return false;
     }
 
-    if (nameField === '' || nameField === null || nameField === undefined) {
+    if (!checkerString(nameField)) {
       setErrorEdit('Please write a name!');
       return false;
     }
 
-    if (
-      descriptionField === '' ||
-      descriptionField === null ||
-      descriptionField === undefined
-    ) {
+    if (!checkerString(descriptionField)) {
       setErrorEdit('Please write a description!');
       return false;
     }
 
-    if (
-      eventIDField === '' ||
-      eventIDField === null ||
-      eventIDField === undefined
-    ) {
+    if (!checkerString(eventIDField)) {
       setErrorEdit('Please choose an event!');
       return false;
     }
 
     if (
-      latitudeField === '' ||
-      latitudeField === null ||
-      latitudeField === undefined
+      !checkerString(latitudeField) ||
+      !checkerNumber(Number(latitudeField))
     ) {
       setErrorEdit('Please provide a latitude!');
       return false;
     }
 
     if (
-      longitudeField === '' ||
-      longitudeField === null ||
-      longitudeField === undefined
+      !checkerString(longitudeField) ||
+      !checkerNumber(Number(longitudeField))
     ) {
       setErrorEdit('Please provide a longitude');
       return false;
@@ -292,13 +272,7 @@ export default function AssetComponent() {
           leftIcon={<InfoOutlineIcon />}
           onClick={(event) => {
             event.preventDefault();
-            console.log(content.imagePath);
-            if (
-              router.isReady &&
-              content.imagePath !== null &&
-              content.imagePath !== undefined &&
-              content.imagePath !== ''
-            ) {
+            if (router.isReady && checkerString(content.imagePath)) {
               router.push(content.imagePath);
             }
           }}
@@ -335,6 +309,7 @@ export default function AssetComponent() {
           dataField.action = buttons;
 
           const dataSet = {
+            id: dataField.id,
             title: dataField.name,
             msg: dataField.description,
             pos: {
@@ -590,18 +565,39 @@ export default function AssetComponent() {
   }, []);
 
   useEffect(() => {
-    async function generate() {
+    async function generate(propsField: any) {
       await fetchData();
       await fetchAssetData();
+
+      const propRes = await propsField;
+      if (propRes.API_KEY) {
+        setAPIKEY(propRes.API_KEY);
+      }
+
+      if (propRes.sess) {
+        const user: Session = propRes.sess;
+        const { level } = user.user;
+        if (checkerNumber(level)) {
+          if (level === levels.FACILITATOR) {
+            setOrganizer(false);
+          } else if (level === levels.ORGANIZER) {
+            setOrganizer(true);
+          }
+        }
+      }
     }
 
-    generate();
-  }, [fetchData, fetchAssetData]);
+    generate(props);
+  }, [fetchData, fetchAssetData, props]);
 
   const columns = useMemo(
     () => [
       {
-        Header: 'Name',
+        Header: 'Event Name',
+        accessor: 'eventName',
+      },
+      {
+        Header: 'Asset Name',
         accessor: 'name',
       },
       {
@@ -632,7 +628,7 @@ export default function AssetComponent() {
     const searchInput = event.target.value;
     setSearch(searchInput);
 
-    if (searchInput && searchInput !== '') {
+    if (checkerString(searchInput)) {
       const filteredDataField = data.filter(
         (value) =>
           value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
@@ -675,7 +671,7 @@ export default function AssetComponent() {
 
           {!loadingData && data.length > 0 && (
             <Stack>
-              <Box w='full' mt={30}>
+              <Box w='full' mt={30} overflow='auto'>
                 <Stack align='center' justify='center' spacing={30} mb={10}>
                   <InputGroup>
                     <InputLeftAddon>Search:</InputLeftAddon>
@@ -700,386 +696,416 @@ export default function AssetComponent() {
                 <Map
                   location={location}
                   zoomLevel={15}
-                  apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}
+                  apiKey={API_KEY || null}
                   markers={markers}
+                  dataHandler={onLocationChange}
                 />
               </Box>
+              <Text>Click on the Map to get coordinates {coordinate}</Text>
             </Stack>
           )}
         </Box>
 
-        <MotionSimpleGrid
-          mt='3'
-          minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
-          minH='full'
-          variants={parentVariant}
-          initial='initial'
-          animate='animate'
-        >
-          <MotionBox>
-            <Stack
-              spacing={4}
-              w='full'
-              maxW='md'
-              bg='white'
-              rounded='xl'
-              boxShadow='lg'
-              p={6}
-              my={12}
-            >
-              <Heading size='md'>Create Asset</Heading>
-              <form onSubmit={handleSubmitCreate}>
-                <Stack spacing={4}>
-                  <Stack spacing={5} w='full'>
-                    <Text>Select Event</Text>
-                    <Select onChange={onEventChange} size='sm' value={eventID}>
-                      {eventDropdown}
-                    </Select>
-                  </Stack>
-
-                  <FormControl id='name'>
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Name'
-                      value={name}
-                      size='lg'
-                      onChange={(event) => {
-                        setName(event.currentTarget.value);
-                        nameDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-                  <FormControl id='description'>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      placeholder='Description'
-                      value={description}
-                      size='lg'
-                      onChange={(event) => {
-                        setDescription(event.currentTarget.value);
-                        descriptionDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <FormControl id='latitude'>
-                    <FormLabel>Latitude</FormLabel>
-                    <Input
-                      placeholder='Latitude'
-                      value={latitude}
-                      size='lg'
-                      onChange={(event) => {
-                        setLatitude(event.currentTarget.value);
-                        latitudeDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <FormControl id='longitude'>
-                    <FormLabel>Longitude</FormLabel>
-                    <Input
-                      placeholder='Longitude'
-                      value={longitude}
-                      size='lg'
-                      onChange={(event) => {
-                        setLongitude(event.currentTarget.value);
-                        longitudeDB.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <Stack spacing={5} direction='row'>
-                    <Checkbox
-                      isChecked={visible}
-                      onChange={(event) => {
-                        setVisible(event.target.checked);
-                        visibleDB.current = event.target.checked;
-                      }}
-                    >
-                      Visible
-                    </Checkbox>
-                  </Stack>
-
-                  <FormControl id='photo'>
-                    <FormLabel fontSize='sm' fontWeight='md' color='gray.700'>
-                      Venue Photo
-                    </FormLabel>
-                    {fileName && <Text>File uploaded: {fileName}</Text>}
-                    <Flex
-                      mt={1}
-                      justify='center'
-                      px={6}
-                      pt={5}
-                      pb={6}
-                      borderWidth={2}
-                      borderColor='gray.300'
-                      borderStyle='dashed'
-                      rounded='md'
-                    >
-                      <Stack spacing={1} textAlign='center'>
-                        <Icon
-                          mx='auto'
-                          boxSize={12}
-                          color='gray.400'
-                          stroke='currentColor'
-                          fill='none'
-                          viewBox='0 0 48 48'
-                          aria-hidden='true'
-                        >
-                          <path
-                            d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </Icon>
-                        <Flex
-                          fontSize='sm'
-                          color='gray.600'
-                          alignItems='baseline'
-                        >
-                          <chakra.label
-                            htmlFor='file-upload'
-                            cursor='pointer'
-                            rounded='md'
-                            fontSize='md'
-                            color='brand.600'
-                            pos='relative'
-                            _hover={{
-                              color: 'brand.400',
-                            }}
-                          >
-                            <span>Upload a file</span>
-                            <VisuallyHidden>
-                              <input
-                                id='file-upload'
-                                name='file-upload'
-                                type='file'
-                                onChange={onFileChange}
-                              />
-                            </VisuallyHidden>
-                          </chakra.label>
-                          <Text pl={1}>or drag and drop</Text>
-                        </Flex>
-                        <Text fontSize='xs' color='gray.500'>
-                          PNG, JPG, GIF up to 10MB
-                        </Text>
-                      </Stack>
-                    </Flex>
-                  </FormControl>
-
-                  {errorMsg && (
-                    <Stack align='center'>
-                      <Text>{errorMsg}</Text>
+        {organizer && (
+          <MotionSimpleGrid
+            mt='3'
+            minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
+            minH='full'
+            variants={parentVariant}
+            initial='initial'
+            animate='animate'
+          >
+            <MotionBox>
+              <Stack
+                spacing={4}
+                w='full'
+                maxW='md'
+                bg='white'
+                rounded='xl'
+                boxShadow='lg'
+                p={6}
+                my={12}
+              >
+                <Heading size='md'>Create Asset</Heading>
+                <form onSubmit={handleSubmitCreate}>
+                  <Stack spacing={4}>
+                    <Stack spacing={5} w='full'>
+                      <Text>Select Event</Text>
+                      <Select
+                        onChange={onEventChange}
+                        size='sm'
+                        value={eventID}
+                      >
+                        {eventDropdown}
+                      </Select>
                     </Stack>
-                  )}
 
-                  <Stack spacing={10}>
-                    <Button
-                      type='submit'
-                      bg='blue.400'
-                      color='white'
-                      _hover={{
-                        bg: 'blue.500',
-                      }}
-                    >
-                      Create
-                    </Button>
-                  </Stack>
-                </Stack>
-              </form>
-            </Stack>
-          </MotionBox>
-          <MotionBox>
-            <Stack
-              spacing={4}
-              w='full'
-              maxW='md'
-              bg='white'
-              rounded='xl'
-              boxShadow='lg'
-              p={6}
-              my={12}
-            >
-              <Heading size='md'>Edit Asset</Heading>
-              <form onSubmit={handleSubmitEdit}>
-                <Stack spacing={4}>
-                  <Stack spacing={5} w='full'>
-                    <Text>Select Asset</Text>
-                    <Select onChange={onAssetChange} size='sm' value={asset}>
-                      {assetDropdown}
-                    </Select>
-                  </Stack>
+                    <FormControl id='name'>
+                      <FormLabel>Name</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Name'
+                        value={name}
+                        size='lg'
+                        onChange={(event) => {
+                          setName(event.currentTarget.value);
+                          nameDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl id='description'>
+                      <FormLabel>Description</FormLabel>
+                      <Textarea
+                        placeholder='Description'
+                        value={description}
+                        size='lg'
+                        onChange={(event) => {
+                          setDescription(event.currentTarget.value);
+                          descriptionDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <Stack spacing={5} w='full'>
-                    <Text>Select Event</Text>
-                    <Select
-                      onChange={onEventChangeEdit}
-                      size='sm'
-                      value={eventIDEdit}
-                    >
-                      {eventDropdown}
-                    </Select>
-                  </Stack>
+                    <FormControl id='latitude'>
+                      <FormLabel>Latitude</FormLabel>
+                      <Input
+                        placeholder='Latitude'
+                        value={latitude}
+                        size='lg'
+                        onChange={(event) => {
+                          setLatitude(event.currentTarget.value);
+                          latitudeDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <FormControl id='nameEdit'>
-                    <FormLabel>Name</FormLabel>
-                    <Input
-                      type='text'
-                      placeholder='Name'
-                      value={nameEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setNameEdit(event.currentTarget.value);
-                        nameDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
+                    <FormControl id='longitude'>
+                      <FormLabel>Longitude</FormLabel>
+                      <Input
+                        placeholder='Longitude'
+                        value={longitude}
+                        size='lg'
+                        onChange={(event) => {
+                          setLongitude(event.currentTarget.value);
+                          longitudeDB.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
 
-                  <FormControl id='descriptionEdit'>
-                    <FormLabel>Description</FormLabel>
-                    <Textarea
-                      placeholder='Description'
-                      value={descriptionEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setDescriptionEdit(event.currentTarget.value);
-                        descriptionDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <FormControl id='latitudeEdit'>
-                    <FormLabel>Latitude</FormLabel>
-                    <Input
-                      placeholder='Latitude'
-                      value={latitudeEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setLatitudeEdit(event.currentTarget.value);
-                        latitudeDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <FormControl id='longitudeEdit'>
-                    <FormLabel>Longitude</FormLabel>
-                    <Input
-                      placeholder='Longitude'
-                      value={longitudeEdit}
-                      size='lg'
-                      onChange={(event) => {
-                        setLongitudeEdit(event.currentTarget.value);
-                        longitudeDBEdit.current = event.currentTarget.value;
-                      }}
-                    />
-                  </FormControl>
-
-                  <Stack spacing={5} direction='row'>
-                    <Checkbox
-                      isChecked={visibleEdit}
-                      onChange={(event) => {
-                        setVisibleEdit(event.target.checked);
-                        visibleDBEdit.current = event.target.checked;
-                      }}
-                    >
-                      Visible
-                    </Checkbox>
-                  </Stack>
-
-                  <FormControl id='photoEdit'>
-                    <FormLabel fontSize='sm' fontWeight='md' color='gray.700'>
-                      Venue Photo
-                    </FormLabel>
-                    {fileNameEdit && <Text>File uploaded: {fileNameEdit}</Text>}
-                    <Flex
-                      mt={1}
-                      justify='center'
-                      px={6}
-                      pt={5}
-                      pb={6}
-                      borderWidth={2}
-                      borderColor='gray.300'
-                      borderStyle='dashed'
-                      rounded='md'
-                    >
-                      <Stack spacing={1} textAlign='center'>
-                        <Icon
-                          mx='auto'
-                          boxSize={12}
-                          color='gray.400'
-                          stroke='currentColor'
-                          fill='none'
-                          viewBox='0 0 48 48'
-                          aria-hidden='true'
-                        >
-                          <path
-                            d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
-                            strokeWidth='2'
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                          />
-                        </Icon>
-                        <Flex
-                          fontSize='sm'
-                          color='gray.600'
-                          alignItems='baseline'
-                        >
-                          <chakra.label
-                            htmlFor='file-upload-edit'
-                            cursor='pointer'
-                            rounded='md'
-                            fontSize='md'
-                            color='brand.600'
-                            pos='relative'
-                            _hover={{
-                              color: 'brand.400',
-                            }}
-                          >
-                            <span>Upload a file</span>
-                            <VisuallyHidden>
-                              <input
-                                id='file-upload-edit'
-                                name='file-upload-edit'
-                                type='file'
-                                onChange={onFileChangeEdit}
-                              />
-                            </VisuallyHidden>
-                          </chakra.label>
-                          <Text pl={1}>or drag and drop</Text>
-                        </Flex>
-                        <Text fontSize='xs' color='gray.500'>
-                          PNG, JPG, GIF up to 10MB
-                        </Text>
-                      </Stack>
-                    </Flex>
-                  </FormControl>
-
-                  {errorMsgEdit && (
-                    <Stack align='center'>
-                      <Text>{errorMsgEdit}</Text>
+                    <Stack spacing={5} direction='row'>
+                      <Checkbox
+                        isChecked={visible}
+                        onChange={(event) => {
+                          setVisible(event.target.checked);
+                          visibleDB.current = event.target.checked;
+                        }}
+                      >
+                        Visible
+                      </Checkbox>
                     </Stack>
-                  )}
 
-                  <Stack spacing={10}>
-                    <Button
-                      type='submit'
-                      bg='blue.400'
-                      color='white'
-                      _hover={{
-                        bg: 'blue.500',
-                      }}
-                    >
-                      Update
-                    </Button>
+                    <FormControl id='photo'>
+                      <FormLabel fontSize='sm' fontWeight='md' color='gray.700'>
+                        Venue Photo
+                      </FormLabel>
+                      {fileName && <Text>File uploaded: {fileName}</Text>}
+                      <Flex
+                        mt={1}
+                        justify='center'
+                        px={6}
+                        pt={5}
+                        pb={6}
+                        borderWidth={2}
+                        borderColor='gray.300'
+                        borderStyle='dashed'
+                        rounded='md'
+                      >
+                        <Stack spacing={1} textAlign='center'>
+                          <Icon
+                            mx='auto'
+                            boxSize={12}
+                            color='gray.400'
+                            stroke='currentColor'
+                            fill='none'
+                            viewBox='0 0 48 48'
+                            aria-hidden='true'
+                          >
+                            <path
+                              d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          </Icon>
+                          <Flex
+                            fontSize='sm'
+                            color='gray.600'
+                            alignItems='baseline'
+                          >
+                            <chakra.label
+                              htmlFor='file-upload'
+                              cursor='pointer'
+                              rounded='md'
+                              fontSize='md'
+                              color='brand.600'
+                              pos='relative'
+                              _hover={{
+                                color: 'brand.400',
+                              }}
+                            >
+                              <span>Upload a file</span>
+                              <VisuallyHidden>
+                                <input
+                                  id='file-upload'
+                                  name='file-upload'
+                                  type='file'
+                                  onChange={onFileChange}
+                                />
+                              </VisuallyHidden>
+                            </chakra.label>
+                            <Text pl={1}>or drag and drop</Text>
+                          </Flex>
+                          <Text fontSize='xs' color='gray.500'>
+                            PNG, JPG, GIF up to 10MB
+                          </Text>
+                        </Stack>
+                      </Flex>
+                    </FormControl>
+
+                    {errorMsg && (
+                      <Stack align='center'>
+                        <Text>{errorMsg}</Text>
+                      </Stack>
+                    )}
+
+                    <Stack spacing={10}>
+                      <Button
+                        type='submit'
+                        bg='blue.400'
+                        color='white'
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                      >
+                        Create
+                      </Button>
+                    </Stack>
                   </Stack>
-                </Stack>
-              </form>
-            </Stack>
-          </MotionBox>
-        </MotionSimpleGrid>
+                </form>
+              </Stack>
+            </MotionBox>
+            <MotionBox>
+              <Stack
+                spacing={4}
+                w='full'
+                maxW='md'
+                bg='white'
+                rounded='xl'
+                boxShadow='lg'
+                p={6}
+                my={12}
+              >
+                <Heading size='md'>Edit Asset</Heading>
+                <form onSubmit={handleSubmitEdit}>
+                  <Stack spacing={4}>
+                    <Stack spacing={5} w='full'>
+                      <Text>Select Asset</Text>
+                      <Select onChange={onAssetChange} size='sm' value={asset}>
+                        {assetDropdown}
+                      </Select>
+                    </Stack>
+
+                    <Stack spacing={5} w='full'>
+                      <Text>Select Event</Text>
+                      <Select
+                        onChange={onEventChangeEdit}
+                        size='sm'
+                        value={eventIDEdit}
+                      >
+                        {eventDropdown}
+                      </Select>
+                    </Stack>
+
+                    <FormControl id='nameEdit'>
+                      <FormLabel>Name</FormLabel>
+                      <Input
+                        type='text'
+                        placeholder='Name'
+                        value={nameEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setNameEdit(event.currentTarget.value);
+                          nameDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+
+                    <FormControl id='descriptionEdit'>
+                      <FormLabel>Description</FormLabel>
+                      <Textarea
+                        placeholder='Description'
+                        value={descriptionEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setDescriptionEdit(event.currentTarget.value);
+                          descriptionDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+
+                    <FormControl id='latitudeEdit'>
+                      <FormLabel>Latitude</FormLabel>
+                      <Input
+                        placeholder='Latitude'
+                        value={latitudeEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setLatitudeEdit(event.currentTarget.value);
+                          latitudeDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+
+                    <FormControl id='longitudeEdit'>
+                      <FormLabel>Longitude</FormLabel>
+                      <Input
+                        placeholder='Longitude'
+                        value={longitudeEdit}
+                        size='lg'
+                        onChange={(event) => {
+                          setLongitudeEdit(event.currentTarget.value);
+                          longitudeDBEdit.current = event.currentTarget.value;
+                        }}
+                      />
+                    </FormControl>
+
+                    <Stack spacing={5} direction='row'>
+                      <Checkbox
+                        isChecked={visibleEdit}
+                        onChange={(event) => {
+                          setVisibleEdit(event.target.checked);
+                          visibleDBEdit.current = event.target.checked;
+                        }}
+                      >
+                        Visible
+                      </Checkbox>
+                    </Stack>
+
+                    <FormControl id='photoEdit'>
+                      <FormLabel fontSize='sm' fontWeight='md' color='gray.700'>
+                        Venue Photo
+                      </FormLabel>
+                      {fileNameEdit && (
+                        <Text>File uploaded: {fileNameEdit}</Text>
+                      )}
+                      <Flex
+                        mt={1}
+                        justify='center'
+                        px={6}
+                        pt={5}
+                        pb={6}
+                        borderWidth={2}
+                        borderColor='gray.300'
+                        borderStyle='dashed'
+                        rounded='md'
+                      >
+                        <Stack spacing={1} textAlign='center'>
+                          <Icon
+                            mx='auto'
+                            boxSize={12}
+                            color='gray.400'
+                            stroke='currentColor'
+                            fill='none'
+                            viewBox='0 0 48 48'
+                            aria-hidden='true'
+                          >
+                            <path
+                              d='M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02'
+                              strokeWidth='2'
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                            />
+                          </Icon>
+                          <Flex
+                            fontSize='sm'
+                            color='gray.600'
+                            alignItems='baseline'
+                          >
+                            <chakra.label
+                              htmlFor='file-upload-edit'
+                              cursor='pointer'
+                              rounded='md'
+                              fontSize='md'
+                              color='brand.600'
+                              pos='relative'
+                              _hover={{
+                                color: 'brand.400',
+                              }}
+                            >
+                              <span>Upload a file</span>
+                              <VisuallyHidden>
+                                <input
+                                  id='file-upload-edit'
+                                  name='file-upload-edit'
+                                  type='file'
+                                  onChange={onFileChangeEdit}
+                                />
+                              </VisuallyHidden>
+                            </chakra.label>
+                            <Text pl={1}>or drag and drop</Text>
+                          </Flex>
+                          <Text fontSize='xs' color='gray.500'>
+                            PNG, JPG, GIF up to 10MB
+                          </Text>
+                        </Stack>
+                      </Flex>
+                    </FormControl>
+
+                    {errorMsgEdit && (
+                      <Stack align='center'>
+                        <Text>{errorMsgEdit}</Text>
+                      </Stack>
+                    )}
+
+                    <Stack spacing={10}>
+                      <Button
+                        type='submit'
+                        bg='blue.400'
+                        color='white'
+                        _hover={{
+                          bg: 'blue.500',
+                        }}
+                      >
+                        Update
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </form>
+              </Stack>
+            </MotionBox>
+          </MotionSimpleGrid>
+        )}
       </Box>
     </Auth>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => ({
+  props: (async function Props() {
+    try {
+      const session: Session = await currentSession(context);
+      const stringifiedData = safeJsonStringify(session);
+      const data: Session = JSON.parse(stringifiedData);
+      return {
+        API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+        sess: data,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+        sess: null,
+      };
+    }
+  })(),
+});

@@ -11,7 +11,7 @@ export const currentSession = async (req = null): Promise<Session> => {
         username: 'Test user',
         email: 'testing@test.com',
         admin: true,
-        level: levels['ORGANIZER'],
+        level: levels.USER,
       },
     };
 

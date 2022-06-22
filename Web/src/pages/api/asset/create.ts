@@ -41,60 +41,68 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const imageFile: formidable.File = data.files.image as formidable.File;
         let assetPath: string = null;
 
-        if (imageFile) {
+        if (imageFile !== null && imageFile !== undefined) {
           const imagePath: string = imageFile.filepath;
 
           assetPath = `/assets/${data.fields.eventID}_${imageFile.originalFilename}`;
           const pathToWriteImage = `public${assetPath}`;
           const image = await fs.readFile(imagePath);
           await fs.writeFile(pathToWriteImage, image);
-        }
 
-        const name = data.fields.name as string;
-        const description = data.fields.description as string;
-        const eventID = data.fields.eventID as string;
-        const visible = data.fields.visible === 'true';
-        const latitude = data.fields.latitude as string;
-        const longitude = data.fields.longitude as string;
+          const name = data.fields.name as string;
+          const description = data.fields.description as string;
+          const eventID = data.fields.eventID as string;
+          const visible = data.fields.visible === 'true';
+          const latitude = data.fields.latitude as string;
+          const longitude = data.fields.longitude as string;
 
-        if (
-          checkerString(name) &&
-          checkerString(description) &&
-          checkerString(eventID) &&
-          checkerString(latitude) &&
-          checkerString(longitude)
-        ) {
-          const assetData: Asset = {
-            name: name,
-            description: description,
-            eventID: eventID,
-            visible: visible,
-            latitude: latitude,
-            longitude: longitude,
-            imagePath: assetPath,
-            createdBy: session.user.email,
-          };
-
-          const createEventRequest = await createAsset(assetData);
-          if (createEventRequest.status) {
-            result = {
-              status: true,
-              error: '',
-              msg: 'Successfully created asset',
+          if (
+            checkerString(name) &&
+            checkerString(description) &&
+            checkerString(eventID) &&
+            checkerString(latitude) &&
+            checkerString(longitude)
+          ) {
+            const assetData: Asset = {
+              name: name,
+              description: description,
+              eventID: eventID,
+              visible: visible,
+              latitude: latitude,
+              longitude: longitude,
+              imagePath: assetPath,
+              createdBy: session.user.email,
             };
-            res.status(200).send(result);
-            res.end();
+
+            const createEventRequest = await createAsset(assetData);
+            if (createEventRequest.status) {
+              result = {
+                status: true,
+                error: '',
+                msg: 'Successfully created asset',
+              };
+              res.status(200).send(result);
+              res.end();
+            } else {
+              result = {
+                status: false,
+                error: createEventRequest.error,
+                msg: '',
+              };
+              res.status(200).send(result);
+              res.end();
+            }
           } else {
-            result = {
-              status: false,
-              error: createEventRequest.error,
-              msg: '',
-            };
+            result = { status: false, error: 'Missing information', msg: '' };
             res.status(200).send(result);
             res.end();
           }
         } else {
-          result = { status: false, error: 'Missing information', msg: '' };
+          result = {
+            status: false,
+            error: 'Please include an image!',
+            msg: '',
+          };
           res.status(200).send(result);
           res.end();
         }

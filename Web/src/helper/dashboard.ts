@@ -22,10 +22,10 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
     const eventsObj = await fetchAllEventByUser(session);
     if (eventsObj.status) {
       const events: Event[] = eventsObj.msg;
-      if (events) {
+      if (events !== null) {
         for (let ev in events) {
           if (events[ev]) {
-            const event = events[ev];
+            const event: Event = events[ev];
             const id = event.id;
 
             const countUsers: Result = await countUserInEvent(id);
@@ -34,13 +34,13 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
               numberOfUsers += users;
               numberOfEvents += 1;
             }
+
+            const countAssets: Result = await countAsset(id);
+            if (countAssets.status) {
+              numberOfAssets += countAssets.msg;
+            }
           }
         }
-      }
-
-      const countAssets: Result = await countAsset(session);
-      if (countAssets.status) {
-        numberOfAssets = countAssets.msg;
       }
     }
 
@@ -52,7 +52,7 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
 
     result = { status: true, error: '', msg: resultMsg };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     result = { status: false, error: error, msg: null };
   }
 

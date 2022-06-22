@@ -1,5 +1,6 @@
 export type Asset = {
   id?: string;
+  eventName?: string;
   eventID: string;
   name: string;
   description: string;
