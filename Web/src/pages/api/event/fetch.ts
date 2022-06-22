@@ -77,7 +77,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized request', msg: '' };
+      result = { status: true, error: null, msg: [] };
       res.status(200).send(result);
       res.end();
     }
