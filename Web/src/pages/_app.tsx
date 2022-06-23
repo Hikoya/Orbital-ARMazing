@@ -9,16 +9,16 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <SessionProvider
-      session={session}
-      refetchInterval={Number(process.env.NEXTAUTH_REFRESH_INTERVAL)}
-    >
-      <ChakraProvider>
+    <ChakraProvider>
+      <SessionProvider
+        session={session}
+        refetchInterval={Number(process.env.NEXTAUTH_REFRESH_INTERVAL)}
+      >
         <Head>
           <title>ARMazing</title>
         </Head>
         <Component {...pageProps} />
-      </ChakraProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </ChakraProvider>
   );
 }
