@@ -46,7 +46,9 @@ function MapComponent({ location, zoomLevel, apiKey, markers, dataHandler }) {
             zoom={zoomLevel}
             onClick={(ev) => {
               if (dataHandler) {
-                dataHandler({ lat: ev.latLng.lat(), lng: ev.latLng.lng() });
+                if (ev.latLng !== undefined && ev.latLng !== null) {
+                  dataHandler({ lat: ev.latLng.lat(), lng: ev.latLng.lng() });
+                }
               }
             }}
           >

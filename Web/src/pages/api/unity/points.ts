@@ -13,8 +13,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const { eventID, username, points } = req.body;
 
     if (
-      req.headers.authorization !== null ||
-      req.headers.authorization !== ''
+      req.headers.authorization !== null &&
+      req.headers.authorization !== '' &&
+      req.headers.authorization !== undefined
     ) {
       const head: string = req.headers.authorization;
       const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;

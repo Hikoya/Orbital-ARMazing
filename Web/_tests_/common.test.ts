@@ -5,8 +5,6 @@ test('checkerString test 1', async () => {
   expect(checkerString('202sadsa9')).toStrictEqual(true);
   expect(checkerString('2as fdsafds')).toStrictEqual(true);
   expect(checkerString('2as fd s a f  d s')).toStrictEqual(true);
-  expect(checkerString(null)).toStrictEqual(false);
-  expect(checkerString(undefined)).toStrictEqual(false);
 });
 
 test('checkerNumber test 1', async () => {
@@ -14,8 +12,6 @@ test('checkerNumber test 1', async () => {
   expect(checkerNumber(Number('1234'))).toStrictEqual(true);
   expect(checkerNumber(Number('dsafougfouegr'))).toStrictEqual(false);
   expect(checkerNumber(12345)).toStrictEqual(true);
-  expect(checkerNumber(null)).toStrictEqual(false);
-  expect(checkerNumber(undefined)).toStrictEqual(false);
 });
 
 test('filterDuplicates test 1', async () => {

@@ -28,16 +28,18 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
             const event: Event = events[ev];
             const id = event.id;
 
-            const countUsers: Result = await countUserInEvent(id);
-            if (countUsers.status) {
-              const users = countUsers.msg;
-              numberOfUsers += users;
-              numberOfEvents += 1;
-            }
+            if (id !== undefined) {
+              const countUsers: Result = await countUserInEvent(id);
+              if (countUsers.status) {
+                const users = countUsers.msg;
+                numberOfUsers += users;
+                numberOfEvents += 1;
+              }
 
-            const countAssets: Result = await countAsset(id);
-            if (countAssets.status) {
-              numberOfAssets += countAssets.msg;
+              const countAssets: Result = await countAsset(id);
+              if (countAssets.status) {
+                numberOfAssets += countAssets.msg;
+              }
             }
           }
         }

@@ -39,8 +39,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       try {
         const imageFile: formidable.File = data.files.image as formidable.File;
-        let assetPath: string = null;
-        let assetData: Asset = null;
+        let assetPath: string = '';
+        let assetData: Asset | null = null;
 
         const id = data.fields.id as string;
         const name = data.fields.name as string;

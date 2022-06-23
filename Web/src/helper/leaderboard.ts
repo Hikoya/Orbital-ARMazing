@@ -154,7 +154,11 @@ export const updateUserPoints = async (
     const doesUser: Result = await doesUserExist(eventID, username);
     if (doesUser.status) {
       const doesUserMsg: Leaderboard = doesUser.msg[0];
-      const userPoints: number = doesUserMsg.points;
+      let userPoints: number = 0;
+      if (doesUserMsg.points !== undefined) {
+        userPoints = doesUserMsg.points;
+      }
+
       const userID = doesUserMsg.id;
       const finalPoints: number = Number(userPoints) + Number(points);
 

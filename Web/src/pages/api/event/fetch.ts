@@ -31,31 +31,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (eventData[ev]) {
               const event: Event = eventData[ev];
 
-              const start = formatDateToString(
-                convertUnixToDate(Number(event.startDate)),
+              const startD: Date | null = convertUnixToDate(
+                Number(event.startDate),
               );
-              const end = formatDateToString(
-                convertUnixToDate(Number(event.endDate)),
+              const endD: Date | null = convertUnixToDate(
+                Number(event.endDate),
               );
 
-              const isPublic = event.isPublic ? 'Yes' : 'No';
-              const visible = event.visible ? 'Yes' : 'No';
+              if (startD !== null && endD !== null) {
+                const end = formatDateToString(endD);
+                const start = formatDateToString(startD);
 
-              const data: Event = {
-                id: event.id,
-                name: event.name,
-                description: event.description,
-                startDate: event.startDate,
-                endDate: event.endDate,
-                startDateStr: start,
-                endDateStr: end,
-                isPublic: event.isPublic,
-                visible: event.visible,
-                isPublicText: isPublic,
-                visibleText: visible,
-              };
+                const isPublic = event.isPublic ? 'Yes' : 'No';
+                const visible = event.visible ? 'Yes' : 'No';
 
-              parsedEvent.push(data);
+                const data: Event = {
+                  id: event.id,
+                  name: event.name,
+                  description: event.description,
+                  startDate: event.startDate,
+                  endDate: event.endDate,
+                  startDateStr: start,
+                  endDateStr: end,
+                  isPublic: event.isPublic,
+                  visible: event.visible,
+                  isPublicText: isPublic,
+                  visibleText: visible,
+                };
+
+                parsedEvent.push(data);
+              }
             }
           }
         }

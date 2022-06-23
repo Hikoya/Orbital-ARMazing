@@ -17,7 +17,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { eventID } = req.body;
 
-  if (req.headers.authorization !== null || req.headers.authorization !== '') {
+  if (
+    req.headers.authorization !== null &&
+    req.headers.authorization !== '' &&
+    req.headers.authorization !== undefined
+  ) {
     const head: string = req.headers.authorization;
     const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
     if (head === secret) {
@@ -35,34 +39,38 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             if (questionData[q]) {
               const quiz: Quiz = questionData[q];
               const { assetID } = quiz;
-              const asset = await fetchAssetByID(assetID);
-              const assetMsg = asset.msg as Asset;
-              const assetName: string = assetMsg.name as string;
+              if (assetID !== undefined) {
+                const asset = await fetchAssetByID(assetID);
+                const assetMsg = asset.msg as Asset;
+                const assetName: string = assetMsg.name as string;
 
-              const questions: string[] = quiz.options.split(',');
-              const option1 = questions[0];
-              const option2 = questions[1];
-              const option3 = questions[2];
-              const option4 = questions[3];
+                if (quiz.options !== undefined) {
+                  const questions: string[] = quiz.options.split(',');
+                  const option1 = questions[0];
+                  const option2 = questions[1];
+                  const option3 = questions[2];
+                  const option4 = questions[3];
 
-              if (event.status) {
-                const data: Quiz = {
-                  id: quiz.id,
-                  eventName: eventName,
-                  asset: assetName,
-                  eventID: quiz.eventID,
-                  assetID: quiz.assetID,
-                  question: quiz.question,
-                  option1: option1,
-                  option2: option2,
-                  option3: option3,
-                  option4: option4,
-                  answer: quiz.answer,
-                  points: quiz.points,
-                  visible: quiz.visible,
-                };
+                  if (event.status) {
+                    const data: Quiz = {
+                      id: quiz.id,
+                      eventName: eventName,
+                      asset: assetName,
+                      eventID: quiz.eventID,
+                      assetID: quiz.assetID,
+                      question: quiz.question,
+                      option1: option1,
+                      option2: option2,
+                      option3: option3,
+                      option4: option4,
+                      answer: quiz.answer,
+                      points: quiz.points,
+                      visible: quiz.visible,
+                    };
 
-                parsedQuiz.push(data);
+                    parsedQuiz.push(data);
+                  }
+                }
               }
             }
           }

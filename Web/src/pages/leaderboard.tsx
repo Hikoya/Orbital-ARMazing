@@ -26,12 +26,12 @@ export default function LeaderboardComponent() {
 
   const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
-  const [eventDropdown, setEventDropdown] = useState([]);
+  const [eventDropdown, setEventDropdown] = useState<JSX.Element[]>([]);
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Leaderboard[]>([]);
 
   const [search, setSearch] = useState('');
-  const [filteredData, setFilteredData] = useState(null);
+  const [filteredData, setFilteredData] = useState<Leaderboard[] | null>(null);
 
   const includeActionButton = useCallback(async (content: Leaderboard[]) => {
     for (let key = 0; key < content.length; key += 1) {
@@ -80,7 +80,7 @@ export default function LeaderboardComponent() {
   };
 
   const eventDropDownMenu = useCallback(async (content: Event[]) => {
-    const selection = [];
+    const selection: JSX.Element[] = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
     for (let key = 0; key < content.length; key += 1) {
@@ -150,12 +150,16 @@ export default function LeaderboardComponent() {
     if (searchInput && searchInput !== '') {
       const filteredDataField = data.filter(
         (value) =>
-          value.eventName.toLowerCase().includes(searchInput.toLowerCase()) ||
+          (value.eventName !== undefined &&
+            value.eventName
+              .toLowerCase()
+              .includes(searchInput.toLowerCase())) ||
           value.username.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.points
-            .toString()
-            .toLowerCase()
-            .includes(searchInput.toLowerCase()),
+          (value.points !== undefined &&
+            value.points
+              .toString()
+              .toLowerCase()
+              .includes(searchInput.toLowerCase())),
       );
 
       setFilteredData(filteredDataField);

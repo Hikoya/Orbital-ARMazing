@@ -46,19 +46,19 @@ export default function QuizComponent(props: any) {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
-  const [errorMsg, setError] = useState(null);
-  const [errorMsgEdit, setErrorEdit] = useState(null);
+  const [errorMsg, setError] = useState('');
+  const [errorMsgEdit, setErrorEdit] = useState('');
 
   const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
-  const [eventDropdown, setEventDropdown] = useState([]);
+  const [eventDropdown, setEventDropdown] = useState<JSX.Element[]>([]);
 
   const [eventIDEdit, setEventIDEdit] = useState('');
   const eventIDDBEdit = useRef('');
 
   const [assetID, setAssetID] = useState('');
   const assetIDDB = useRef('');
-  const [assetDropdown, setAssetDropdown] = useState([]);
+  const [assetDropdown, setAssetDropdown] = useState<JSX.Element[]>([]);
 
   const [assetIDEdit, setAssetIDEdit] = useState('');
   const assetIDDBEdit = useRef('');
@@ -113,13 +113,13 @@ export default function QuizComponent(props: any) {
 
   const quizDBEdit = useRef('');
   const [quiz, setQuiz] = useState('');
-  const quizData = useRef([]);
-  const [quizDropdown, setQuizDropdown] = useState([]);
+  const quizData = useRef<Quiz[]>([]);
+  const [quizDropdown, setQuizDropdown] = useState<JSX.Element[]>([]);
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Quiz[]>([]);
 
   const [search, setSearch] = useState('');
-  const [filteredData, setFilteredData] = useState(null);
+  const [filteredData, setFilteredData] = useState<Quiz[] | null>(null);
 
   const [organizer, setOrganizer] = useState(false);
 
@@ -146,7 +146,7 @@ export default function QuizComponent(props: any) {
 
     setVisible(true);
 
-    setError(null);
+    setError('');
   };
 
   const resetEdit = async () => {
@@ -174,7 +174,7 @@ export default function QuizComponent(props: any) {
 
     setVisibleEdit(true);
 
-    setErrorEdit(null);
+    setErrorEdit('');
   };
 
   const validateFields = (
@@ -334,7 +334,7 @@ export default function QuizComponent(props: any) {
   };
 
   const includeActionButton = useCallback(async (content: Quiz[]) => {
-    const selectionEdit = [];
+    const selectionEdit: JSX.Element[] = [];
     selectionEdit.push(<option key='' value='' aria-label='Default' />);
     const allQuiz: Quiz[] = [];
 
@@ -507,30 +507,35 @@ export default function QuizComponent(props: any) {
   };
 
   const changeDataEdit = (dataField: Quiz) => {
-    setAssetIDEdit(dataField.assetID);
+    if (dataField.assetID !== undefined) {
+      setAssetIDEdit(dataField.assetID);
+      assetIDDBEdit.current = dataField.assetID;
+    }
+
     setAnswerEdit(dataField.answer);
     setEventIDEdit(dataField.eventID);
     setVisibleEdit(dataField.visible);
     setPointsEdit(dataField.points);
     setQuestionEdit(dataField.question);
 
-    assetIDDBEdit.current = dataField.assetID;
     answerDBEdit.current = dataField.answer;
     eventIDDBEdit.current = dataField.eventID;
     visibleDBEdit.current = dataField.visible;
     pointsDBEdit.current = dataField.points;
     questionDBEdit.current = dataField.question;
 
-    const [one, two, three, four] = dataField.options.split(',');
-    option1DBEdit.current = one;
-    option2DBEdit.current = two;
-    option3DBEdit.current = three;
-    option4DBEdit.current = four;
+    if (dataField.options !== undefined) {
+      const [one, two, three, four] = dataField.options.split(',');
+      option1DBEdit.current = one;
+      option2DBEdit.current = two;
+      option3DBEdit.current = three;
+      option4DBEdit.current = four;
 
-    setOption1Edit(one);
-    setOption2Edit(two);
-    setOption3Edit(three);
-    setOption4Edit(four);
+      setOption1Edit(one);
+      setOption2Edit(two);
+      setOption3Edit(three);
+      setOption4Edit(four);
+    }
   };
 
   const onQuizChange = async (event: { target: { value: string } }) => {
@@ -569,7 +574,7 @@ export default function QuizComponent(props: any) {
   };
 
   const eventDropDownMenu = useCallback(async (content: Event[]) => {
-    const selection = [];
+    const selection: JSX.Element[] = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
     for (let key = 0; key < content.length; key += 1) {
@@ -623,7 +628,7 @@ export default function QuizComponent(props: any) {
   };
 
   const assetDropDownMenu = useCallback(async (content: Asset[]) => {
-    const selection = [];
+    const selection: JSX.Element[] = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
     for (let key = 0; key < content.length; key += 1) {
@@ -720,10 +725,11 @@ export default function QuizComponent(props: any) {
     if (searchInput && searchInput !== '') {
       const filteredDataField = data.filter(
         (value) =>
-          value.event.toLowerCase().includes(searchInput.toLowerCase()) ||
+          (value.event !== undefined &&
+            value.event.toLowerCase().includes(searchInput.toLowerCase())) ||
           value.question.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.options.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.answer.toLowerCase().includes(searchInput.toLowerCase()) ||
+          (value.options !== undefined &&
+            value.options.toLowerCase().includes(searchInput.toLowerCase())) ||
           value.points
             .toString()
             .toLowerCase()
@@ -1133,10 +1139,10 @@ export default function QuizComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async () => ({
   props: (async function Props() {
     try {
-      const session: Session = await currentSession(context);
+      const session: Session | null = await currentSession();
       const stringifiedData = safeJsonStringify(session);
       const data: Session = JSON.parse(stringifiedData);
       return {
