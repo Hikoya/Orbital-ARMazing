@@ -124,7 +124,7 @@ export const fetchLeaderBoardByEventID = async (
         }
       }
       result = { status: true, error: null, msg: boardResult };
-    } else if (board && board.length === 0){
+    } else if (board && board.length === 0) {
       result = {
         status: true,
         error: null,
@@ -134,6 +134,42 @@ export const fetchLeaderBoardByEventID = async (
       result = {
         status: false,
         error: 'Failed to get leaderboard',
+        msg: [],
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: [] };
+  }
+
+  return result;
+};
+
+export const resetLeaderBoardByEventID = async (
+  eventID: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const board: Leaderboard[] = await prisma.leaderboard.updateMany({
+      where: {
+        eventID: eventID,
+      },
+      data: {
+        points: 0,
+      },
+    });
+
+    if (board) {
+      result = { status: true, error: null, msg: board };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to reset leaderboard',
         msg: [],
       };
     }

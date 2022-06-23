@@ -30,13 +30,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const end = convertDateToUnix(endDate);
 
         const data: Event = {
-          name: name,
-          description: description,
+          name: name.trim(),
+          description: description.trim(),
           startDate: start,
           endDate: end,
           isPublic: isPublic,
           visible: visible,
-          createdBy: session.user.email,
+          createdBy: session.user.email.trim(),
         };
 
         const event = await createEvent(data);

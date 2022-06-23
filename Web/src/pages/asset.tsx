@@ -744,7 +744,7 @@ export default function AssetComponent(props: any) {
           )}
 
           {!loadingData && data.length === 0 && (
-            <Box mt={30}>
+            <Box w='full' mt={30} overflow='auto'>
               <Stack justify='center' align='center'>
                 <Text>No assets found</Text>
               </Stack>
@@ -774,18 +774,18 @@ export default function AssetComponent(props: any) {
                   }
                 />
               </Box>
-              <Box>
-                <Map
-                  location={location}
-                  zoomLevel={15}
-                  apiKey={API_KEY || null}
-                  markers={markers}
-                  dataHandler={onLocationChange}
-                />
-              </Box>
-              <Text>Click on the Map to get coordinates {coordinate}</Text>
             </Stack>
           )}
+        </Box>
+        <Box bg='white' borderRadius='lg' p={3} color='gray.700' shadow='base'>
+          <Map
+            location={location}
+            zoomLevel={15}
+            apiKey={API_KEY || null}
+            markers={markers}
+            dataHandler={onLocationChange}
+          />
+          <Text>Click on the Map to get coordinates {coordinate}</Text>
         </Box>
 
         {organizer && !noEvent && (

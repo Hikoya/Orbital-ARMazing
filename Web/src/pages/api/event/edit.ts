@@ -32,14 +32,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const end = convertDateToUnix(endDate);
 
         const data: Event = {
-          id: id,
-          name: name,
-          description: description,
+          id: id.trim(),
+          name: name.trim(),
+          description: description.trim(),
           startDate: start,
           endDate: end,
           isPublic: isPublic,
           visible: visible,
-          createdBy: session.user.email,
+          createdBy: session.user.email.trim(),
         };
 
         const event: Result = await editEvent(data);

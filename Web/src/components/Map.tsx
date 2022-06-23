@@ -7,6 +7,16 @@ const containerStyle = {
   height: '60vh',
 };
 
+interface MarkerData {
+  id: string;
+  title: string;
+  msg: string;
+  pos: {
+    lat: number;
+    lng: number;
+  };
+}
+
 function MapComponent({ location, zoomLevel, apiKey, markers, dataHandler }) {
   const toast = useToast();
 
@@ -53,7 +63,7 @@ function MapComponent({ location, zoomLevel, apiKey, markers, dataHandler }) {
             }}
           >
             {markers &&
-              markers.map((mark) => (
+              markers.map((mark: MarkerData) => (
                 <LocationPin key={mark.id} data={mark} position={mark.pos} />
               ))}
           </GoogleMap>

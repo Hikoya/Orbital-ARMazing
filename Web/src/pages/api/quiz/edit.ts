@@ -49,14 +49,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const options = [option1, option2, option3, option4].toString();
         const data: Quiz = {
           id: quizID,
-          eventID: eventID,
-          assetID: assetID,
-          question: question,
-          options: options,
+          eventID: eventID.trim(),
+          assetID: assetID.trim(),
+          question: question.trim(),
+          options: options.trim(),
           answer: Number(answer),
           points: Number(points),
           visible: visible,
-          createdBy: session.user.email,
+          createdBy: session.user.email.trim(),
         };
 
         const qn = await editQuiz(data);
