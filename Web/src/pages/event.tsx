@@ -84,17 +84,17 @@ export default function EventComponent(props: any) {
   const publicDBEdit = useRef(true);
   const [isPublicEdit, setIsPublicEdit] = useState(true);
 
-  const [errorMsg, setError] = useState(null);
-  const [errorMsgEdit, setErrorEdit] = useState(null);
+  const [errorMsg, setError] = useState('');
+  const [errorMsgEdit, setErrorEdit] = useState('');
 
-  const eventData = useRef([]);
+  const eventData = useRef<Event[]>([]);
 
-  const [eventDropdown, setEventDropdown] = useState([]);
+  const [eventDropdown, setEventDropdown] = useState<JSX.Element[]>([]);
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Event[]>([]);
 
   const [search, setSearch] = useState('');
-  const [filteredData, setFilteredData] = useState(null);
+  const [filteredData, setFilteredData] = useState<Event[] | null>(null);
 
   const [organizer, setOrganizer] = useState(false);
 
@@ -112,7 +112,7 @@ export default function EventComponent(props: any) {
     setEndDate('');
     setVisible(true);
     setIsPublic(true);
-    setError(null);
+    setError('');
   };
 
   const resetEdit = async () => {
@@ -131,7 +131,7 @@ export default function EventComponent(props: any) {
     setEndDateEdit('');
     setVisibleEdit(true);
     setIsPublicEdit(true);
-    setErrorEdit(null);
+    setErrorEdit('');
   };
 
   const validateFields = (
@@ -232,7 +232,7 @@ export default function EventComponent(props: any) {
 
   const includeActionButton = useCallback(async (content: Event[]) => {
     const allEvent: Event[] = [];
-    const selectionEdit = [];
+    const selectionEdit: JSX.Element[] = [];
 
     selectionEdit.push(<option key='' value='' aria-label='Default' />);
 
@@ -392,15 +392,22 @@ export default function EventComponent(props: any) {
   const changeDataEdit = (dataField: Event) => {
     setNameEdit(dataField.name);
     setDescriptionEdit(dataField.description);
-    setStartDateEdit(dataField.startDateStr);
-    setEndDateEdit(dataField.endDateStr);
+
+    if (dataField.startDateStr !== undefined) {
+      setStartDateEdit(dataField.startDateStr);
+      startDateDBEdit.current = dataField.startDateStr;
+    }
+
+    if (dataField.endDateStr !== undefined) {
+      setEndDateEdit(dataField.endDateStr);
+      endDateDBEdit.current = dataField.endDateStr;
+    }
+
     setVisibleEdit(dataField.visible);
     setIsPublicEdit(dataField.isPublic);
 
     nameDBEdit.current = dataField.name;
     descriptionDBEdit.current = dataField.description;
-    startDateDBEdit.current = dataField.startDateStr;
-    endDateDBEdit.current = dataField.endDateStr;
     visibleDBEdit.current = dataField.visible;
     publicDBEdit.current = dataField.isPublic;
   };
@@ -484,8 +491,12 @@ export default function EventComponent(props: any) {
         (value) =>
           value.name.toLowerCase().includes(searchInput.toLowerCase()) ||
           value.description.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.startDate.toLowerCase().includes(searchInput.toLowerCase()) ||
-          value.endDate.toLowerCase().includes(searchInput.toLowerCase()),
+          (value.startDateStr !== undefined &&
+            value.startDateStr
+              .toLowerCase()
+              .includes(searchInput.toLowerCase())) ||
+          (value.endDateStr !== undefined &&
+            value.endDateStr.toLowerCase().includes(searchInput.toLowerCase())),
       );
 
       setFilteredData(filteredDataField);
@@ -637,7 +648,7 @@ export default function EventComponent(props: any) {
                       </Checkbox>
                     </Stack>
 
-                    {errorMsg && (
+                    {checkerString(errorMsg) && (
                       <Stack align='center'>
                         <Text>{errorMsg}</Text>
                       </Stack>
@@ -764,7 +775,7 @@ export default function EventComponent(props: any) {
                       </Checkbox>
                     </Stack>
 
-                    {errorMsgEdit && (
+                    {checkerString(errorMsgEdit) && (
                       <Stack align='center'>
                         <Text>{errorMsgEdit}</Text>
                       </Stack>
@@ -793,10 +804,10 @@ export default function EventComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async () => ({
   props: (async function Props() {
     try {
-      const session: Session = await currentSession(context);
+      const session: Session | null = await currentSession();
       const stringifiedData = safeJsonStringify(session);
       const data: Session = JSON.parse(stringifiedData);
       return {

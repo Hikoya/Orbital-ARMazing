@@ -1,7 +1,14 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
-module.exports = {
+const nextJest = require('next/jest');
+const createJestConfig = nextJest({
+  dir: './',
+});
+const customJestConfig = {
+  clearMocks: true,
+  moduleDirectories: ['node_modules', '<rootDir>/'],
+  testEnvironment: 'jest-environment-jsdom',
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  verbose: true,
   moduleNameMapper: {
     '^@root/(.*)$': '<rootDir>/$1',
     '^@components/(.*)$': '<rootDir>/src/components/$1',
@@ -12,6 +19,7 @@ module.exports = {
     '^@public/(.*)$': '<rootDir>/public/$1',
     '^@pages/(.*)$': '<rootDir>/src/pages/$1',
     '^types/(.*)$': '<rootDir>/src/types/$1',
+    '^@tests/(.*)$': '<rootDir>/_tests_/$1',
   },
-  verbose: true,
 };
+module.exports = createJestConfig(customJestConfig);

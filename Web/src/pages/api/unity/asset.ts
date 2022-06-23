@@ -11,13 +11,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     msg: '',
   };
 
-  if (req.headers.authorization !== null || req.headers.authorization !== '') {
+  if (
+    req.headers.authorization !== null &&
+    req.headers.authorization !== '' &&
+    req.headers.authorization !== undefined
+  ) {
     const head: string = req.headers.authorization;
     const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
     if (head === secret) {
       const assets = await fetchAllAsset();
       const parsedAsset: Asset[] = [];
-      const url: string = process.env.NEXTAUTH_URL;
+
+      let url: string = 'kevii.azurewebsites.net';
+      if (process.env.NEXTAUTH_URL !== undefined) {
+        url = process.env.NEXTAUTH_URL;
+      }
 
       if (assets && assets.status) {
         const assetData: Asset[] = assets.msg;

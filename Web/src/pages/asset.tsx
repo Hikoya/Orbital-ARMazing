@@ -50,13 +50,23 @@ import { levels } from '@constants/admin';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+interface MarkerData {
+  id: string;
+  title: string;
+  msg: string;
+  pos: {
+    lat: number;
+    lng: number;
+  };
+}
+
 export default function AssetComponent(props: any) {
   const router = useRouter();
 
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
 
-  const assetData = useRef([]);
+  const assetData = useRef<Asset[]>([]);
 
   const assetDBEdit = useRef('');
   const [asset, setAsset] = useState('');
@@ -85,13 +95,13 @@ export default function AssetComponent(props: any) {
   const [eventIDEdit, setEventIDEdit] = useState('');
   const eventIDDBEdit = useRef('');
 
-  const selectedFileDB = useRef(null);
-  const [fileName, setFileName] = useState(null);
+  const selectedFileDB = useRef<string | Blob | null>(null);
+  const [fileName, setFileName] = useState('');
 
-  const selectedFileDBEdit = useRef(null);
-  const [fileNameEdit, setFileNameEdit] = useState(null);
+  const selectedFileDBEdit = useRef<string | Blob | null>(null);
+  const [fileNameEdit, setFileNameEdit] = useState('');
 
-  const [eventDropdown, setEventDropdown] = useState([]);
+  const [eventDropdown, setEventDropdown] = useState<JSX.Element[]>([]);
 
   const latitudeDB = useRef('');
   const [latitude, setLatitude] = useState('');
@@ -105,18 +115,18 @@ export default function AssetComponent(props: any) {
   const longitudeDBEdit = useRef('');
   const [longitudeEdit, setLongitudeEdit] = useState('');
 
-  const [errorMsg, setError] = useState(null);
-  const [errorMsgEdit, setErrorEdit] = useState(null);
+  const [errorMsg, setError] = useState('');
+  const [errorMsgEdit, setErrorEdit] = useState('');
 
-  const [assetDropdown, setAssetDropdown] = useState([]);
+  const [assetDropdown, setAssetDropdown] = useState<JSX.Element[]>([]);
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<Asset[]>([]);
 
   const [search, setSearch] = useState('');
-  const [filteredData, setFilteredData] = useState(null);
+  const [filteredData, setFilteredData] = useState<Asset[] | null>(null);
 
   const [API_KEY, setAPIKEY] = useState('');
-  const [markers, setMarkers] = useState(null);
+  const [markers, setMarkers] = useState<MarkerData[] | null>(null);
   const location = {
     lat: 1.2925423384337875,
     lng: 103.78102165309795,
@@ -141,11 +151,11 @@ export default function AssetComponent(props: any) {
 
     setName('');
     setDescription('');
-    setFileName(null);
+    setFileName('');
     setLatitude('');
     setLongitude('');
     setVisible(true);
-    setError(null);
+    setError('');
   };
 
   const resetEdit = async () => {
@@ -161,11 +171,11 @@ export default function AssetComponent(props: any) {
     setAsset('');
     setNameEdit('');
     setDescriptionEdit('');
-    setFileNameEdit(null);
+    setFileNameEdit('');
     setLatitudeEdit('');
     setLongitudeEdit('');
     setVisibleEdit(true);
-    setErrorEdit(null);
+    setErrorEdit('');
   };
 
   const validateFields = (
@@ -264,15 +274,17 @@ export default function AssetComponent(props: any) {
 
   const generateActionButton = useCallback(
     async (content: Asset) => {
-      let button = null;
-
-      button = (
+      const button: JSX.Element = (
         <Button
           size='sm'
           leftIcon={<InfoOutlineIcon />}
           onClick={(event) => {
             event.preventDefault();
-            if (router.isReady && checkerString(content.imagePath)) {
+            if (
+              router.isReady &&
+              content.imagePath !== undefined &&
+              checkerString(content.imagePath)
+            ) {
               router.push(content.imagePath);
             }
           }}
@@ -288,12 +300,12 @@ export default function AssetComponent(props: any) {
 
   const includeActionButton = useCallback(
     async (content: Asset[]) => {
-      const selectionEdit = [];
+      const selectionEdit: JSX.Element[] = [];
       selectionEdit.push(<option key='' value='' aria-label='Default' />);
 
       const allAssets: Asset[] = [];
 
-      const marker = [];
+      const marker: MarkerData[] = [];
 
       for (let key = 0; key < content.length; key += 1) {
         if (content[key]) {
@@ -308,17 +320,19 @@ export default function AssetComponent(props: any) {
           const buttons = await generateActionButton(dataField);
           dataField.action = buttons;
 
-          const dataSet = {
-            id: dataField.id,
-            title: dataField.name,
-            msg: dataField.description,
-            pos: {
-              lat: Number(dataField.latitude),
-              lng: Number(dataField.longitude),
-            },
-          };
+          if (dataField.id !== undefined) {
+            const dataSet: MarkerData = {
+              id: dataField.id,
+              title: dataField.name,
+              msg: dataField.description,
+              pos: {
+                lat: Number(dataField.latitude),
+                lng: Number(dataField.longitude),
+              },
+            };
 
-          marker.push(dataSet);
+            marker.push(dataSet);
+          }
         }
       }
 
@@ -365,38 +379,42 @@ export default function AssetComponent(props: any) {
       )
     ) {
       try {
-        const dataField = new FormData();
-        dataField.append('eventID', eventIDDB.current);
-        dataField.append('name', nameDB.current);
-        dataField.append('description', descriptionDB.current);
-        dataField.append('visible', visibleDB.current.toString());
-        dataField.append('image', selectedFileDB.current);
-        dataField.append('latitude', latitudeDB.current);
-        dataField.append('longitude', longitudeDB.current);
+        if (selectedFileDB.current !== null) {
+          const dataField = new FormData();
+          dataField.append('eventID', eventIDDB.current);
+          dataField.append('name', nameDB.current);
+          dataField.append('description', descriptionDB.current);
+          dataField.append('visible', visibleDB.current.toString());
+          dataField.append('image', selectedFileDB.current);
+          dataField.append('latitude', latitudeDB.current);
+          dataField.append('longitude', longitudeDB.current);
 
-        const rawResponse = await fetch('/api/asset/create', {
-          method: 'POST',
-          body: dataField,
-        });
-        const content = await rawResponse.json();
-        if (content.status) {
-          await resetEdit();
-          toast({
-            title: 'Success',
-            description: content.msg,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
+          const rawResponse = await fetch('/api/asset/create', {
+            method: 'POST',
+            body: dataField,
           });
-          await fetchAssetData();
+          const content = await rawResponse.json();
+          if (content.status) {
+            await resetEdit();
+            toast({
+              title: 'Success',
+              description: content.msg,
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+            await fetchAssetData();
+          } else {
+            toast({
+              title: 'Error',
+              description: content.error,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
         } else {
-          toast({
-            title: 'Error',
-            description: content.error,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
+          setError('Please include an image');
         }
 
         return true;
@@ -420,41 +438,44 @@ export default function AssetComponent(props: any) {
       )
     ) {
       try {
-        const dataField = new FormData();
-        dataField.append('id', assetDBEdit.current);
-        dataField.append('eventID', eventIDDBEdit.current);
-        dataField.append('name', nameDBEdit.current);
-        dataField.append('description', descriptionDBEdit.current);
-        dataField.append('visible', visibleDBEdit.current.toString());
-        dataField.append('image', selectedFileDBEdit.current);
-        dataField.append('latitude', latitudeDBEdit.current);
-        dataField.append('longitude', longitudeDBEdit.current);
+        if (selectedFileDBEdit.current !== null) {
+          const dataField = new FormData();
+          dataField.append('id', assetDBEdit.current);
+          dataField.append('eventID', eventIDDBEdit.current);
+          dataField.append('name', nameDBEdit.current);
+          dataField.append('description', descriptionDBEdit.current);
+          dataField.append('visible', visibleDBEdit.current.toString());
+          dataField.append('image', selectedFileDBEdit.current);
+          dataField.append('latitude', latitudeDBEdit.current);
+          dataField.append('longitude', longitudeDBEdit.current);
 
-        const rawResponse = await fetch('/api/asset/edit', {
-          method: 'POST',
-          body: dataField,
-        });
-        const content = await rawResponse.json();
-        if (content.status) {
-          await reset();
-          toast({
-            title: 'Success',
-            description: content.msg,
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
+          const rawResponse = await fetch('/api/asset/edit', {
+            method: 'POST',
+            body: dataField,
           });
-          await fetchAssetData();
+          const content = await rawResponse.json();
+          if (content.status) {
+            await reset();
+            toast({
+              title: 'Success',
+              description: content.msg,
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+            await fetchAssetData();
+          } else {
+            toast({
+              title: 'Error',
+              description: content.error,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
         } else {
-          toast({
-            title: 'Error',
-            description: content.error,
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          });
+          setErrorEdit('Please upload an image');
         }
-
         return true;
       } catch (error) {
         return false;
@@ -479,16 +500,24 @@ export default function AssetComponent(props: any) {
     longitudeDBEdit.current = dataField.longitude;
   };
 
-  const onFileChange = async (event: { target: { files: FileList } }) => {
-    const file = event.target.files[0];
-    selectedFileDB.current = file;
-    setFileName(file.name);
+  const onFileChange = async (event: {
+    target: { files: FileList | null };
+  }) => {
+    if (event.target.files !== null) {
+      const file = event.target.files[0];
+      selectedFileDB.current = file;
+      setFileName(file.name);
+    }
   };
 
-  const onFileChangeEdit = async (event: { target: { files: FileList } }) => {
-    const file = event.target.files[0];
-    selectedFileDBEdit.current = file;
-    setFileNameEdit(file.name);
+  const onFileChangeEdit = async (event: {
+    target: { files: FileList | null };
+  }) => {
+    if (event.target.files !== null) {
+      const file = event.target.files[0];
+      selectedFileDBEdit.current = file;
+      setFileNameEdit(file.name);
+    }
   };
 
   const onEventChange = async (event: { target: { value: any } }) => {
@@ -527,7 +556,7 @@ export default function AssetComponent(props: any) {
   };
 
   const eventDropDownMenu = async (content: Event[]) => {
-    const selection = [];
+    const selection: JSX.Element[] = [];
     selection.push(<option key='' value='' aria-label='default' />);
 
     for (let key = 0; key < content.length; key += 1) {
@@ -1090,10 +1119,10 @@ export default function AssetComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async () => ({
   props: (async function Props() {
     try {
-      const session: Session = await currentSession(context);
+      const session: Session | null = await currentSession();
       const stringifiedData = safeJsonStringify(session);
       const data: Session = JSON.parse(stringifiedData);
       return {

@@ -39,7 +39,7 @@ export const convertDateToUnix = (date: string): number => {
   }
 };
 
-export const convertUnixToDate = (date: number): Date => {
+export const convertUnixToDate = (date: number): Date | null => {
   if (date < 0) {
     return null;
   }

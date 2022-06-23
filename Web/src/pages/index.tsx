@@ -26,7 +26,7 @@ export default function Home() {
   const [user, setUser] = useState(0);
   const [asset, setAsset] = useState(0);
 
-  const [data, setData] = useState(null);
+  const [data, setData] = useState(false);
 
   const generateStatistic = useCallback(async (content: Statistic) => {
     if (content) {
@@ -44,7 +44,7 @@ export default function Home() {
         setAsset(content.asset);
       }
     } else {
-      setData(null);
+      setData(false);
     }
   }, []);
 
