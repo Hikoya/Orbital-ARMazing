@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         result = {
           status: false,
           error: stat.error,
-          msg: '',
+          msg: { event: 0, asset: 0, user: 0 },
         };
         res.status(200).send(result);
         res.end();
@@ -41,13 +41,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       result = {
         status: false,
         error: 'Unauthorized',
-        msg: '',
+        msg: { event: 0, asset: 0, user: 0 },
       };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthenticated', msg: '' };
+    result = {
+      status: false,
+      error: 'Unauthenticated',
+      msg: { event: 0, asset: 0, user: 0 },
+    };
     res.status(200).send(result);
     res.end();
   }

@@ -32,6 +32,7 @@ export default function LeaderboardComponent() {
 
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState<Leaderboard[] | null>(null);
+  const [noEvent, setNoEvent] = useState(false);
 
   const includeActionButton = useCallback(async (content: Leaderboard[]) => {
     for (let key = 0; key < content.length; key += 1) {
@@ -80,22 +81,27 @@ export default function LeaderboardComponent() {
   };
 
   const eventDropDownMenu = useCallback(async (content: Event[]) => {
-    const selection: JSX.Element[] = [];
-    selection.push(<option key='' value='' aria-label='default' />);
+    if (content.length > 0) {
+      setNoEvent(false);
+      const selection: JSX.Element[] = [];
+      selection.push(<option key='' value='' aria-label='default' />);
 
-    for (let key = 0; key < content.length; key += 1) {
-      if (content[key]) {
-        const dataField = content[key];
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField = content[key];
 
-        selection.push(
-          <option key={dataField.id} value={dataField.id}>
-            {dataField.name}
-          </option>,
-        );
+          selection.push(
+            <option key={dataField.id} value={dataField.id}>
+              {dataField.name}
+            </option>,
+          );
+        }
       }
-    }
 
-    setEventDropdown(selection);
+      setEventDropdown(selection);
+    } else {
+      setNoEvent(true);
+    }
   }, []);
 
   const fetchEventData = useCallback(async () => {
@@ -109,6 +115,8 @@ export default function LeaderboardComponent() {
       const content: Result = await rawResponse.json();
       if (content.status) {
         await eventDropDownMenu(content.msg as Event[]);
+      } else {
+        setNoEvent(true);
       }
 
       return true;
@@ -172,12 +180,20 @@ export default function LeaderboardComponent() {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          <Stack spacing={5} w='full'>
-            <Text>Select Event</Text>
-            <Select onChange={onEventChange} size='sm' value={eventID}>
-              {eventDropdown}
-            </Select>
-          </Stack>
+          {noEvent && (
+            <Stack justify='center' align='center'>
+              <Text>Please create an Event first.</Text>
+            </Stack>
+          )}
+
+          {!noEvent && (
+            <Stack spacing={5} w='full'>
+              <Text>Select Event</Text>
+              <Select onChange={onEventChange} size='sm' value={eventID}>
+                {eventDropdown}
+              </Select>
+            </Stack>
+          )}
 
           {loadingData && !data && (
             <Box mt={30}>
@@ -187,7 +203,7 @@ export default function LeaderboardComponent() {
             </Box>
           )}
 
-          {!loadingData && !checkerString(eventID) && (
+          {!loadingData && !noEvent && !checkerString(eventID) && (
             <Box mt={30}>
               <Stack align='center' justify='center'>
                 <Text>Select an event</Text>
@@ -195,15 +211,18 @@ export default function LeaderboardComponent() {
             </Box>
           )}
 
-          {!loadingData && checkerString(eventID) && data.length === 0 && (
-            <Box mt={30}>
-              <Stack align='center' justify='center'>
-                <Text>No leaderboard found</Text>
-              </Stack>
-            </Box>
+          {!loadingData &&
+            !noEvent &&
+            checkerString(eventID) &&
+            data.length === 0 && (
+              <Box mt={30}>
+                <Stack align='center' justify='center'>
+                  <Text>No leaderboard found</Text>
+                </Stack>
+              </Box>
           )}
 
-          {!loadingData && data.length > 0 && (
+          {!loadingData && !noEvent && data.length > 0 && (
             <Box w='full' mt={30} overflow='auto'>
               <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>

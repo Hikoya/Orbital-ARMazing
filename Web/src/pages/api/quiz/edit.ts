@@ -100,6 +100,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.status(200).send(result);
       res.end();
     }
+  } else {
+    result = {
+      status: false,
+      error: 'Unauthorized access',
+      msg: null,
+    };
+
+    res.status(200).send(result);
+    res.end();
   }
 };
 

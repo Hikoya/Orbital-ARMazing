@@ -71,7 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         result = {
           status: false,
           error: 'Cannot get all events',
-          msg: '',
+          msg: [],
         };
         res.status(200).send(result);
         res.end();
@@ -80,7 +80,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       result = {
         status: false,
         error: 'Unauthorized',
-        msg: '',
+        msg: [],
       };
       res.status(200).send(result);
       res.end();
@@ -89,7 +89,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     result = {
       status: false,
       error: 'Unauthorized',
-      msg: '',
+      msg: [],
     };
     res.status(200).send(result);
     res.end();

@@ -62,18 +62,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         result = {
           status: false,
           error: 'Cannot get all events',
-          msg: '',
+          msg: [],
         };
         res.status(200).send(result);
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized', msg: '' };
+      result = { status: false, error: 'Unauthorized', msg: [] };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthorized', msg: '' };
+    result = { status: false, error: 'Unauthorized', msg: [] };
     res.status(200).send(result);
     res.end();
   }

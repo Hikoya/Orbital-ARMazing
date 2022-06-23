@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { Box, CloseButton, Flex, Text } from '@chakra-ui/react';
 import {
   FiHome,
@@ -8,11 +9,8 @@ import {
   FiPaperclip,
   FiAward,
 } from 'react-icons/fi';
-import NavLink from '@components/NavLink';
-import Link from 'next/link';
-import { currentSession } from '@helper/session';
 
-let LinkItems = [{ label: 'Home', icon: FiHome, href: '/' }];
+import NavLink from '@components/NavLink';
 
 const adminMenu = [
   { label: 'Home', icon: FiHome, href: '/' },
@@ -22,29 +20,30 @@ const adminMenu = [
   { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
 ];
 
-const userMenu = [{ label: 'Home', icon: FiHome, href: '/' }];
+const userMenu = [
+  { label: 'Home', icon: FiHome, href: '/' },
+  { label: 'Manage Events', icon: FiSettings, href: '/event' },
+  { label: 'Manage Assets', icon: FiStar, href: '/asset' },
+  { label: 'Manage Quiz', icon: FiPaperclip, href: '/quiz' },
+  { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
+];
 
-export default function Sidebar({ onClose, ...rest }) {
+export default function Sidebar({ session, onClose, ...rest }) {
   const router = useRouter();
+  const [menu, setMenu] = useState(userMenu);
 
   useEffect(() => {
-    async function fetchData() {
-      const session = await currentSession();
-      if (session) {
-        if (session.user.admin) {
-          LinkItems = adminMenu;
-        } else {
-          LinkItems = userMenu;
-        }
+    if (session) {
+      if (session.user.admin) {
+        setMenu(adminMenu);
       }
     }
-    fetchData();
 
     router.events.on('routeChangeComplete', onClose);
     return () => {
       router.events.off('routeChangeComplete', onClose);
     };
-  }, [router.events, onClose]);
+  }, [router.events, onClose, session]);
 
   return (
     <Box
@@ -58,14 +57,14 @@ export default function Sidebar({ onClose, ...rest }) {
       {...rest}
     >
       <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-        <Link href='/'>
+        <Link href='/sys'>
           <Text fontSize='2xl' fontFamily='monospace' fontWeight='bold'>
             ARMazing
           </Text>
         </Link>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems && LinkItems.map((link, i) => <NavLink key={i} link={link} />)}
+      {menu && menu.map((link, i) => <NavLink key={i} link={link} />)}
     </Box>
   );
 }

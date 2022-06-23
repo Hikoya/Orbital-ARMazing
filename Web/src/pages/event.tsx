@@ -96,7 +96,7 @@ export default function EventComponent(props: any) {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState<Event[] | null>(null);
 
-  const [organizer, setOrganizer] = useState(false);
+  const [organizer, setOrganizer] = useState(true);
 
   const reset = async () => {
     nameDB.current = '';
@@ -263,12 +263,13 @@ export default function EventComponent(props: any) {
           'Content-Type': 'application/json',
         },
       });
+
       const content: Result = await rawResponse.json();
       if (content.status) {
         await includeActionButton(content.msg as Event[]);
-        setLoading(false);
       }
 
+      setLoading(false);
       return true;
     } catch (error) {
       return false;
@@ -469,11 +470,12 @@ export default function EventComponent(props: any) {
       if (propRes.sess) {
         const user: Session = propRes.sess;
         const { level } = user.user;
+
         if (checkerNumber(level)) {
-          if (level === levels.FACILITATOR) {
-            setOrganizer(false);
-          } else if (level === levels.ORGANIZER) {
+          if (level === levels.ORGANIZER) {
             setOrganizer(true);
+          } else {
+            setOrganizer(false);
           }
         }
       }
@@ -509,7 +511,7 @@ export default function EventComponent(props: any) {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data && (
+          {loadingData && (data === null || data === []) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
                 <Text>Loading Please wait...</Text>
@@ -525,7 +527,7 @@ export default function EventComponent(props: any) {
             </Box>
           )}
 
-          {!loadingData && data.length > 0 && (
+          {!loadingData && data !== [] && data.length > 0 && (
             <Box w='full' mt={30} overflow='auto'>
               <Stack align='center' justify='center' spacing={30} mb={10}>
                 <InputGroup>
@@ -540,7 +542,7 @@ export default function EventComponent(props: any) {
               </Stack>
 
               <TableWidget
-                key={1}
+                key='table'
                 columns={columns}
                 data={filteredData && filteredData.length ? filteredData : data}
               />
@@ -557,7 +559,7 @@ export default function EventComponent(props: any) {
             initial='initial'
             animate='animate'
           >
-            <MotionBox>
+            <MotionBox key={1}>
               <Stack
                 spacing={4}
                 w='full'
@@ -671,7 +673,7 @@ export default function EventComponent(props: any) {
               </Stack>
             </MotionBox>
 
-            <MotionBox>
+            <MotionBox key={2}>
               <Stack
                 spacing={4}
                 w='full'
@@ -804,14 +806,19 @@ export default function EventComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => ({
+export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession();
-      const stringifiedData = safeJsonStringify(session);
-      const data: Session = JSON.parse(stringifiedData);
+      const session: Session | null = await currentSession(context);
+      if (session !== null) {
+        const stringifiedData = safeJsonStringify(session);
+        const data: Session = JSON.parse(stringifiedData);
+        return {
+          sess: data,
+        };
+      }
       return {
-        sess: data,
+        sess: null,
       };
     } catch (error) {
       console.error(error);

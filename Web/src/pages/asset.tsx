@@ -133,7 +133,9 @@ export default function AssetComponent(props: any) {
   };
   const [coordinate, setCoordinate] = useState('');
 
-  const [organizer, setOrganizer] = useState(false);
+  const [organizer, setOrganizer] = useState(true);
+
+  const [noEvent, setNoEvent] = useState(false);
 
   const onLocationChange = (locationC: { lat: number; lng: number }) => {
     const text = `Latitude: ${locationC.lat} , Longitude: ${locationC.lng}`;
@@ -357,9 +359,9 @@ export default function AssetComponent(props: any) {
       const content: Result = await rawResponse.json();
       if (content.status) {
         await includeActionButton(content.msg as Asset[]);
-        setLoading(false);
       }
 
+      setLoading(false);
       return true;
     } catch (error) {
       return false;
@@ -556,22 +558,27 @@ export default function AssetComponent(props: any) {
   };
 
   const eventDropDownMenu = async (content: Event[]) => {
-    const selection: JSX.Element[] = [];
-    selection.push(<option key='' value='' aria-label='default' />);
+    if (content.length > 0) {
+      setNoEvent(false);
+      const selection: JSX.Element[] = [];
+      selection.push(<option key='' value='' aria-label='default' />);
 
-    for (let key = 0; key < content.length; key += 1) {
-      if (content[key]) {
-        const dataField = content[key];
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField = content[key];
 
-        selection.push(
-          <option key={dataField.id} value={dataField.id}>
-            {dataField.name}
-          </option>,
-        );
+          selection.push(
+            <option key={dataField.id} value={dataField.id}>
+              {dataField.name}
+            </option>,
+          );
+        }
       }
-    }
 
-    setEventDropdown(selection);
+      setEventDropdown(selection);
+    } else {
+      setNoEvent(true);
+    }
   };
 
   const fetchData = useCallback(async () => {
@@ -585,6 +592,8 @@ export default function AssetComponent(props: any) {
       const content: Result = await rawResponse.json();
       if (content.status) {
         await eventDropDownMenu(content.msg as Event[]);
+      } else {
+        setNoEvent(true);
       }
 
       return true;
@@ -606,11 +615,12 @@ export default function AssetComponent(props: any) {
       if (propRes.sess) {
         const user: Session = propRes.sess;
         const { level } = user.user;
+
         if (checkerNumber(level)) {
-          if (level === levels.FACILITATOR) {
-            setOrganizer(false);
-          } else if (level === levels.ORGANIZER) {
+          if (level === levels.ORGANIZER) {
             setOrganizer(true);
+          } else {
+            setOrganizer(false);
           }
         }
       }
@@ -682,7 +692,7 @@ export default function AssetComponent(props: any) {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data && (
+          {loadingData && (data === null || data.length === 0) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
                 <Text>Loading Please wait...</Text>
@@ -735,7 +745,7 @@ export default function AssetComponent(props: any) {
           )}
         </Box>
 
-        {organizer && (
+        {organizer && !noEvent && (
           <MotionSimpleGrid
             mt='3'
             minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
@@ -744,7 +754,7 @@ export default function AssetComponent(props: any) {
             initial='initial'
             animate='animate'
           >
-            <MotionBox>
+            <MotionBox key={1}>
               <Stack
                 spacing={4}
                 w='full'
@@ -923,7 +933,7 @@ export default function AssetComponent(props: any) {
                 </form>
               </Stack>
             </MotionBox>
-            <MotionBox>
+            <MotionBox key={2}>
               <Stack
                 spacing={4}
                 w='full'
@@ -1114,20 +1124,41 @@ export default function AssetComponent(props: any) {
             </MotionBox>
           </MotionSimpleGrid>
         )}
+
+        {organizer && noEvent && (
+          <Box
+            bg='white'
+            borderRadius='lg'
+            p={8}
+            color='gray.700'
+            shadow='base'
+            mt={30}
+          >
+            <Stack justify='center' align='center'>
+              <Text>Please create an Event first.</Text>
+            </Stack>
+          </Box>
+        )}
       </Box>
     </Auth>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => ({
+export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession();
-      const stringifiedData = safeJsonStringify(session);
-      const data: Session = JSON.parse(stringifiedData);
+      const session: Session | null = await currentSession(context);
+      if (session !== null) {
+        const stringifiedData = safeJsonStringify(session);
+        const data: Session = JSON.parse(stringifiedData);
+        return {
+          API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+          sess: data,
+        };
+      }
       return {
         API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
-        sess: data,
+        sess: null,
       };
     } catch (error) {
       console.error(error);

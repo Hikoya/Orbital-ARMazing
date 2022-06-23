@@ -12,7 +12,8 @@
     "postinstall": "prisma generate",
     "code": "npm run prettier && npm run lint -- --fix",
     "lazy": "npm run code && npm run test && npm run build",
-    "test": "jest"
+    "full": "npm run lazy && npm run start",
+    "test": "jest -i"
   },
   "engines": {
     "node": "16.15.1"
