@@ -390,6 +390,50 @@ export default function EventComponent(props: any) {
     return false;
   };
 
+  const handleDelete = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (checkerString(eventIDDBEdit.current)) {
+      try {
+        const rawResponse = await fetch('/api/event/delete', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: eventIDDBEdit.current,
+          }),
+        });
+        const content: Result = await rawResponse.json();
+        if (content.status) {
+          await resetEdit();
+          toast({
+            title: 'Success',
+            description: content.msg as string,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          await fetchData();
+        } else {
+          toast({
+            title: 'Error',
+            description: content.error,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+      } catch (error) {
+        return false;
+      }
+
+      return true;
+    }
+
+    return false;
+  };
+
   const changeDataEdit = (dataField: Event) => {
     setNameEdit(dataField.name);
     setDescriptionEdit(dataField.description);
@@ -783,7 +827,7 @@ export default function EventComponent(props: any) {
                       </Stack>
                     )}
 
-                    <Stack spacing={10}>
+                    <Stack spacing={5}>
                       <Button
                         type='submit'
                         bg='blue.400'
@@ -793,6 +837,16 @@ export default function EventComponent(props: any) {
                         }}
                       >
                         Update
+                      </Button>
+                      <Button
+                        bg='red.400'
+                        color='white'
+                        _hover={{
+                          bg: 'red.500',
+                        }}
+                        onClick={handleDelete}
+                      >
+                        Delete
                       </Button>
                     </Stack>
                   </Stack>

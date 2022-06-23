@@ -61,8 +61,7 @@ export default function LeaderboardComponent() {
         if (content.status) {
           await includeActionButton(content.msg as Leaderboard[]);
           setLoading(false);
-        }
-
+        } 
         return true;
       } catch (error) {
         return false;

@@ -7,7 +7,10 @@ import { EventPermission } from 'types/eventPermission';
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
 import { fetchAllEventWPermission } from '@helper/permission';
-import { filterDuplicates } from './common';
+import { filterDuplicates } from '@helper/common';
+import { deleteAsset, fetchAllAssetByEventID } from '@helper/asset';
+import { Asset } from 'types/asset';
+import { deleteLeaderBoardByEventID } from './leaderboard';
 
 export const createEvent = async (data: Event): Promise<Result> => {
   let result: Result = {
@@ -32,7 +35,7 @@ export const createEvent = async (data: Event): Promise<Result> => {
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -64,7 +67,60 @@ export const editEvent = async (data: Event): Promise<Result> => {
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
+export const deleteEvent = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  const assetRes: Result = await fetchAllAssetByEventID(id);
+  if (assetRes.status) {
+    const assets: Asset[] = assetRes.msg;
+    if (assets.length > 0) {
+      for (let key = 0; key < assets.length; key += 1) {
+        if (assets[key]) {
+          const asset: Asset = assets[key];
+          if (asset.id !== undefined) {
+            await deleteAsset(asset.id);
+          }
+        }
+      }
+    }
+  } else {
+    console.log(assetRes.error);
+  }
+
+  const leaderBoardRes: Result = await deleteLeaderBoardByEventID(id);
+  if (!leaderBoardRes.status) {
+    console.log(leaderBoardRes.error);
+  }
+
+  try {
+    const event: Event = await prisma.event.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (event) {
+      result = { status: true, error: null, msg: event };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to delete event in database',
+        msg: '',
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -129,7 +185,7 @@ export const fetchAllEventByUser = async (
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = { status: false, error: error.toString(), msg: null };
     }
   }
 
@@ -149,7 +205,7 @@ export const fetchAllEvent = async (): Promise<Result> => {
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -172,7 +228,7 @@ export const fetchEventByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -199,6 +255,25 @@ export const isEventAuthorized = async (
         }
       }
     }
+  }
+
+  return false;
+};
+
+export const isCreatorOfEvent = async (
+  id: string,
+  session: Session,
+): Promise<boolean> => {
+  const eventRes: Result = await fetchEventByID(id);
+
+  if (
+    eventRes.status &&
+    eventRes.msg !== null &&
+    session !== undefined &&
+    session !== null
+  ) {
+    const event: Event = eventRes.msg;
+    return event.createdBy === session.user.email;
   }
 
   return false;

@@ -1,18 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { Event } from 'types/event';
 
 import { currentSession } from '@helper/session';
-import { convertDateToUnix } from '@constants/date';
-import { editEvent } from '@helper/event';
+import { deleteAsset, isCreatorOfAsset } from '@helper/asset';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  const { id, name, description, startDate, endDate, isPublic, visible } =
-    req.body;
+  const { id } = req.body;
   let result: Result = {
     status: false,
     error: '',
@@ -21,43 +18,35 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
-      if (
-        checkerString(id) &&
-        checkerString(name) &&
-        checkerString(description) &&
-        checkerString(startDate) &&
-        checkerString(endDate)
-      ) {
-        const start = convertDateToUnix(startDate);
-        const end = convertDateToUnix(endDate);
+      if (checkerString(id)) {
+        const isCreator: boolean = await isCreatorOfAsset(id, session);
+        if (isCreator) {
+          const asset: Result = await deleteAsset(id);
+          if (asset.status) {
+            result = {
+              status: true,
+              error: null,
+              msg: 'Event deleted',
+            };
 
-        const data: Event = {
-          id: id,
-          name: name,
-          description: description,
-          startDate: start,
-          endDate: end,
-          isPublic: isPublic,
-          visible: visible,
-          createdBy: session.user.email,
-        };
-
-        const event: Result = await editEvent(data);
-        if (event.status) {
-          result = {
-            status: true,
-            error: null,
-            msg: 'Event updated',
-          };
-
-          res.status(200).send(result);
-          res.end();
+            res.status(200).send(result);
+            res.end();
+          } else {
+            result = {
+              status: false,
+              error: asset.error,
+              msg: '',
+            };
+            res.status(200).send(result);
+            res.end();
+          }
         } else {
           result = {
             status: false,
-            error: event.error,
-            msg: '',
+            error: 'Only the creator can delete the asset',
+            msg: null,
           };
+
           res.status(200).send(result);
           res.end();
         }

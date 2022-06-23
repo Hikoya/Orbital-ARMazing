@@ -397,7 +397,7 @@ export default function AssetComponent(props: any) {
           });
           const content = await rawResponse.json();
           if (content.status) {
-            await resetEdit();
+            await reset();
             toast({
               title: 'Success',
               description: content.msg,
@@ -457,7 +457,7 @@ export default function AssetComponent(props: any) {
           });
           const content = await rawResponse.json();
           if (content.status) {
-            await reset();
+            await resetEdit();
             toast({
               title: 'Success',
               description: content.msg,
@@ -478,6 +478,49 @@ export default function AssetComponent(props: any) {
         } else {
           setErrorEdit('Please upload an image');
         }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const handleDelete = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (checkerString(assetDBEdit.current)) {
+      try {
+        const rawResponse = await fetch('/api/event/delete', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: assetDBEdit.current,
+          }),
+        });
+        const content = await rawResponse.json();
+        if (content.status) {
+          await resetEdit();
+          toast({
+            title: 'Success',
+            description: content.msg,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          await fetchAssetData();
+        } else {
+          toast({
+            title: 'Error',
+            description: content.error,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
         return true;
       } catch (error) {
         return false;
@@ -1106,7 +1149,7 @@ export default function AssetComponent(props: any) {
                       </Stack>
                     )}
 
-                    <Stack spacing={10}>
+                    <Stack spacing={5}>
                       <Button
                         type='submit'
                         bg='blue.400'
@@ -1116,6 +1159,16 @@ export default function AssetComponent(props: any) {
                         }}
                       >
                         Update
+                      </Button>
+                      <Button
+                        bg='red.400'
+                        color='white'
+                        _hover={{
+                          bg: 'red.500',
+                        }}
+                        onClick={handleDelete}
+                      >
+                        Delete
                       </Button>
                     </Stack>
                   </Stack>

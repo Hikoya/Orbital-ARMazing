@@ -6,6 +6,8 @@ import { levels } from '@constants/admin';
 import { fetchAllEventWPermission } from '@helper/permission';
 import { EventPermission } from 'types/eventPermission';
 import { filterDuplicates } from '@helper/common';
+import { deleteQuiz, fetchAllQuizByAssetID } from '@helper/quiz';
+import { Quiz } from 'types/quiz';
 
 export const createAsset = async (data: Asset): Promise<Result> => {
   let result: Result = {
@@ -15,7 +17,7 @@ export const createAsset = async (data: Asset): Promise<Result> => {
   };
 
   try {
-    const event = await prisma.assets.create({
+    const event: Asset = await prisma.assets.create({
       data: data,
     });
 
@@ -30,7 +32,7 @@ export const createAsset = async (data: Asset): Promise<Result> => {
     }
   } catch (error) {
     console.log(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -44,7 +46,7 @@ export const editAsset = async (data: Asset): Promise<Result> => {
   };
 
   try {
-    const asset = await prisma.assets.update({
+    const asset: Asset = await prisma.assets.update({
       where: {
         id: data.id,
       },
@@ -62,7 +64,55 @@ export const editAsset = async (data: Asset): Promise<Result> => {
     }
   } catch (error) {
     console.log(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
+export const deleteAsset = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  const quizzesRes: Result = await fetchAllQuizByAssetID(id);
+  if (quizzesRes.status) {
+    const quizzes: Quiz[] = quizzesRes.msg;
+    if (quizzes.length > 0) {
+      for (let key = 0; key < quizzes.length; key += 1) {
+        if (quizzes[key]) {
+          const quiz: Quiz = quizzes[key];
+          if (quiz.id !== undefined) {
+            await deleteQuiz(quiz.id);
+          }
+        }
+      }
+    }
+  } else {
+    console.log(quizzesRes.error);
+  }
+
+  try {
+    const asset: Asset = await prisma.assets.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (asset) {
+      result = { status: true, error: null, msg: 'Success!' };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to delete asset in database',
+        msg: '',
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -79,7 +129,7 @@ export const fetchAllAssetByUser = async (
 
   if (session.user.level === levels.ORGANIZER) {
     try {
-      const asset = await prisma.assets.findMany({
+      const asset: Asset[] = await prisma.assets.findMany({
         where: {
           createdBy: session.user.email,
         },
@@ -133,11 +183,11 @@ export const fetchAllAssetByUser = async (
 
         result = { status: true, error: null, msg: assetList };
       } else {
-        result = { status: false, error: '', msg: null };
+        result = { status: false, error: listOfEventsRes.error, msg: null };
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = { status: false, error: error.toString(), msg: null };
     }
   }
 
@@ -152,12 +202,37 @@ export const fetchAllAsset = async (): Promise<Result> => {
   };
 
   try {
-    const asset = await prisma.assets.findMany();
+    const asset: Asset[] = await prisma.assets.findMany();
 
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
+export const fetchAllAssetByEventID = async (
+  eventID: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const asset: Asset[] = await prisma.assets.findMany({
+      where: {
+        eventID: eventID,
+      },
+    });
+
+    result = { status: true, error: null, msg: asset };
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -171,7 +246,7 @@ export const fetchAssetByID = async (id: string): Promise<Result> => {
   };
 
   try {
-    const asset = await prisma.assets.findUnique({
+    const asset: Asset = await prisma.assets.findUnique({
       where: {
         id: id,
       },
@@ -180,7 +255,7 @@ export const fetchAssetByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -203,8 +278,27 @@ export const countAsset = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: numberOfAssets };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
+};
+
+export const isCreatorOfAsset = async (
+  id: string,
+  session: Session,
+): Promise<boolean> => {
+  const assetRes: Result = await fetchAssetByID(id);
+
+  if (
+    assetRes.status &&
+    assetRes.msg !== null &&
+    session !== undefined &&
+    session !== null
+  ) {
+    const asset: Asset = assetRes.msg;
+    return asset.createdBy === session.user.email;
+  }
+
+  return false;
 };

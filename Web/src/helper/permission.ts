@@ -24,7 +24,7 @@ export const fetchAllEventWPermission = async (
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
