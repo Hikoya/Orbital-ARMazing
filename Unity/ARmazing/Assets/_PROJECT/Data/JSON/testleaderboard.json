@@ -1,0 +1,27 @@
+{
+  "status": true,
+  "error": null,
+  "msg": [
+    {
+      "id": "cl4bb42r30131icdrmuoo8fad",
+      "eventID": "cl4b9auoo0018icdrn9aq2t8a",
+      "eventName": "NUS Open House",
+      "points": 120,
+      "username": "tester"
+    },
+    {
+      "id": "cl4bau4sq0091icdrj2iql11c",
+      "eventID": "cl4b9auoo0018icdrn9aq2t8a",
+      "eventName": "NUS Open House",
+      "points": 0,
+      "username": "hikoya"
+    },
+    {
+      "id": "cl4baw7a20108icdr03w2giht",
+      "eventID": "cl4b9auoo0018icdrn9aq2t8a",
+      "eventName": "NUS Open House",
+      "points": 0,
+      "username": "stevenaung"
+    }
+  ]
+}

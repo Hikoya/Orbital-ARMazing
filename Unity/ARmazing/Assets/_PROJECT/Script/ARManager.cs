@@ -10,16 +10,15 @@ using TMPro;
 public class ARManager : MonoBehaviour
 {
     private ARTrackedImageManager _trackedImageManager;
+    private Dictionary<string, GameObject> _arUICanvases= new Dictionary<string, GameObject>();
 
-    [SerializeField] private GameObject _arUICanvas;
-    [SerializeField] private TMP_Text tileText;
-    [SerializeField] private TMP_Text descText;
+    [SerializeField] private GameObject _arUICanvasPrefab;
 
     private void Awake()
     {
+        Screen.orientation = ScreenOrientation.LandscapeLeft;
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         _trackedImageManager = GetComponent<ARTrackedImageManager>();
-        _arUICanvas.SetActive(false);
     }
 
     private void OnEnable()
@@ -36,6 +35,8 @@ public class ARManager : MonoBehaviour
     {
         foreach(ARTrackedImage trackedImage in eventArgs.added)
         {
+            GameObject arUICanvas = Instantiate(_arUICanvasPrefab);
+            _arUICanvases.Add(trackedImage.referenceImage.name, arUICanvas);
             UpdateARUI(trackedImage);
         }
 
@@ -47,15 +48,33 @@ public class ARManager : MonoBehaviour
             } 
             else
             {
-                _arUICanvas.SetActive(false);
+                _arUICanvases[trackedImage.referenceImage.name].SetActive(false);
             }
         }
     }
 
     void UpdateARUI(ARTrackedImage trackedImage)
     {
-        _arUICanvas.SetActive(true);
-        tileText.text = trackedImage.referenceImage.name;
+        GameObject arUICanvas = null;
+
+        foreach (KeyValuePair<string, GameObject> canvas in _arUICanvases)
+        {
+            if (canvas.Key == trackedImage.referenceImage.name)
+            {
+                canvas.Value.SetActive(true);
+                arUICanvas = canvas.Value;
+            } else
+            {
+                canvas.Value.SetActive(false);
+            }
+        }
+
+        GameObject arPanel = arUICanvas.transform.Find("Panel").gameObject;
+        
+        TMP_Text titleText = arPanel.transform.Find("Title_Text").gameObject.GetComponent<TMP_Text>();
+        titleText.text = trackedImage.referenceImage.name;
+        TMP_Text descText = arPanel.transform.Find("Desc_Text").gameObject.GetComponent<TMP_Text>();
         descText.text = "Description of " + trackedImage.referenceImage.name;
     }
+
 }
