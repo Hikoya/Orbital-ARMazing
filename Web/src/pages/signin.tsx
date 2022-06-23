@@ -42,13 +42,14 @@ export default function SignIn(props: Promise<{ data: string }>) {
           email: email,
           callbackUrl: `${url}/`,
         });
-  
+
         return true;
       } catch (error) {
         return false;
       }
     } else {
       setError('Please enter a valid email');
+      return false;
     }
   };
 
