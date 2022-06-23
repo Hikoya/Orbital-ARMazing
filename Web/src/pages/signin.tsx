@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Flex,
   Box,
@@ -12,16 +12,20 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
+import { checkerString } from '@helper/common';
 
 export default function SignIn(props: Promise<{ data: string }>) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [url, setURL] = useState('http://localhost:3000'); // default
 
+  const emailDB = useRef('');
+  const [errorMsg, setError] = useState('');
+
   useEffect(() => {
     async function fetchData(propsField: Promise<{ data: string }>) {
       const propRes = await propsField;
-      if (propRes.data) {
+      if (checkerString(propRes.data)) {
         setURL(propRes.data);
       }
     }
@@ -30,16 +34,21 @@ export default function SignIn(props: Promise<{ data: string }>) {
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    try {
-      setLoading(true);
-      await signIn('email', {
-        email: email,
-        callbackUrl: `${url}/`,
-      });
-
-      return true;
-    } catch (error) {
-      return false;
+    if (checkerString(url)) {
+      try {
+        setError('');
+        setLoading(true);
+        await signIn('email', {
+          email: email,
+          callbackUrl: `${url}/`,
+        });
+  
+        return true;
+      } catch (error) {
+        return false;
+      }
+    } else {
+      setError('Please enter a valid email');
     }
   };
 
@@ -49,6 +58,13 @@ export default function SignIn(props: Promise<{ data: string }>) {
         <Stack align='center'>
           <Heading fontSize='4xl'>ARMazing</Heading>
         </Stack>
+
+        {checkerString(errorMsg) && (
+          <Stack align='center'>
+            <Text>{errorMsg}</Text>
+          </Stack>
+        )}
+
         <Box rounded='lg' bg='white' boxShadow='lg' p={8}>
           <form onSubmit={handleSubmit}>
             <Stack spacing={4}>
@@ -58,7 +74,10 @@ export default function SignIn(props: Promise<{ data: string }>) {
                   type='email'
                   placeholder='test@gmail.com'
                   size='lg'
-                  onChange={(event) => setEmail(event.currentTarget.value)}
+                  onChange={(event) => {
+                    setEmail(event.currentTarget.value);
+                    emailDB.current = event.currentTarget.value;
+                  }}
                 />
               </FormControl>
               <Stack spacing={10}>
