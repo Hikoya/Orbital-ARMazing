@@ -4,11 +4,12 @@ import Sidebar from '@components/Sidebar';
 
 import { Box, Drawer, DrawerContent, useDisclosure } from '@chakra-ui/react';
 
-export default function Layout({ children }) {
+export default function Layout({ session, children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH='100vh' bg='gray.100'>
       <Sidebar
+        session={session}
         onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
       />
@@ -22,7 +23,7 @@ export default function Layout({ children }) {
         size='full'
       >
         <DrawerContent>
-          <Sidebar onClose={onClose} />
+          <Sidebar session={session} onClose={onClose} />
         </DrawerContent>
       </Drawer>
 

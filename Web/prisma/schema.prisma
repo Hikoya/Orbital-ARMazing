@@ -31,7 +31,7 @@ model User {
   emailVerified DateTime?
   image         String?
   sessions      Session[]
-  admin      Boolean  @default(false)
+  admin      Boolean  @default(true)
   level   Int   @default(2)
 }
 

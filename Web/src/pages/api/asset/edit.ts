@@ -67,15 +67,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             await fs.writeFile(pathToWriteImage, image);
 
             assetData = {
-              id: id,
-              name: name,
-              description: description,
-              eventID: eventID,
+              id: id.trim(),
+              name: name.trim(),
+              description: description.trim(),
+              eventID: eventID.trim(),
               visible: visible,
-              latitude: latitude,
-              longitude: longitude,
-              imagePath: assetPath,
-              createdBy: session.user.email,
+              latitude: latitude.trim(),
+              longitude: longitude.trim(),
+              imagePath: assetPath.trim(),
+              createdBy: session.user.email.trim(),
             };
           } else {
             assetData = {

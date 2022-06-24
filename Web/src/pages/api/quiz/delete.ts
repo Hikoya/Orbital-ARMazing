@@ -1,17 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { Event } from 'types/event';
+
+import { levels } from '@constants/admin';
 
 import { currentSession } from '@helper/session';
-import { convertDateToUnix } from '@constants/date';
-import { createEvent } from '@helper/event';
-import { levels } from '@constants/admin';
+import { deleteQuiz, isCreatorOfQuiz } from '@helper/quiz';
 import { checkerString } from '@helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
 
-  const { name, description, startDate, endDate, isPublic, visible } = req.body;
+  const { quizID } = req.body;
+
   let result: Result = {
     status: false,
     error: '',
@@ -20,41 +20,36 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (session) {
     if (session.user.level === levels.ORGANIZER) {
-      if (
-        checkerString(name) &&
-        checkerString(description) &&
-        checkerString(startDate) &&
-        checkerString(endDate)
-      ) {
-        const start = convertDateToUnix(startDate);
-        const end = convertDateToUnix(endDate);
+      if (checkerString(quizID)) {
+        const isCreator: boolean = await isCreatorOfQuiz(quizID, session);
+        if (isCreator) {
+          const qn = await deleteQuiz(quizID);
+          if (qn.status) {
+            result = {
+              status: true,
+              error: null,
+              msg: 'Quiz deleted',
+            };
 
-        const data: Event = {
-          name: name.trim(),
-          description: description.trim(),
-          startDate: start,
-          endDate: end,
-          isPublic: isPublic,
-          visible: visible,
-          createdBy: session.user.email.trim(),
-        };
+            res.status(200).send(result);
+            res.end();
+          } else {
+            result = {
+              status: false,
+              error: qn.error,
+              msg: '',
+            };
 
-        const event = await createEvent(data);
-        if (event.status) {
-          result = {
-            status: true,
-            error: null,
-            msg: 'Event created',
-          };
-
-          res.status(200).send(result);
-          res.end();
+            res.status(200).send(result);
+            res.end();
+          }
         } else {
           result = {
             status: false,
-            error: event.error,
-            msg: '',
+            error: 'Only the creator can delete the asset',
+            msg: null,
           };
+
           res.status(200).send(result);
           res.end();
         }

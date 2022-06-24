@@ -64,14 +64,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             checkerString(longitude)
           ) {
             const assetData: Asset = {
-              name: name,
-              description: description,
-              eventID: eventID,
+              name: name.trim(),
+              description: description.trim(),
+              eventID: eventID.trim(),
               visible: visible,
-              latitude: latitude,
-              longitude: longitude,
-              imagePath: assetPath,
-              createdBy: session.user.email,
+              latitude: latitude.trim(),
+              longitude: longitude.trim(),
+              imagePath: assetPath.trim(),
+              createdBy: session.user.email.trim(),
             };
 
             const createEventRequest = await createAsset(assetData);

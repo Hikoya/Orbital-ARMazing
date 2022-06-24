@@ -133,7 +133,9 @@ export default function AssetComponent(props: any) {
   };
   const [coordinate, setCoordinate] = useState('');
 
-  const [organizer, setOrganizer] = useState(false);
+  const [organizer, setOrganizer] = useState(true);
+
+  const [noEvent, setNoEvent] = useState(false);
 
   const onLocationChange = (locationC: { lat: number; lng: number }) => {
     const text = `Latitude: ${locationC.lat} , Longitude: ${locationC.lng}`;
@@ -357,9 +359,9 @@ export default function AssetComponent(props: any) {
       const content: Result = await rawResponse.json();
       if (content.status) {
         await includeActionButton(content.msg as Asset[]);
-        setLoading(false);
       }
 
+      setLoading(false);
       return true;
     } catch (error) {
       return false;
@@ -395,7 +397,7 @@ export default function AssetComponent(props: any) {
           });
           const content = await rawResponse.json();
           if (content.status) {
-            await resetEdit();
+            await reset();
             toast({
               title: 'Success',
               description: content.msg,
@@ -455,7 +457,7 @@ export default function AssetComponent(props: any) {
           });
           const content = await rawResponse.json();
           if (content.status) {
-            await reset();
+            await resetEdit();
             toast({
               title: 'Success',
               description: content.msg,
@@ -476,6 +478,49 @@ export default function AssetComponent(props: any) {
         } else {
           setErrorEdit('Please upload an image');
         }
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  const handleDelete = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (checkerString(assetDBEdit.current)) {
+      try {
+        const rawResponse = await fetch('/api/event/delete', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id: assetDBEdit.current,
+          }),
+        });
+        const content = await rawResponse.json();
+        if (content.status) {
+          await resetEdit();
+          toast({
+            title: 'Success',
+            description: content.msg,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          await fetchAssetData();
+        } else {
+          toast({
+            title: 'Error',
+            description: content.error,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
         return true;
       } catch (error) {
         return false;
@@ -556,22 +601,27 @@ export default function AssetComponent(props: any) {
   };
 
   const eventDropDownMenu = async (content: Event[]) => {
-    const selection: JSX.Element[] = [];
-    selection.push(<option key='' value='' aria-label='default' />);
+    if (content.length > 0) {
+      setNoEvent(false);
+      const selection: JSX.Element[] = [];
+      selection.push(<option key='' value='' aria-label='default' />);
 
-    for (let key = 0; key < content.length; key += 1) {
-      if (content[key]) {
-        const dataField = content[key];
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField = content[key];
 
-        selection.push(
-          <option key={dataField.id} value={dataField.id}>
-            {dataField.name}
-          </option>,
-        );
+          selection.push(
+            <option key={dataField.id} value={dataField.id}>
+              {dataField.name}
+            </option>,
+          );
+        }
       }
-    }
 
-    setEventDropdown(selection);
+      setEventDropdown(selection);
+    } else {
+      setNoEvent(true);
+    }
   };
 
   const fetchData = useCallback(async () => {
@@ -585,6 +635,8 @@ export default function AssetComponent(props: any) {
       const content: Result = await rawResponse.json();
       if (content.status) {
         await eventDropDownMenu(content.msg as Event[]);
+      } else {
+        setNoEvent(true);
       }
 
       return true;
@@ -606,11 +658,12 @@ export default function AssetComponent(props: any) {
       if (propRes.sess) {
         const user: Session = propRes.sess;
         const { level } = user.user;
+
         if (checkerNumber(level)) {
-          if (level === levels.FACILITATOR) {
-            setOrganizer(false);
-          } else if (level === levels.ORGANIZER) {
+          if (level === levels.ORGANIZER) {
             setOrganizer(true);
+          } else {
+            setOrganizer(false);
           }
         }
       }
@@ -682,7 +735,7 @@ export default function AssetComponent(props: any) {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
-          {loadingData && !data && (
+          {loadingData && (data === null || data.length === 0) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
                 <Text>Loading Please wait...</Text>
@@ -691,7 +744,7 @@ export default function AssetComponent(props: any) {
           )}
 
           {!loadingData && data.length === 0 && (
-            <Box mt={30}>
+            <Box w='full' mt={30} overflow='auto'>
               <Stack justify='center' align='center'>
                 <Text>No assets found</Text>
               </Stack>
@@ -721,21 +774,21 @@ export default function AssetComponent(props: any) {
                   }
                 />
               </Box>
-              <Box>
-                <Map
-                  location={location}
-                  zoomLevel={15}
-                  apiKey={API_KEY || null}
-                  markers={markers}
-                  dataHandler={onLocationChange}
-                />
-              </Box>
-              <Text>Click on the Map to get coordinates {coordinate}</Text>
             </Stack>
           )}
         </Box>
+        <Box bg='white' borderRadius='lg' p={3} color='gray.700' shadow='base'>
+          <Map
+            location={location}
+            zoomLevel={15}
+            apiKey={API_KEY || null}
+            markers={markers}
+            dataHandler={onLocationChange}
+          />
+          <Text>Click on the Map to get coordinates {coordinate}</Text>
+        </Box>
 
-        {organizer && (
+        {organizer && !noEvent && (
           <MotionSimpleGrid
             mt='3'
             minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
@@ -744,7 +797,7 @@ export default function AssetComponent(props: any) {
             initial='initial'
             animate='animate'
           >
-            <MotionBox>
+            <MotionBox key={1}>
               <Stack
                 spacing={4}
                 w='full'
@@ -923,7 +976,7 @@ export default function AssetComponent(props: any) {
                 </form>
               </Stack>
             </MotionBox>
-            <MotionBox>
+            <MotionBox key={2}>
               <Stack
                 spacing={4}
                 w='full'
@@ -1096,7 +1149,7 @@ export default function AssetComponent(props: any) {
                       </Stack>
                     )}
 
-                    <Stack spacing={10}>
+                    <Stack spacing={5}>
                       <Button
                         type='submit'
                         bg='blue.400'
@@ -1107,6 +1160,16 @@ export default function AssetComponent(props: any) {
                       >
                         Update
                       </Button>
+                      <Button
+                        bg='red.400'
+                        color='white'
+                        _hover={{
+                          bg: 'red.500',
+                        }}
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </Button>
                     </Stack>
                   </Stack>
                 </form>
@@ -1114,20 +1177,41 @@ export default function AssetComponent(props: any) {
             </MotionBox>
           </MotionSimpleGrid>
         )}
+
+        {organizer && noEvent && (
+          <Box
+            bg='white'
+            borderRadius='lg'
+            p={8}
+            color='gray.700'
+            shadow='base'
+            mt={30}
+          >
+            <Stack justify='center' align='center'>
+              <Text>Please create an Event first.</Text>
+            </Stack>
+          </Box>
+        )}
       </Box>
     </Auth>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => ({
+export const getServerSideProps: GetServerSideProps = async (context) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession();
-      const stringifiedData = safeJsonStringify(session);
-      const data: Session = JSON.parse(stringifiedData);
+      const session: Session | null = await currentSession(context);
+      if (session !== null) {
+        const stringifiedData = safeJsonStringify(session);
+        const data: Session = JSON.parse(stringifiedData);
+        return {
+          API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
+          sess: data,
+        };
+      }
       return {
         API_KEY: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY,
-        sess: data,
+        sess: null,
       };
     } catch (error) {
       console.error(error);

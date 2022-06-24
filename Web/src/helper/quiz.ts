@@ -68,6 +68,37 @@ export const editQuiz = async (data: Quiz): Promise<Result> => {
   return result;
 };
 
+export const deleteQuiz = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const qn: Quiz = await prisma.questions.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (qn) {
+      result = { status: true, error: null, msg: qn };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to delete question in database',
+        msg: '',
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
 export const fetchAllQuiz = async (session: Session): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -135,7 +166,7 @@ export const fetchAllQuiz = async (session: Session): Promise<Result> => {
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = { status: false, error: error.toString(), msg: null };
     }
   }
 
@@ -163,4 +194,70 @@ export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
   }
 
   return result;
+};
+
+export const fetchAllQuizByAssetID = async (
+  assetID: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const qn: Quiz[] = await prisma.questions.findMany({
+      where: {
+        assetID: assetID,
+      },
+    });
+
+    result = { status: true, error: null, msg: qn };
+  } catch (error) {
+    console.log(error);
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
+export const fetchQuizByID = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const qn = await prisma.questions.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    result = { status: true, error: null, msg: qn };
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
+export const isCreatorOfQuiz = async (
+  id: string,
+  session: Session,
+): Promise<boolean> => {
+  const qnRes: Result = await fetchQuizByID(id);
+  if (
+    qnRes.status &&
+    qnRes.msg !== null &&
+    session !== undefined &&
+    session !== null
+  ) {
+    const qn: Quiz = qnRes.msg;
+    return qn.createdBy === session.user.email;
+  }
+
+  return false;
 };

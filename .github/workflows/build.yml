@@ -30,29 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DANGER_DISABLE_TRANSPILATION: true
 
-  lint:
-    name: NPM Lint
-    runs-on: ubuntu-latest
-    needs: danger
-    defaults:
-      run:
-        working-directory: ./Web
-    if: ${{ github.actor == 'Hikoya' && github.event.action == 'opened' }}
-
-    steps:
-    - name: Restore cached artifacts
-      uses: actions/cache@v1
-      id: restore-build
-      with:
-        path: '.'
-        key: ${{ github.sha }}
-    - name: Eslint
-      run: npm run lint
-
   build:
     name: NPM Build
     runs-on: ubuntu-latest
-    needs: lint
     defaults:
       run:
         working-directory: ./Web

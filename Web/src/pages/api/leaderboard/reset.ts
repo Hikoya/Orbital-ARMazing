@@ -1,13 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
-import { Leaderboard } from 'types/leaderboard';
 
 import { currentSession } from '@helper/session';
 import { fetchEventByID, isEventAuthorized } from '@helper/event';
-import { fetchLeaderBoardByEventID } from '@helper/leaderboard';
+import { resetLeaderBoardByEventID } from '@helper/leaderboard';
 import { levels } from '@constants/admin';
-import { checkerString } from '@helper/common';
+import { checkerString } from '@root/src/helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req);
@@ -28,19 +27,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (checkerString(eventID)) {
         const event = await fetchEventByID(eventID);
         if (event.status) {
-          const eventMsg: Event = event.msg as Event;
-          const isAuthorized: boolean = await isEventAuthorized(
-            eventMsg,
-            session,
-          );
+          const eventMsg = event.msg as Event;
+          const isAuthorized = await isEventAuthorized(eventMsg, session);
           if (isAuthorized) {
-            const board: Result = await fetchLeaderBoardByEventID(eventID);
+            const board: Result = await resetLeaderBoardByEventID(eventID);
             if (board.status) {
-              const leaderboard: Leaderboard[] = board.msg;
               result = {
                 status: true,
                 error: null,
-                msg: leaderboard,
+                msg: 'LeaderBoard successfully reset',
               };
               res.status(200).send(result);
               res.end();

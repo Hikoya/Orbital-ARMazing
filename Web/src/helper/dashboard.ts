@@ -55,7 +55,7 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
     result = { status: true, error: '', msg: resultMsg };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;

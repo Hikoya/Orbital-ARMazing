@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           result = {
             status: false,
             error: board.error,
-            msg: '',
+            msg: [],
           };
           res.status(200).send(result);
           res.end();
@@ -44,18 +44,18 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         result = {
           status: false,
           error: 'No event ID',
-          msg: '',
+          msg: [],
         };
         res.status(200).send(result);
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized', msg: '' };
+      result = { status: false, error: 'Unauthorized', msg: [] };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthorized', msg: '' };
+    result = { status: false, error: 'Unauthorized', msg: [] };
     res.status(200).send(result);
     res.end();
   }

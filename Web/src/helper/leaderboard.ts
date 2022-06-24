@@ -37,7 +37,7 @@ export const doesUserExist = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error, msg: null };
+    result = { status: false, error: error.toString(), msg: null };
   }
 
   return result;
@@ -76,7 +76,7 @@ export const joinEvent = async (
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = { status: false, error: error.toString(), msg: null };
     }
   }
 
@@ -103,7 +103,7 @@ export const fetchLeaderBoardByEventID = async (
       take: 10,
     });
 
-    if (board.length > 0) {
+    if (board && board.length > 0) {
       const boardResult: Leaderboard[] = [];
       for (let key = 0; key < board.length; key += 1) {
         if (board[key]) {
@@ -124,10 +124,85 @@ export const fetchLeaderBoardByEventID = async (
         }
       }
       result = { status: true, error: null, msg: boardResult };
+    } else if (board && board.length === 0) {
+      result = {
+        status: true,
+        error: null,
+        msg: [],
+      };
     } else {
       result = {
         status: false,
         error: 'Failed to get leaderboard',
+        msg: [],
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: [] };
+  }
+
+  return result;
+};
+
+export const resetLeaderBoardByEventID = async (
+  eventID: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const board: Leaderboard[] = await prisma.leaderboard.updateMany({
+      where: {
+        eventID: eventID,
+      },
+      data: {
+        points: 0,
+      },
+    });
+
+    if (board) {
+      result = { status: true, error: null, msg: board };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to reset leaderboard',
+        msg: [],
+      };
+    }
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: [] };
+  }
+
+  return result;
+};
+
+export const deleteLeaderBoardByEventID = async (
+  eventID: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const board: Leaderboard = await prisma.leaderboard.deleteMany({
+      where: {
+        eventID: eventID,
+      },
+    });
+
+    if (board) {
+      result = { status: true, error: null, msg: board };
+    } else {
+      result = {
+        status: false,
+        error: 'Failed to delete leaderboard in database',
         msg: '',
       };
     }
