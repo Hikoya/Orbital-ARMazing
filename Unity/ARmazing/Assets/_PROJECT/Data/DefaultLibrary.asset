@@ -18,32 +18,12 @@ MonoBehaviour:
     m_Storage: []
   m_Images:
   - m_SerializedGuid:
-      m_GuidLow: 5532968703358115188
-      m_GuidHigh: 3531697909888980123
+      m_GuidLow: 4840959952868112269
+      m_GuidHigh: 196652027207284398
     m_SerializedTextureGuid:
-      m_GuidLow: 10008312978192472329
-      m_GuidHigh: 15685366712328490088
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: Museum
-    m_Texture: {fileID: 2800000, guid: 9a181909aba08ae4688c1394eb9dadd9, type: 3}
-  - m_SerializedGuid:
-      m_GuidLow: 5727131570090029193
-      m_GuidHigh: 14720275643782223792
-    m_SerializedTextureGuid:
-      m_GuidLow: 11237738962044739306
-      m_GuidHigh: 14370191181460386280
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: Computing 1
-    m_Texture: {fileID: 2800000, guid: bf3e5eea780b9bf4e8b16535be2c6dc7, type: 3}
-  - m_SerializedGuid:
-      m_GuidLow: 4787259912885500678
-      m_GuidHigh: 13433021327725985927
-    m_SerializedTextureGuid:
-      m_GuidLow: 2973675473199543619
-      m_GuidHigh: 16007715119601644795
-    m_Size: {x: 0, y: 0}
-    m_SpecifySize: 0
-    m_Name: Computing2
-    m_Texture: {fileID: 2800000, guid: 7159b5439e162944fb7481b916d426de, type: 3}
+      m_GuidLow: 8958858190396879877
+      m_GuidHigh: 10122904980353836024
+    m_Size: {x: 0.1, y: 0.1}
+    m_SpecifySize: 1
+    m_Name: unitylogowhiteonblack
+    m_Texture: {fileID: 2800000, guid: dfb47405420e7c54f8e3053972c87b8c, type: 3}
