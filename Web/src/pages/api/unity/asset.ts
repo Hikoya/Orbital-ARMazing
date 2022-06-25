@@ -22,11 +22,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const assets = await fetchAllAsset();
       const parsedAsset: Asset[] = [];
 
-      let url: string = 'https://orbital-armazing.herokuapp.com';
-      if (process.env.NEXTAUTH_URL !== undefined) {
-        url = process.env.NEXTAUTH_URL;
-      }
-
       if (assets && assets.status) {
         const assetData: Asset[] = assets.msg;
         for (let as = 0; as < assetData.length; as += 1) {
@@ -44,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               longitude: asset.longitude,
               visible: asset.visible,
               visibleText: visible,
-              imagePath: `${url}${asset.imagePath}`,
+              imagePath: asset.imagePath,
             };
 
             parsedAsset.push(data);
