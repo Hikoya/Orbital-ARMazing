@@ -255,6 +255,8 @@ export const updateUserPoints = async (
           msg: '',
         };
       }
+    } else {
+      result = { status: false, error: doesUser.error, msg: null };
     }
   } catch (error) {
     console.error(error);
