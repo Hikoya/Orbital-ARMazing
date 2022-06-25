@@ -94,6 +94,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   latitude: latitude.trim(),
                   longitude: longitude.trim(),
                   imagePath: uploadedImage.Location.trim(),
+                  updated_at: new Date().toISOString(),
                 };
               } else {
                 success = false;

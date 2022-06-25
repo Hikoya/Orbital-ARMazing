@@ -38,6 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           endDate: end,
           isPublic: isPublic,
           visible: visible,
+          updated_at: new Date().toISOString(),
         };
 
         const event: Result = await editEvent(data);

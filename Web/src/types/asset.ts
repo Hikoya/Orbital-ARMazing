@@ -11,4 +11,5 @@ export type Asset = {
   imagePath?: string;
   createdBy?: string;
   action?: any;
+  updated_at?: string;
 };

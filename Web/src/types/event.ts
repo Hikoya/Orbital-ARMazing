@@ -11,4 +11,5 @@ export type Event = {
   createdBy?: string;
   isPublicText?: string;
   visibleText?: string;
+  updated_at?: string;
 };

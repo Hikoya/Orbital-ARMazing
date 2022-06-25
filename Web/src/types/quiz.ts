@@ -16,4 +16,5 @@ export type Quiz = {
   visible: boolean;
   isVisible?: string;
   createdBy?: string;
+  updated_at?: string;
 };

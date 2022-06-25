@@ -55,6 +55,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           answer: Number(answer),
           points: Number(points),
           visible: visible,
+          updated_at: new Date().toISOString(),
         };
 
         const qn = await editQuiz(data);
