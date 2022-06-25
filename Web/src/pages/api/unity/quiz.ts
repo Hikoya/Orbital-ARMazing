@@ -36,7 +36,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             const event = await fetchEventByID(eventID);
             const eventMsg = event.msg as Event;
             const eventName: string = eventMsg.name;
-  
+
             for (let q = 0; q < questionData.length; q += 1) {
               if (questionData[q]) {
                 const quiz: Quiz = questionData[q];
@@ -45,14 +45,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   const asset = await fetchAssetByID(assetID);
                   const assetMsg = asset.msg as Asset;
                   const assetName: string = assetMsg.name as string;
-  
+
                   if (quiz.options !== undefined) {
                     const questions: string[] = quiz.options.split(',');
                     const option1 = questions[0];
                     const option2 = questions[1];
                     const option3 = questions[2];
                     const option4 = questions[3];
-  
+
                     if (event.status) {
                       const data: Quiz = {
                         id: quiz.id,
@@ -69,7 +69,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                         points: quiz.points,
                         visible: quiz.visible,
                       };
-  
+
                       parsedQuiz.push(data);
                     }
                   }

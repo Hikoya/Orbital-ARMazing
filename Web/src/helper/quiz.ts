@@ -192,7 +192,6 @@ export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
     } else {
       result = { status: true, error: null, msg: [] };
     }
-
   } catch (error) {
     console.log(error);
     result = { status: false, error: error.toString(), msg: null };
