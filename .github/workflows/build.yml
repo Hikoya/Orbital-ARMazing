@@ -6,6 +6,8 @@ on:
     - main
   workflow_dispatch:
 
+env:
+  DATABASE_URL: ${{ secrets.DATABASE_URL }}
     
 permissions:
   actions: write
@@ -33,6 +35,7 @@ jobs:
   build:
     name: NPM Build
     runs-on: ubuntu-latest
+    
     defaults:
       run:
         working-directory: ./Web
@@ -51,6 +54,8 @@ jobs:
     - name: Install Dependencies
       run: npm ci
     - name: Build project
+      env:
+        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: npm run build
     - name: Cache artifacts
       uses: actions/cache@v1
@@ -67,6 +72,6 @@ jobs:
       - uses: akhileshns/heroku-deploy@v3.12.12
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "orbital-armazing"
-          heroku_email: "hikoyanamikaze@gmail.com"
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+          heroku_email: ${{secrets.HEROKU_APP_EMAIL}}
           appdir: "Web"
