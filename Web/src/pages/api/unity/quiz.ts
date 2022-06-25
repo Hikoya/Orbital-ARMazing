@@ -29,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const qn = await fetchAllQuizByEvent(eventID);
         const parsedQuiz: Quiz[] = [];
 
-        if (qn && qn.status) {
+        if (qn && qn.status && qn.msg !== null) {
           const event = await fetchEventByID(eventID);
           const eventMsg = event.msg as Event;
           const eventName: string = eventMsg.name;
