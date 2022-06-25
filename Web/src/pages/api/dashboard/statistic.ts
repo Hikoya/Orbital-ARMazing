@@ -1,13 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { fetchStatistic } from '@helper/dashboard';
 import { levels } from '@constants/admin';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await currentSession(req);
-
+  const session = await currentSession(req, res, null, true);
   let result: Result = {
     status: false,
     error: '',
@@ -49,7 +48,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     result = {
       status: false,
-      error: 'Unauthenticated',
+      error: 'Session not found',
       msg: { event: 0, asset: 0, user: 0 },
     };
     res.status(200).send(result);

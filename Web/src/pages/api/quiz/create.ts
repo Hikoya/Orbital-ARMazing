@@ -4,13 +4,12 @@ import { Quiz } from 'types/quiz';
 
 import { levels } from '@constants/admin';
 
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { createQuiz } from '@helper/quiz';
 import { checkerNumber, checkerString } from '@helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await currentSession(req);
-
+  const session = await currentSession(req, res, null, true);
   const {
     eventID,
     assetID,
@@ -100,7 +99,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     result = {
       status: false,
-      error: 'Unauthorized access',
+      error: 'Session not found',
       msg: null,
     };
 

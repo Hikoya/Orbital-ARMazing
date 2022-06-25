@@ -35,7 +35,7 @@ import { motion } from 'framer-motion';
 
 import safeJsonStringify from 'safe-json-stringify';
 import { GetServerSideProps } from 'next';
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
 
@@ -187,6 +187,7 @@ export default function QuizComponent(props: any) {
     o3: string,
     o4: string,
     ans: number,
+    pointsField: number,
   ) => {
     // super basic validation here
 
@@ -250,6 +251,11 @@ export default function QuizComponent(props: any) {
       return false;
     }
 
+    if (pointsField <= 0) {
+      setError('Points cannot be 0 or lesser than 0!');
+      return false;
+    }
+
     return true;
   };
 
@@ -263,6 +269,7 @@ export default function QuizComponent(props: any) {
     o3: string,
     o4: string,
     ans: number,
+    pointsField: number,
   ) => {
     // super basic validation here
 
@@ -331,6 +338,11 @@ export default function QuizComponent(props: any) {
       return false;
     }
 
+    if (pointsField <= 0) {
+      setError('Points cannot be 0 or lesser than 0!');
+      return false;
+    }
+
     return true;
   };
 
@@ -389,6 +401,7 @@ export default function QuizComponent(props: any) {
         option3DB.current,
         option4DB.current,
         answerDB.current,
+        pointsDB.current,
       )
     ) {
       try {
@@ -454,6 +467,7 @@ export default function QuizComponent(props: any) {
         option3DBEdit.current,
         option4DBEdit.current,
         answerDBEdit.current,
+        pointsDBEdit.current,
       )
     ) {
       try {
@@ -504,6 +518,49 @@ export default function QuizComponent(props: any) {
       return true;
     }
 
+    return false;
+  };
+
+  const handleDelete = async (event: { preventDefault: () => void }) => {
+    event.preventDefault();
+    if (checkerString(quizDBEdit.current)) {
+      try {
+        const rawResponse = await fetch('/api/quiz/delete', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            quizID: quizDBEdit.current,
+          }),
+        });
+        const content = await rawResponse.json();
+        if (content.status) {
+          await resetEdit();
+          toast({
+            title: 'Success',
+            description: content.msg,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+          });
+          await fetchData();
+        } else {
+          toast({
+            title: 'Error',
+            description: content.error,
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
+
+        return true;
+      } catch (error) {
+        return false;
+      }
+    }
     return false;
   };
 
@@ -1125,7 +1182,7 @@ export default function QuizComponent(props: any) {
                       </Stack>
                     )}
 
-                    <Stack spacing={10}>
+                    <Stack spacing={5}>
                       <Button
                         type='submit'
                         bg='blue.400'
@@ -1135,6 +1192,16 @@ export default function QuizComponent(props: any) {
                         }}
                       >
                         Update
+                      </Button>
+                      <Button
+                        bg='red.400'
+                        color='white'
+                        _hover={{
+                          bg: 'red.500',
+                        }}
+                        onClick={handleDelete}
+                      >
+                        Delete
                       </Button>
                     </Stack>
                   </Stack>
@@ -1163,10 +1230,15 @@ export default function QuizComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession(context);
+      const session: Session | null = await currentSession(
+        null,
+        null,
+        cont,
+        true,
+      );
       if (session !== null) {
         const stringifiedData = safeJsonStringify(session);
         const data: Session = JSON.parse(stringifiedData);

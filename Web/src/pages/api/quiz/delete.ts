@@ -3,13 +3,12 @@ import { Result } from 'types/api';
 
 import { levels } from '@constants/admin';
 
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { deleteQuiz, isCreatorOfQuiz } from '@helper/quiz';
 import { checkerString } from '@helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await currentSession(req);
-
+  const session = await currentSession(req, res, null, true);
   const { quizID } = req.body;
 
   let result: Result = {
@@ -76,7 +75,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     result = {
       status: false,
-      error: 'Unauthorized access',
+      error: 'Session not found',
       msg: null,
     };
 

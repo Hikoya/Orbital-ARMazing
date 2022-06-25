@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const assets = await fetchAllAsset();
       const parsedAsset: Asset[] = [];
 
-      let url: string = 'kevii.azurewebsites.net';
+      let url: string = 'https://orbital-armazing.herokuapp.com';
       if (process.env.NEXTAUTH_URL !== undefined) {
         url = process.env.NEXTAUTH_URL;
       }
@@ -68,12 +68,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized', msg: [] };
+      result = { status: false, error: 'Unauthorized, invalid token', msg: [] };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthorized', msg: [] };
+    result = { status: false, error: 'Unauthorized, token not found', msg: [] };
     res.status(200).send(result);
     res.end();
   }

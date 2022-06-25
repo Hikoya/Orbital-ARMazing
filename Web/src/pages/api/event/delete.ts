@@ -1,14 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { deleteEvent, isCreatorOfEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await currentSession(req);
-
+  const session = await currentSession(req, res, null, true);
   const { id } = req.body;
   let result: Result = {
     status: false,
@@ -73,7 +72,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     result = {
       status: false,
-      error: 'Unauthorized access',
+      error: 'Session not found',
       msg: null,
     };
 

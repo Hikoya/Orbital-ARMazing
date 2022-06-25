@@ -13,9 +13,7 @@ export default function VerifyRequest() {
             </Text>
             <Text fontSize='sm' color='gray.600' mt={5}>
               Please click on the link in the email to complete your
-            </Text>
-            <Text fontSize='sm' color='gray.600' mt={-5}>
-              authentication.
+              authentication
             </Text>
           </Stack>
         </Box>
