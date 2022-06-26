@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
 using System.IO;
 using Newtonsoft.Json;
+using UnityEngine.Networking;
 
 public class QuizManager : MonoBehaviour
 {
@@ -14,14 +15,22 @@ public class QuizManager : MonoBehaviour
     public GameObject[] options;
     public int currentQuestion;
     public string filename;
+    private string jsonContent;
 
     public TMP_Text QuestionTxt;
 
     private void Start()
     {
         filename = "testquiz.json";
-        QnA = ReadQuizFromJSON(filename);
-        GenerateQuestion();
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            StartCoroutine(ReadAndGenerateQuizFromJSONAndroid(filename));
+        }
+        else
+        {
+            QnA = ReadQuizFromJSON(filename);
+            GenerateQuestion();
+        }
     }
 
     public void NextQuestion()
@@ -63,7 +72,7 @@ public class QuizManager : MonoBehaviour
         {
             options[i].GetComponent<AnswerButtonBehaviour>().isCorrect = false;
 
-            if(QnA[currentQuestion].answer == i + 1)
+            if (QnA[currentQuestion].answer == i + 1)
             {
                 options[i].GetComponent<AnswerButtonBehaviour>().isCorrect = true;
             }
@@ -78,22 +87,47 @@ public class QuizManager : MonoBehaviour
         SetAnswers();
     }
 
-    List <QuestionAndAnswers> ReadQuizFromJSON(string filename)
+    List<QuestionAndAnswers> ReadQuizFromJSON(string filename)
     {
-        string content = ReadFile(GetPath(filename));
-        Debug.Log(content);
-        if (string.IsNullOrEmpty(content) || content == "{}")
+        jsonContent = ReadFile(GetPath(filename));
+
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {
             return null;
         }
 
-        QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(content);
+        QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(jsonContent);
         return res.msg;
     }
 
     string GetPath(string filename)
     {
-        return "Assets/_PROJECT/Data/JSON/" + filename;
+        if (Application.platform == RuntimePlatform.IPhonePlayer) return Application.dataPath + "/Raw" + filename;
+        else return Application.dataPath + "/StreamingAssets/" + filename;
+    }
+
+    IEnumerator ReadAndGenerateQuizFromJSONAndroid(string filename)
+    {
+        string filePath = "jar:file://" + Application.dataPath + "!/assets/" + filename;
+        using (UnityWebRequest request = UnityWebRequest.Get(filePath))
+        {
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                Debug.Log(request.error);
+            } 
+            else
+            {
+                jsonContent = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(jsonContent) && !(jsonContent == "{}"))
+                {
+                    QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(jsonContent);
+                    QnA = res.msg;
+                    GenerateQuestion();
+                }
+
+            }
+        }
     }
 
     string ReadFile(string path)
