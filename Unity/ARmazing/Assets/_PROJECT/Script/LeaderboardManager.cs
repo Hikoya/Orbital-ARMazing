@@ -5,6 +5,7 @@ using System.IO;
 using UnityEngine;
 using System.Linq;
 using TMPro;
+using UnityEngine.Networking;
 
 public class LeaderboardManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class LeaderboardManager : MonoBehaviour
     public GameObject rowPrefab;
     public List<PlayerScores> playerScores;
     public string filename;
+    private string jsonContent;
     // Start is called before the first frame update
     void Start()
     {
@@ -21,8 +23,20 @@ public class LeaderboardManager : MonoBehaviour
     public void UpdateLeaderboard()
     {
         filename = "testleaderboard.json";
-        playerScores = ReadPlayerScoresFromJSON(filename);
+        if (Application.platform == RuntimePlatform.Android)
+        {
+            StartCoroutine(ReadPlayerScoresFromJSONAndroid(filename));
+        } else
+        {
+            playerScores = ReadPlayerScoresFromJSON(filename);
 
+            PopulateRanking();
+        }
+       
+    }
+
+    void PopulateRanking()
+    {
         for (int i = 0; i < playerScores.Count; i++)
         {
             if (i >= 10) break;
@@ -39,20 +53,45 @@ public class LeaderboardManager : MonoBehaviour
 
     List<PlayerScores> ReadPlayerScoresFromJSON(string filename)
     {
-        string content = ReadFile(GetPath(filename));
-        Debug.Log(content);
-        if (string.IsNullOrEmpty(content) || content == "{}")
+        jsonContent = ReadFile(GetPath(filename));
+
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {
             return null;
         }
 
-        LeaderboardJSONObj res = JsonConvert.DeserializeObject<LeaderboardJSONObj>(content);
+        LeaderboardJSONObj res = JsonConvert.DeserializeObject<LeaderboardJSONObj>(jsonContent);
         return res.msg.OrderByDescending(x => x.points).ToList();
     }
 
     string GetPath(string filename)
     {
-        return "Assets/_PROJECT/Data/JSON/" + filename;
+        if (Application.platform == RuntimePlatform.IPhonePlayer) return Application.dataPath + "/Raw" + filename;
+        else return Application.dataPath + "/StreamingAssets/" + filename;
+    }
+
+    IEnumerator ReadPlayerScoresFromJSONAndroid(string filename)
+    {
+        string filePath = "jar:file://" + Application.dataPath + "!/assets/" + filename;
+        using (UnityWebRequest request = UnityWebRequest.Get(filePath))
+        {
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                Debug.Log(request.error);
+            }
+            else
+            {
+                jsonContent = request.downloadHandler.text;
+                if (!string.IsNullOrEmpty(jsonContent) && !(jsonContent == "{}"))
+                {
+                    LeaderboardJSONObj res = JsonConvert.DeserializeObject<LeaderboardJSONObj>(jsonContent);
+                    playerScores = res.msg;
+                    PopulateRanking();
+                }
+
+            }
+        }
     }
 
     string ReadFile(string path)
