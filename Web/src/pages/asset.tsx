@@ -43,7 +43,7 @@ import { checkerString, checkerNumber } from '@helper/common';
 
 import safeJsonStringify from 'safe-json-stringify';
 import { GetServerSideProps } from 'next';
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
 
@@ -224,6 +224,18 @@ export default function AssetComponent(props: any) {
       return false;
     }
 
+    if (
+      !(
+        Number(longitudeField) > -180 &&
+        Number(longitudeField) < 180 &&
+        Number(latitudeField) > -90 &&
+        Number(latitudeField) < 90
+      )
+    ) {
+      setError('Please provide valid pair of longitude and latitude');
+      return false;
+    }
+
     return true;
   };
 
@@ -268,6 +280,18 @@ export default function AssetComponent(props: any) {
       !checkerNumber(Number(longitudeField))
     ) {
       setErrorEdit('Please provide a longitude');
+      return false;
+    }
+
+    if (
+      !(
+        Number(longitudeField) > -180 &&
+        Number(longitudeField) < 180 &&
+        Number(latitudeField) > -90 &&
+        Number(latitudeField) < 90
+      )
+    ) {
+      setErrorEdit('Please provide valid pair of longitude and latitude');
       return false;
     }
 
@@ -476,7 +500,40 @@ export default function AssetComponent(props: any) {
             });
           }
         } else {
-          setErrorEdit('Please upload an image');
+          const dataField = new FormData();
+          dataField.append('id', assetDBEdit.current);
+          dataField.append('eventID', eventIDDBEdit.current);
+          dataField.append('name', nameDBEdit.current);
+          dataField.append('description', descriptionDBEdit.current);
+          dataField.append('visible', visibleDBEdit.current.toString());
+          dataField.append('image', '');
+          dataField.append('latitude', latitudeDBEdit.current);
+          dataField.append('longitude', longitudeDBEdit.current);
+
+          const rawResponse = await fetch('/api/asset/edit', {
+            method: 'POST',
+            body: dataField,
+          });
+          const content = await rawResponse.json();
+          if (content.status) {
+            await resetEdit();
+            toast({
+              title: 'Success',
+              description: content.msg,
+              status: 'success',
+              duration: 5000,
+              isClosable: true,
+            });
+            await fetchAssetData();
+          } else {
+            toast({
+              title: 'Error',
+              description: content.error,
+              status: 'error',
+              duration: 5000,
+              isClosable: true,
+            });
+          }
         }
         return true;
       } catch (error) {
@@ -490,7 +547,7 @@ export default function AssetComponent(props: any) {
     event.preventDefault();
     if (checkerString(assetDBEdit.current)) {
       try {
-        const rawResponse = await fetch('/api/event/delete', {
+        const rawResponse = await fetch('/api/asset/delete', {
           method: 'POST',
           headers: {
             Accept: 'application/json',
@@ -941,6 +998,7 @@ export default function AssetComponent(props: any) {
                                   id='file-upload'
                                   name='file-upload'
                                   type='file'
+                                  accept='image/png, image/jpeg'
                                   onChange={onFileChange}
                                 />
                               </VisuallyHidden>
@@ -948,7 +1006,7 @@ export default function AssetComponent(props: any) {
                             <Text pl={1}>or drag and drop</Text>
                           </Flex>
                           <Text fontSize='xs' color='gray.500'>
-                            PNG, JPG, GIF up to 10MB
+                            PNG, JPG up to 10MB
                           </Text>
                         </Stack>
                       </Flex>
@@ -1130,6 +1188,7 @@ export default function AssetComponent(props: any) {
                                   id='file-upload-edit'
                                   name='file-upload-edit'
                                   type='file'
+                                  accept='image/png, image/jpeg'
                                   onChange={onFileChangeEdit}
                                 />
                               </VisuallyHidden>
@@ -1137,7 +1196,7 @@ export default function AssetComponent(props: any) {
                             <Text pl={1}>or drag and drop</Text>
                           </Flex>
                           <Text fontSize='xs' color='gray.500'>
-                            PNG, JPG, GIF up to 10MB
+                            PNG, JPG up to 10MB
                           </Text>
                         </Stack>
                       </Flex>
@@ -1197,10 +1256,15 @@ export default function AssetComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession(context);
+      const session: Session | null = await currentSession(
+        null,
+        null,
+        cont,
+        true,
+      );
       if (session !== null) {
         const stringifiedData = safeJsonStringify(session);
         const data: Session = JSON.parse(stringifiedData);

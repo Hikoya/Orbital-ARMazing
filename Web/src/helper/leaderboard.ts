@@ -53,31 +53,40 @@ export const joinEvent = async (
     msg: '',
   };
 
-  const doesUser: Result = await doesUserExist(eventID, user);
-  if (doesUser.status) {
-    result = { status: false, error: doesUser.error, msg: null };
-  } else {
-    try {
-      const event: Leaderboard = await prisma.leaderboard.create({
-        data: {
-          username: user,
-          eventID: eventID,
-        },
-      });
+  const doesEvent: Result = await fetchEventByID(eventID);
+  if (doesEvent.status && doesEvent.msg !== null) {
+    const doesUser: Result = await doesUserExist(eventID, user);
+    if (doesUser.status) {
+      result = { status: false, error: doesUser.error, msg: null };
+    } else {
+      try {
+        const event: Leaderboard = await prisma.leaderboard.create({
+          data: {
+            username: user,
+            eventID: eventID,
+          },
+        });
 
-      if (event) {
-        result = { status: true, error: null, msg: event };
-      } else {
-        result = {
-          status: false,
-          error: 'Failed to insert into database!',
-          msg: null,
-        };
+        if (event) {
+          result = { status: true, error: null, msg: event };
+        } else {
+          result = {
+            status: false,
+            error: 'Failed to insert into database!',
+            msg: null,
+          };
+        }
+      } catch (error) {
+        console.error(error);
+        result = { status: false, error: error.toString(), msg: null };
       }
-    } catch (error) {
-      console.error(error);
-      result = { status: false, error: error.toString(), msg: null };
     }
+  } else {
+    result = {
+      status: false,
+      error: 'Event does not exist',
+      msg: null,
+    };
   }
 
   return result;
@@ -161,6 +170,7 @@ export const resetLeaderBoardByEventID = async (
       },
       data: {
         points: 0,
+        updated_at: new Date().toISOString(),
       },
     });
 
@@ -243,6 +253,7 @@ export const updateUserPoints = async (
         },
         data: {
           points: Number(finalPoints),
+          updated_at: new Date().toISOString(),
         },
       });
 
@@ -255,6 +266,8 @@ export const updateUserPoints = async (
           msg: '',
         };
       }
+    } else {
+      result = { status: false, error: doesUser.error, msg: null };
     }
   } catch (error) {
     console.error(error);

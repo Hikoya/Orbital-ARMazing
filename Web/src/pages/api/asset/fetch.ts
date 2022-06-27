@@ -3,15 +3,14 @@ import { Result } from 'types/api';
 import { Asset } from 'types/asset';
 import { Event } from 'types/event';
 
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { fetchAllAssetByUser } from '@helper/asset';
 import { fetchEventByID } from '@helper/event';
 
 import { levels } from '@constants/admin';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const session = await currentSession(req);
-
+  const session = await currentSession(req, res, null, true);
   let result: Result = {
     status: false,
     error: '',

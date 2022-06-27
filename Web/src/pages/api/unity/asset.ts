@@ -22,11 +22,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const assets = await fetchAllAsset();
       const parsedAsset: Asset[] = [];
 
-      let url: string = 'kevii.azurewebsites.net';
-      if (process.env.NEXTAUTH_URL !== undefined) {
-        url = process.env.NEXTAUTH_URL;
-      }
-
       if (assets && assets.status) {
         const assetData: Asset[] = assets.msg;
         for (let as = 0; as < assetData.length; as += 1) {
@@ -44,7 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               longitude: asset.longitude,
               visible: asset.visible,
               visibleText: visible,
-              imagePath: `${url}${asset.imagePath}`,
+              imagePath: asset.imagePath,
             };
 
             parsedAsset.push(data);
@@ -68,12 +63,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         res.end();
       }
     } else {
-      result = { status: false, error: 'Unauthorized', msg: [] };
+      result = { status: false, error: 'Unauthorized, invalid token', msg: [] };
       res.status(200).send(result);
       res.end();
     }
   } else {
-    result = { status: false, error: 'Unauthorized', msg: [] };
+    result = { status: false, error: 'Unauthorized, token not found', msg: [] };
     res.status(200).send(result);
     res.end();
   }

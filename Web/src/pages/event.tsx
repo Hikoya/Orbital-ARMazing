@@ -34,7 +34,7 @@ import { isValidDate } from '@constants/date';
 
 import safeJsonStringify from 'safe-json-stringify';
 import { GetServerSideProps } from 'next';
-import { currentSession } from '@helper/session';
+import { currentSession } from '@helper/sessionServer';
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
 
@@ -732,7 +732,7 @@ export default function EventComponent(props: any) {
                 <form onSubmit={handleSubmitEdit}>
                   {eventDropdown && (
                     <Stack spacing={3} w='full'>
-                      <FormLabel>Select Venue</FormLabel>
+                      <FormLabel>Select Event</FormLabel>
                       <Select
                         value={eventIDEdit}
                         onChange={onEventChangeEdit}
@@ -860,10 +860,15 @@ export default function EventComponent(props: any) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => ({
+export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {
-      const session: Session | null = await currentSession(context);
+      const session: Session | null = await currentSession(
+        null,
+        null,
+        cont,
+        true,
+      );
       if (session !== null) {
         const stringifiedData = safeJsonStringify(session);
         const data: Session = JSON.parse(stringifiedData);
