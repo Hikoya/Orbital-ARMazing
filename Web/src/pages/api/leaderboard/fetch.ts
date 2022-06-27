@@ -58,7 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               error: 'Not authorized',
               msg: [],
             };
-            res.status(200).send(result);
+            res.status(401).send(result);
             res.end();
           }
         } else {
@@ -86,7 +86,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else {
     result = { status: false, error: 'Session not found', msg: [] };
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };

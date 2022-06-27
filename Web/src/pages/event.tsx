@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputLeftAddon,
   Text,
+  Textarea,
   Stack,
   Select,
   SimpleGrid,
@@ -479,6 +480,10 @@ export default function EventComponent(props: any) {
   const columns = useMemo(
     () => [
       {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
         Header: 'Name',
         accessor: 'name',
       },
@@ -632,8 +637,7 @@ export default function EventComponent(props: any) {
                     </FormControl>
                     <FormControl id='description'>
                       <FormLabel>Description</FormLabel>
-                      <Input
-                        type='text'
+                      <Textarea
                         placeholder='Description'
                         value={description}
                         size='lg'
@@ -759,8 +763,7 @@ export default function EventComponent(props: any) {
                     </FormControl>
                     <FormControl id='descriptionEdit'>
                       <FormLabel>Description</FormLabel>
-                      <Input
-                        type='text'
+                      <Textarea
                         placeholder='Description'
                         value={descriptionEdit}
                         size='lg'

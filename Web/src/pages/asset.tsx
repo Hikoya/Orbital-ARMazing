@@ -732,6 +732,10 @@ export default function AssetComponent(props: any) {
   const columns = useMemo(
     () => [
       {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
         Header: 'Event Name',
         accessor: 'eventName',
       },
