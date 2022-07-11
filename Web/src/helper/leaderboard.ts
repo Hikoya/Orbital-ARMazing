@@ -2,7 +2,7 @@ import { prisma } from '@helper/db';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 import { Leaderboard } from 'types/leaderboard';
-import { fetchEventByID } from '@helper/event';
+import { fetchEventByID, fetchEventByCode } from '@helper/event';
 
 export const doesUserExist = async (
   eventID: string,
@@ -44,7 +44,7 @@ export const doesUserExist = async (
 };
 
 export const joinEvent = async (
-  eventID: string,
+  eventCode: string,
   user: string,
 ): Promise<Result> => {
   let result: Result = {
@@ -53,33 +53,43 @@ export const joinEvent = async (
     msg: '',
   };
 
-  const doesEvent: Result = await fetchEventByID(eventID);
-  if (doesEvent.status && doesEvent.msg !== null) {
-    const doesUser: Result = await doesUserExist(eventID, user);
-    if (doesUser.status) {
-      result = { status: false, error: doesUser.error, msg: null };
-    } else {
-      try {
-        const event: Leaderboard = await prisma.leaderboard.create({
-          data: {
-            username: user,
-            eventID: eventID,
-          },
-        });
+  const doesEventRes: Result = await fetchEventByCode(eventCode);
+  if (doesEventRes.status && doesEventRes.msg !== null) {
+    const doesEvent: Event = doesEventRes.msg;
+    if (doesEvent.id !== undefined) {
+      const doesUser: Result = await doesUserExist(doesEvent.id, user);
 
-        if (event) {
-          result = { status: true, error: null, msg: event };
-        } else {
-          result = {
-            status: false,
-            error: 'Failed to insert into database!',
-            msg: null,
-          };
+      if (doesUser.status) {
+        result = { status: false, error: doesUser.error, msg: null };
+      } else {
+        try {
+          const event: Leaderboard = await prisma.leaderboard.create({
+            data: {
+              username: user,
+              eventID: doesEvent.id,
+            },
+          });
+  
+          if (event) {
+            result = { status: true, error: null, msg: event };
+          } else {
+            result = {
+              status: false,
+              error: 'Failed to insert into database!',
+              msg: null,
+            };
+          }
+        } catch (error) {
+          console.error(error);
+          result = { status: false, error: error.toString(), msg: null };
         }
-      } catch (error) {
-        console.error(error);
-        result = { status: false, error: error.toString(), msg: null };
       }
+    } else {
+      result = {
+        status: false,
+        error: 'Event does not exist',
+        msg: null,
+      };
     }
   } else {
     result = {

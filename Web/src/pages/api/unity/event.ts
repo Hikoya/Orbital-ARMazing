@@ -53,6 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 visible: event.visible,
                 isPublicText: isPublic,
                 visibleText: visible,
+                eventCode: event.eventCode,
               };
 
               parsedEvent.push(data);
@@ -78,12 +79,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     } else {
       result = { status: false, error: 'Unauthorized, invalid token', msg: [] };
-      res.status(200).send(result);
+      res.status(401).send(result);
       res.end();
     }
   } else {
     result = { status: false, error: 'Unauthorized, token not found', msg: [] };
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };

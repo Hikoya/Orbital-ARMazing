@@ -17,6 +17,7 @@ import {
   InputGroup,
   InputLeftAddon,
   Text,
+  Textarea,
   Stack,
   Select,
   SimpleGrid,
@@ -174,7 +175,7 @@ export default function EventComponent(props: any) {
       return false;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setError('End date cannot be earlier than start date!');
       return false;
     }
@@ -222,7 +223,7 @@ export default function EventComponent(props: any) {
       return false;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setErrorEdit('End date cannot be earlier than start date!');
       return false;
     }
@@ -479,6 +480,10 @@ export default function EventComponent(props: any) {
   const columns = useMemo(
     () => [
       {
+        Header: 'ID',
+        accessor: 'id',
+      },
+      {
         Header: 'Name',
         accessor: 'name',
       },
@@ -501,6 +506,10 @@ export default function EventComponent(props: any) {
       {
         Header: 'Visible',
         accessor: 'visibleText',
+      },
+      {
+        Header: 'Event Join Code',
+        accessor: 'eventCode',
       },
     ],
     [],
@@ -632,8 +641,7 @@ export default function EventComponent(props: any) {
                     </FormControl>
                     <FormControl id='description'>
                       <FormLabel>Description</FormLabel>
-                      <Input
-                        type='text'
+                      <Textarea
                         placeholder='Description'
                         value={description}
                         size='lg'
@@ -759,8 +767,7 @@ export default function EventComponent(props: any) {
                     </FormControl>
                     <FormControl id='descriptionEdit'>
                       <FormLabel>Description</FormLabel>
-                      <Input
-                        type='text'
+                      <Textarea
                         placeholder='Description'
                         value={descriptionEdit}
                         size='lg'

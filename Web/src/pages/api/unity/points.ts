@@ -58,7 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           error: 'Unauthorized, invalid token',
           msg: [],
         };
-        res.status(200).send(result);
+        res.status(401).send(result);
         res.end();
       }
     } else {
@@ -67,12 +67,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Unauthorized, token not found',
         msg: [],
       };
-      res.status(200).send(result);
+      res.status(401).send(result);
       res.end();
     }
   } else {
     result = { status: false, error: 'HTTP post only', msg: '' };
-    res.status(200).send(result);
+    res.status(403).send(result);
     res.end();
   }
 };

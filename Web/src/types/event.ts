@@ -8,6 +8,7 @@ export type Event = {
   endDateStr?: string;
   isPublic: boolean;
   visible: boolean;
+  eventCode?: string;
   createdBy?: string;
   isPublicText?: string;
   visibleText?: string;

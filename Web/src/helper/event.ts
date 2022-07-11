@@ -234,6 +234,29 @@ export const fetchEventByID = async (id: string): Promise<Result> => {
   return result;
 };
 
+export const fetchEventByCode = async (eventCode: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const event: Event = await prisma.event.findUnique({
+      where: {
+        eventCode: eventCode,
+      },
+    });
+
+    result = { status: true, error: null, msg: event };
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: null };
+  }
+
+  return result;
+};
+
 export const isEventAuthorized = async (
   event: Event,
   session: Session,
@@ -277,4 +300,41 @@ export const isCreatorOfEvent = async (
   }
 
   return false;
+};
+
+export const isCodeTaken = async (code: string): Promise<boolean> => {
+  let result: boolean = true;
+
+  try {
+    const event: Event = await prisma.event.findUnique({
+      where: {
+        eventCode: code,
+      },
+    });
+
+    if (event) {
+      result = true;
+    } else {
+      result = false;
+    }
+  } catch (error) {
+    console.error(error);
+    result = true;
+  }
+
+  return result;
+};
+
+export const generateEventCode = async (): Promise<string> => {
+  let code: string = '';
+  const maxLength = 6;
+  const maxDigit = 9;
+  for (let i = 0; i < maxLength; i += 1) {
+    const num: number = Math.floor(Math.random() * maxDigit);
+    code += num.toString();
+  }
+
+  const isTaken: boolean = await isCodeTaken(code);
+
+  return isTaken ? await generateEventCode() : code;
 };

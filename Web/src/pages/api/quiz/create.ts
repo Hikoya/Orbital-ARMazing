@@ -93,7 +93,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         msg: null,
       };
 
-      res.status(200).send(result);
+      res.status(401).send(result);
       res.end();
     }
   } else {
@@ -103,7 +103,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       msg: null,
     };
 
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };

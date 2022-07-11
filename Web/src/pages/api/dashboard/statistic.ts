@@ -42,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         error: 'Unauthorized',
         msg: { event: 0, asset: 0, user: 0 },
       };
-      res.status(200).send(result);
+      res.status(401).send(result);
       res.end();
     }
   } else {
@@ -51,7 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       error: 'Session not found',
       msg: { event: 0, asset: 0, user: 0 },
     };
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };

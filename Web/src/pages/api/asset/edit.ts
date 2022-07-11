@@ -166,12 +166,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
     } else {
       result = { status: false, error: 'Unauthorized request', msg: '' };
-      res.status(200).send(result);
+      res.status(401).send(result);
       res.end();
     }
   } else {
     result = { status: false, error: 'Unauthenticated request', msg: '' };
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };

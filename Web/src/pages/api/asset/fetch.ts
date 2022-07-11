@@ -79,7 +79,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else {
     result = { status: false, error: 'Unauthenticated', msg: [] };
-    res.status(200).send(result);
+    res.status(401).send(result);
     res.end();
   }
 };
