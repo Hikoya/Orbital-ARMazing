@@ -22,7 +22,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
       if (head === secret) {
         if (eventID && username && points) {
-
           if (quizID) {
             await log(username, eventID, `Attempted Quiz ${quizID}`);
           }
