@@ -2,12 +2,15 @@ import { prisma } from '@helper/db';
 import { Session } from 'next-auth/core/types';
 import { Asset } from 'types/asset';
 import { Result } from 'types/api';
-import { levels } from '@constants/admin';
-import { fetchAllEventWPermission } from '@helper/permission';
 import { EventPermission } from 'types/eventPermission';
+import { Quiz } from 'types/quiz';
+
+import { levels } from '@constants/admin';
+
 import { filterDuplicates } from '@helper/common';
 import { deleteQuiz, fetchAllQuizByAssetID } from '@helper/quiz';
-import { Quiz } from 'types/quiz';
+import { fetchAllEventWPermission } from '@helper/permission';
+import { log } from '@helper/log';
 
 export const createAsset = async (data: Asset): Promise<Result> => {
   let result: Result = {
@@ -22,6 +25,13 @@ export const createAsset = async (data: Asset): Promise<Result> => {
     });
 
     if (event) {
+      if (
+        data.eventID !== undefined &&
+        data.createdBy !== undefined &&
+        event.id !== undefined
+      ) {
+        await log(data.createdBy, data.eventID, `Create Asset ${event.id}`);
+      }
       result = { status: true, error: null, msg: 'Success!' };
     } else {
       result = {
@@ -38,7 +48,10 @@ export const createAsset = async (data: Asset): Promise<Result> => {
   return result;
 };
 
-export const editAsset = async (data: Asset): Promise<Result> => {
+export const editAsset = async (
+  data: Asset,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -46,6 +59,10 @@ export const editAsset = async (data: Asset): Promise<Result> => {
   };
 
   try {
+    if (data.id !== undefined) {
+      await log(session.user.email, data.eventID, `Edit Asset ${data.id}`);
+    }
+
     const asset: Asset = await prisma.assets.update({
       where: {
         id: data.id,
@@ -70,7 +87,10 @@ export const editAsset = async (data: Asset): Promise<Result> => {
   return result;
 };
 
-export const deleteAsset = async (id: string): Promise<Result> => {
+export const deleteAsset = async (
+  id: string,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -85,7 +105,7 @@ export const deleteAsset = async (id: string): Promise<Result> => {
         if (quizzes[key]) {
           const quiz: Quiz = quizzes[key];
           if (quiz.id !== undefined) {
-            await deleteQuiz(quiz.id);
+            await deleteQuiz(quiz.id, session);
           }
         }
       }
@@ -95,6 +115,10 @@ export const deleteAsset = async (id: string): Promise<Result> => {
   }
 
   try {
+    if (id !== undefined) {
+      await log(session.user.email, id, `Delete Asset ${id}`);
+    }
+
     const asset: Asset = await prisma.assets.delete({
       where: {
         id: id,

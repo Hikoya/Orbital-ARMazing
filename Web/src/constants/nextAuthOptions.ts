@@ -3,6 +3,8 @@ import { prisma } from '@helper/db';
 import EmailProvider from 'next-auth/providers/email';
 import nodemailer from 'nodemailer';
 
+import { log } from '@helper/log';
+
 function html({ newURL, email }) {
   const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
 
@@ -387,6 +389,20 @@ export const options = {
     verifyRequest: '/verify-request',
   },
   callbacks: {
+    async signIn({ user, email }) {
+      if (Object.prototype.hasOwnProperty.call(email, 'verificationRequest')) {
+        const email: string = (user.email as string).trim().toLowerCase();
+        await log(email, email, 'Attempted to log in');
+      } else {
+        if (email !== undefined && email !== null) {
+          await log(email, email, 'Login');
+        } else if (user.email !== undefined && user.email !== null) {
+          await log(user.email, user.email, 'Login');
+        }
+      }
+
+      return true;
+    },
     async session({ session, user }) {
       try {
         const userFromDB = await prisma.user.findUnique({

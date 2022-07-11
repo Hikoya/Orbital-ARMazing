@@ -21,7 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (checkerString(id)) {
         const isCreator: boolean = await isCreatorOfAsset(id, session);
         if (isCreator) {
-          const asset: Result = await deleteAsset(id);
+          const asset: Result = await deleteAsset(id, session);
           if (asset.status) {
             result = {
               status: true,

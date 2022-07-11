@@ -29,7 +29,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           const eventMsg = event.msg as Event;
           const isAuthorized = await isEventAuthorized(eventMsg, session);
           if (isAuthorized) {
-            const board: Result = await resetLeaderBoardByEventID(eventID);
+            const board: Result = await resetLeaderBoardByEventID(
+              eventID,
+              session,
+            );
             if (board.status) {
               result = {
                 status: true,

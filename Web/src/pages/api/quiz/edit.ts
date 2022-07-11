@@ -58,7 +58,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           updated_at: new Date().toISOString(),
         };
 
-        const qn = await editQuiz(data);
+        const qn = await editQuiz(data, session);
 
         if (qn.status) {
           result = {

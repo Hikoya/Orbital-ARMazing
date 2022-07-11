@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (checkerString(quizID)) {
         const isCreator: boolean = await isCreatorOfQuiz(quizID, session);
         if (isCreator) {
-          const qn = await deleteQuiz(quizID);
+          const qn = await deleteQuiz(quizID, session);
           if (qn.status) {
             result = {
               status: true,

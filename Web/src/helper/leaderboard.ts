@@ -4,6 +4,9 @@ import { Event } from 'types/event';
 import { Leaderboard } from 'types/leaderboard';
 import { fetchEventByID, fetchEventByCode } from '@helper/event';
 
+import { log } from '@helper/log';
+import { Session } from 'next-auth/core/types';
+
 export const doesUserExist = async (
   eventID: string,
   username: string,
@@ -63,13 +66,15 @@ export const joinEvent = async (
         result = { status: false, error: doesUser.error, msg: null };
       } else {
         try {
+          await log(user, doesEvent.id, 'Join Event');
+
           const event: Leaderboard = await prisma.leaderboard.create({
             data: {
               username: user,
               eventID: doesEvent.id,
             },
           });
-  
+
           if (event) {
             result = { status: true, error: null, msg: event };
           } else {
@@ -166,6 +171,7 @@ export const fetchLeaderBoardByEventID = async (
 
 export const resetLeaderBoardByEventID = async (
   eventID: string,
+  session: Session,
 ): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -174,6 +180,8 @@ export const resetLeaderBoardByEventID = async (
   };
 
   try {
+    await log(session.user.email, eventID, 'Reset Leaderboard');
+
     const board: Leaderboard[] = await prisma.leaderboard.updateMany({
       where: {
         eventID: eventID,
@@ -203,6 +211,7 @@ export const resetLeaderBoardByEventID = async (
 
 export const deleteLeaderBoardByEventID = async (
   eventID: string,
+  session: Session,
 ): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -211,6 +220,8 @@ export const deleteLeaderBoardByEventID = async (
   };
 
   try {
+    await log(session.user.email, eventID, 'Delete Leaderboard');
+
     const board: Leaderboard = await prisma.leaderboard.deleteMany({
       where: {
         eventID: eventID,
@@ -256,6 +267,12 @@ export const updateUserPoints = async (
 
       const userID = doesUserMsg.id;
       const finalPoints: number = Number(userPoints) + Number(points);
+
+      await log(
+        username,
+        eventID,
+        `Update Points by ${points} to ${finalPoints}`,
+      );
 
       const board: Leaderboard = await prisma.leaderboard.update({
         where: {

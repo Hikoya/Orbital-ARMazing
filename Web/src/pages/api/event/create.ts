@@ -41,7 +41,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           createdBy: session.user.email.trim(),
         };
 
-        const event = await createEvent(data);
+        const event = await createEvent(data, session);
         if (event.status) {
           result = {
             status: true,

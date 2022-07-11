@@ -20,7 +20,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       if (checkerString(id)) {
         const isCreator: boolean = await isCreatorOfEvent(id, session);
         if (isCreator) {
-          const event: Result = await deleteEvent(id);
+          const event: Result = await deleteEvent(id, session);
           if (event.status) {
             result = {
               status: true,
