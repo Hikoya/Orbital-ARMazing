@@ -130,7 +130,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           }
 
           if (success && assetData !== null) {
-            const createEventRequest = await editAsset(assetData);
+            const createEventRequest = await editAsset(assetData, session);
             if (createEventRequest.status) {
               result = {
                 status: true,

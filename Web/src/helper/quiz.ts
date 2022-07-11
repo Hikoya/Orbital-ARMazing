@@ -1,11 +1,14 @@
 import { prisma } from '@helper/db';
 import { Quiz } from 'types/quiz';
 import { Result } from 'types/api';
+import { EventPermission } from 'types/eventPermission';
+
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
+
 import { fetchAllEventWPermission } from '@helper/permission';
-import { EventPermission } from 'types/eventPermission';
 import { filterDuplicates } from '@helper/common';
+import { log } from '@helper/log';
 
 export const createQuiz = async (data: Quiz): Promise<Result> => {
   let result: Result = {
@@ -20,6 +23,14 @@ export const createQuiz = async (data: Quiz): Promise<Result> => {
     });
 
     if (qn) {
+      if (
+        qn.id !== undefined &&
+        data.eventID !== undefined &&
+        data.createdBy !== undefined
+      ) {
+        await log(data.createdBy, data.eventID, `Create Quiz ${qn.id}`);
+      }
+
       result = { status: true, error: null, msg: qn };
     } else {
       result = {
@@ -36,7 +47,10 @@ export const createQuiz = async (data: Quiz): Promise<Result> => {
   return result;
 };
 
-export const editQuiz = async (data: Quiz): Promise<Result> => {
+export const editQuiz = async (
+  data: Quiz,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -44,6 +58,10 @@ export const editQuiz = async (data: Quiz): Promise<Result> => {
   };
 
   try {
+    if (data.eventID !== undefined && data.id !== undefined) {
+      await log(session.user.email, data.eventID, `Edit Quiz ${data.id}`);
+    }
+
     const qn: Quiz = await prisma.questions.update({
       where: {
         id: data.id,
@@ -68,7 +86,10 @@ export const editQuiz = async (data: Quiz): Promise<Result> => {
   return result;
 };
 
-export const deleteQuiz = async (id: string): Promise<Result> => {
+export const deleteQuiz = async (
+  id: string,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -76,6 +97,10 @@ export const deleteQuiz = async (id: string): Promise<Result> => {
   };
 
   try {
+    if (id !== undefined) {
+      await log(session.user.email, id, `Delete Quiz ${id}`);
+    }
+
     const qn: Quiz = await prisma.questions.delete({
       where: {
         id: id,

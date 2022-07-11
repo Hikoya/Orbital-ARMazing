@@ -4,7 +4,7 @@ import { Event } from 'types/event';
 
 import { currentSession } from '@helper/sessionServer';
 import { convertDateToUnix } from '@constants/date';
-import { editEvent } from '@helper/event';
+import { editEvent, isCreatorOfEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
@@ -27,36 +27,49 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         checkerString(startDate) &&
         checkerString(endDate)
       ) {
-        const start = convertDateToUnix(startDate);
-        const end = convertDateToUnix(endDate);
+        const isCreator: boolean = await isCreatorOfEvent(id, session);
 
-        const data: Event = {
-          id: id.trim(),
-          name: name.trim(),
-          description: description.trim(),
-          startDate: start,
-          endDate: end,
-          isPublic: isPublic,
-          visible: visible,
-          updated_at: new Date().toISOString(),
-        };
+        if (isCreator) {
+          const start = convertDateToUnix(startDate);
+          const end = convertDateToUnix(endDate);
 
-        const event: Result = await editEvent(data);
-        if (event.status) {
-          result = {
-            status: true,
-            error: null,
-            msg: 'Event updated',
+          const data: Event = {
+            id: id.trim(),
+            name: name.trim(),
+            description: description.trim(),
+            startDate: start,
+            endDate: end,
+            isPublic: isPublic,
+            visible: visible,
+            updated_at: new Date().toISOString(),
           };
 
-          res.status(200).send(result);
-          res.end();
+          const event: Result = await editEvent(data, session);
+          if (event.status) {
+            result = {
+              status: true,
+              error: null,
+              msg: 'Event updated',
+            };
+
+            res.status(200).send(result);
+            res.end();
+          } else {
+            result = {
+              status: false,
+              error: event.error,
+              msg: '',
+            };
+            res.status(200).send(result);
+            res.end();
+          }
         } else {
           result = {
             status: false,
-            error: event.error,
-            msg: '',
+            error: 'Only the creator can edit the event',
+            msg: null,
           };
+
           res.status(200).send(result);
           res.end();
         }

@@ -339,7 +339,7 @@ export default function LeaderboardComponent() {
                   </Text>
                 </Stack>
               </Box>
-          )}
+            )}
 
           {!loadingData && !noEvent && data.length > 0 && (
             <Box w='full' mt={30} overflow='auto'>

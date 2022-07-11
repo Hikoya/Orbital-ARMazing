@@ -3,16 +3,21 @@ import { prisma } from '@helper/db';
 import { Event } from 'types/event';
 import { Result } from 'types/api';
 import { EventPermission } from 'types/eventPermission';
+import { Asset } from 'types/asset';
 
 import { Session } from 'next-auth/core/types';
 import { levels } from '@constants/admin';
+
 import { fetchAllEventWPermission } from '@helper/permission';
 import { filterDuplicates } from '@helper/common';
 import { deleteAsset, fetchAllAssetByEventID } from '@helper/asset';
-import { Asset } from 'types/asset';
-import { deleteLeaderBoardByEventID } from './leaderboard';
+import { deleteLeaderBoardByEventID } from '@helper/leaderboard';
+import { log } from '@helper/log';
 
-export const createEvent = async (data: Event): Promise<Result> => {
+export const createEvent = async (
+  data: Event,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -25,6 +30,9 @@ export const createEvent = async (data: Event): Promise<Result> => {
     });
 
     if (event) {
+      if (event.id !== undefined) {
+        await log(session.user.email, event.id, `Create Event ${event.id}`);
+      }
       result = { status: true, error: null, msg: event };
     } else {
       result = {
@@ -41,7 +49,10 @@ export const createEvent = async (data: Event): Promise<Result> => {
   return result;
 };
 
-export const editEvent = async (data: Event): Promise<Result> => {
+export const editEvent = async (
+  data: Event,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -49,6 +60,10 @@ export const editEvent = async (data: Event): Promise<Result> => {
   };
 
   try {
+    if (data.id !== undefined) {
+      await log(session.user.email, data.id, `Edit Event ${data.id}`);
+    }
+
     const event: Event = await prisma.event.update({
       where: {
         id: data.id,
@@ -73,7 +88,10 @@ export const editEvent = async (data: Event): Promise<Result> => {
   return result;
 };
 
-export const deleteEvent = async (id: string): Promise<Result> => {
+export const deleteEvent = async (
+  id: string,
+  session: Session,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -88,7 +106,7 @@ export const deleteEvent = async (id: string): Promise<Result> => {
         if (assets[key]) {
           const asset: Asset = assets[key];
           if (asset.id !== undefined) {
-            await deleteAsset(asset.id);
+            await deleteAsset(asset.id, session);
           }
         }
       }
@@ -97,12 +115,14 @@ export const deleteEvent = async (id: string): Promise<Result> => {
     console.log(assetRes.error);
   }
 
-  const leaderBoardRes: Result = await deleteLeaderBoardByEventID(id);
+  const leaderBoardRes: Result = await deleteLeaderBoardByEventID(id, session);
   if (!leaderBoardRes.status) {
     console.log(leaderBoardRes.error);
   }
 
   try {
+    await log(session.user.email, id, `Delete Event ${id}`);
+
     const event: Event = await prisma.event.delete({
       where: {
         id: id,
