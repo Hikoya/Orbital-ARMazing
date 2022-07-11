@@ -20,6 +20,7 @@
     "wrap-iife": "off",
     "function-paren-newline": "off",
     "react/jsx-indent": "off",
+    "indent": "off",
 
     "react/jsx-filename-extension": [
       2,
