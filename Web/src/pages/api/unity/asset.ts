@@ -56,7 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       } else {
         result = {
           status: false,
-          error: 'Cannot get all events',
+          error: 'Cannot get all assets',
           msg: [],
         };
         res.status(200).send(result);
