@@ -4,7 +4,7 @@ import { Event } from 'types/event';
 
 import { currentSession } from '@helper/sessionServer';
 import { convertDateToUnix } from '@constants/date';
-import { createEvent } from '@helper/event';
+import { createEvent, generateEventCode } from '@helper/event';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
@@ -28,6 +28,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const start = convertDateToUnix(startDate);
         const end = convertDateToUnix(endDate);
 
+        const eventCode: string = await generateEventCode();
+
         const data: Event = {
           name: name.trim(),
           description: description.trim(),
@@ -35,6 +37,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           endDate: end,
           isPublic: isPublic,
           visible: visible,
+          eventCode: eventCode,
           createdBy: session.user.email.trim(),
         };
 

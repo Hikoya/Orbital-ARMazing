@@ -53,6 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 visible: event.visible,
                 isPublicText: isPublic,
                 visibleText: visible,
+                eventCode: event.eventCode,
               };
 
               parsedEvent.push(data);

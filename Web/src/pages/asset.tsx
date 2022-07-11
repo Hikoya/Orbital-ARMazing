@@ -1007,7 +1007,6 @@ export default function AssetComponent(props: any) {
                                 />
                               </VisuallyHidden>
                             </chakra.label>
-                            <Text pl={1}>or drag and drop</Text>
                           </Flex>
                           <Text fontSize='xs' color='gray.500'>
                             PNG, JPG up to 10MB
@@ -1197,7 +1196,6 @@ export default function AssetComponent(props: any) {
                                 />
                               </VisuallyHidden>
                             </chakra.label>
-                            <Text pl={1}>or drag and drop</Text>
                           </Flex>
                           <Text fontSize='xs' color='gray.500'>
                             PNG, JPG up to 10MB

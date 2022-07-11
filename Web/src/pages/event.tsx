@@ -175,7 +175,7 @@ export default function EventComponent(props: any) {
       return false;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setError('End date cannot be earlier than start date!');
       return false;
     }
@@ -223,7 +223,7 @@ export default function EventComponent(props: any) {
       return false;
     }
 
-    if (end <= start) {
+    if (end < start) {
       setErrorEdit('End date cannot be earlier than start date!');
       return false;
     }
@@ -506,6 +506,10 @@ export default function EventComponent(props: any) {
       {
         Header: 'Visible',
         accessor: 'visibleText',
+      },
+      {
+        Header: 'Event Join Code',
+        accessor: 'eventCode',
       },
     ],
     [],
