@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
 import { updateUserPoints } from '@helper/leaderboard';
+import { log } from '@helper/log';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
@@ -10,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   };
 
   if (req.method === 'POST') {
-    const { eventID, username, points } = req.body;
+    const { eventID, username, points, quizID } = req.body;
 
     if (
       req.headers.authorization !== null &&
@@ -21,6 +22,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
       if (head === secret) {
         if (eventID && username && points) {
+
+          if (quizID) {
+            await log(username, eventID, `Attempted Quiz ${quizID}`);
+          }
+
           const updateBoard: Result = await updateUserPoints(
             eventID,
             username,
