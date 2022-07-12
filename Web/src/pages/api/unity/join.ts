@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
+import { Event } from 'types/event';
 
 import { joinEvent } from '@helper/leaderboard';
+import { fetchEventByCode } from '@helper/event';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
@@ -24,13 +26,27 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (eventID && username) {
           const join: Result = await joinEvent(eventID, username);
           if (join.status) {
-            result = {
-              status: true,
-              error: null,
-              msg: 'Successfully joined event',
-            };
-            res.status(202).send(result);
-            res.end();
+            const doesEventRes: Result = await fetchEventByCode(eventID);
+            if (doesEventRes.status && doesEventRes.msg !== null) {
+              const doesEvent: Event = doesEventRes.msg;
+              if (doesEvent.id !== undefined) {
+                result = {
+                  status: true,
+                  error: null,
+                  msg: doesEvent.id,
+                };
+                res.status(202).send(result);
+                res.end();
+              }
+            } else {
+              result = {
+                status: false,
+                error: doesEventRes.error,
+                msg: '',
+              };
+              res.status(202).send(result);
+              res.end();
+            }
           } else {
             result = {
               status: false,
