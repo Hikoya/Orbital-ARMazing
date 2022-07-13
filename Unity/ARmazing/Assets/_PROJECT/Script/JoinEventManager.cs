@@ -14,7 +14,7 @@ public class JoinEventManager : MonoBehaviour
     public TMP_InputField eventNameInput;
     private TMP_Text messageText;
     private string auth = "Bearer passwordispasswordissecret";
-    private string eventID = null;
+    private string eventCode = null;
     private string nickname = null;
 
 
@@ -26,7 +26,7 @@ public class JoinEventManager : MonoBehaviour
     public void JoinEventButton()
     {
         //Milestone 2: call backend API to join event (if active) and download necessary event assets
-        eventID = eventNameInput.text;
+        eventCode = eventNameInput.text;
         nickname = nicknameInput.text;
         StartCoroutine(JoinEventPost());
     }
@@ -37,7 +37,7 @@ public class JoinEventManager : MonoBehaviour
         messageText.text = "Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/join";
         WWWForm form = new WWWForm();
-        form.AddField("eventID", eventID);
+        form.AddField("eventID", eventCode);
         form.AddField("username", nickname);
         using (UnityWebRequest request = UnityWebRequest.Post(uri, form))
         {
@@ -53,7 +53,8 @@ public class JoinEventManager : MonoBehaviour
 
                 if (response.status)
                 {
-                    messageText.text = response.msg;
+                    PlayerPrefs.SetString("nickname", nickname);
+                    PlayerPrefs.SetString("eventid", response.msg);
                     LoaderUtility.Initialize();
                     SceneManager.LoadScene("AR", LoadSceneMode.Single);
                 }

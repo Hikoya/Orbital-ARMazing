@@ -82,6 +82,7 @@ public class ARManager : MonoBehaviour
         TMP_Text titleText = arPanel.transform.Find("Title_Text").gameObject.GetComponent<TMP_Text>();
         titleText.text = trackedImage.referenceImage.name;
         TMP_Text descText = arPanel.transform.Find("Desc_Text").gameObject.GetComponent<TMP_Text>();
+        //descText.text = "Description of " + trackedImage.referenceImage.name;
         descText.text = "Description of " + trackedImage.referenceImage.name;
     }
 
