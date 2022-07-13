@@ -108,7 +108,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
                     }
                 case State.Done:
                     {
-                        GUILayout.Label("All images added");
+                        GUILayout.Label("");
                         break;
                     }
                 case State.Error:

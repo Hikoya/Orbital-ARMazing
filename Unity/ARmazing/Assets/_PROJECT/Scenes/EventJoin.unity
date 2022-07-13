@@ -945,7 +945,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: EventName
+  m_text: Event Code
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 20265b2d2d47305429405f4b95db2335, type: 2}
   m_sharedMaterial: {fileID: 1794388633353711125, guid: 20265b2d2d47305429405f4b95db2335,
@@ -1252,7 +1252,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 23523
+  m_text: 235231
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 20265b2d2d47305429405f4b95db2335, type: 2}
   m_sharedMaterial: {fileID: 1794388633353711125, guid: 20265b2d2d47305429405f4b95db2335,
@@ -1480,7 +1480,7 @@ GameObject:
   - component: {fileID: 1740383577}
   - component: {fileID: 1740383580}
   m_Layer: 5
-  m_Name: EventID_InputField (TMP) (1)
+  m_Name: EventCode_InputField (TMP) (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

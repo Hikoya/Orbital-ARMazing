@@ -116,7 +116,8 @@ public class ARManagerTest : MonoBehaviour
         TMP_Text titleText = arPanel.transform.Find("Title_Text").gameObject.GetComponent<TMP_Text>();
         titleText.text = trackedImage.referenceImage.name;
         TMP_Text descText = arPanel.transform.Find("Desc_Text").gameObject.GetComponent<TMP_Text>();
-        descText.text = "Description of " + trackedImage.referenceImage.name;
+        //descText.text = "Description of " + trackedImage.referenceImage.name;
+        descText.text = "The Lee Kong Chian Natural History Museum is a museum of natural history at the Kent Ridge Campus of the National University of Singapore. Officially opened on 18 April 2015, it houses the Raffles Natural History Collection.";
     }
 
 }
