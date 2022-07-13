@@ -9,33 +9,63 @@ using UnityEngine.Networking;
 
 public class LeaderboardManager : MonoBehaviour
 {
+    public GameObject messageBox;
     public Transform gridContent;
     public GameObject rowPrefab;
     public List<PlayerScores> playerScores;
+    private TMP_Text messageText;
     public string filename;
     private string jsonContent;
+    private string auth = "Bearer passwordispasswordissecret";
+    
     // Start is called before the first frame update
     void Start()
     {
-        UpdateLeaderboard();
+        messageText = messageBox.GetComponentInChildren<TMP_Text>();
+        //For testing
+        //PlayerPrefs.SetString("eventid", "cl4vdb84g00830m1yk5v2143l");
+        StartCoroutine(FetchLeaderboardJson());
     }
 
-    public void UpdateLeaderboard()
+    IEnumerator FetchLeaderboardJson()
     {
-        filename = "testleaderboard.json";
-        if (Application.platform == RuntimePlatform.Android)
+        string uri = "https://orbital-armazing.herokuapp.com/api/unity/leaderboard";
+        WWWForm form = new WWWForm();
+        form.AddField("eventID", "cl4vdb84g00830m1yk5v2143l");
+        using (UnityWebRequest request = UnityWebRequest.Post(uri, form))
         {
-            StartCoroutine(ReadPlayerScoresFromJSONAndroid(filename));
-        } else
-        {
-            playerScores = ReadPlayerScoresFromJSON(filename);
-
-            PopulateRanking();
+            request.SetRequestHeader("Authorization", auth);
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                messageText.text = request.error;
+            }
+            else
+            {
+                LeaderboardResponse response = GetFetchLeaderboardDataResponse(request.downloadHandler.text);
+                Debug.Log(response.msg);
+                
+                if (response.status)
+                {
+                    playerScores = response.msg.OrderByDescending(x => x.points).ToList();
+                    UpdateLeaderboard();
+                }
+                else messageText.text = response.error;
+            }
         }
-       
     }
 
-    void PopulateRanking()
+    public LeaderboardResponse GetFetchLeaderboardDataResponse(string jsonContent)
+    {
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
+        {
+            return null;
+        }
+        LeaderboardResponse res = JsonConvert.DeserializeObject<LeaderboardResponse>(jsonContent);
+        return res;
+    }
+
+    void UpdateLeaderboard()
     {
         for (int i = 0; i < playerScores.Count; i++)
         {
@@ -50,66 +80,9 @@ public class LeaderboardManager : MonoBehaviour
             row.transform.Find("PointsText").GetComponent<TMP_Text>().text = playerScores.ElementAt(i).points.ToString();
         }
     }
-
-    List<PlayerScores> ReadPlayerScoresFromJSON(string filename)
-    {
-        jsonContent = ReadFile(GetPath(filename));
-
-        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
-        {
-            return null;
-        }
-
-        LeaderboardJSONObj res = JsonConvert.DeserializeObject<LeaderboardJSONObj>(jsonContent);
-        return res.msg.OrderByDescending(x => x.points).ToList();
-    }
-
-    string GetPath(string filename)
-    {
-        if (Application.platform == RuntimePlatform.IPhonePlayer) return Application.dataPath + "/Raw" + filename;
-        else return Application.dataPath + "/StreamingAssets/" + filename;
-    }
-
-    IEnumerator ReadPlayerScoresFromJSONAndroid(string filename)
-    {
-        string filePath = "jar:file://" + Application.dataPath + "!/assets/" + filename;
-        using (UnityWebRequest request = UnityWebRequest.Get(filePath))
-        {
-            yield return request.SendWebRequest();
-            if (request.isNetworkError || request.isHttpError)
-            {
-                Debug.Log(request.error);
-            }
-            else
-            {
-                jsonContent = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(jsonContent) && !(jsonContent == "{}"))
-                {
-                    LeaderboardJSONObj res = JsonConvert.DeserializeObject<LeaderboardJSONObj>(jsonContent);
-                    playerScores = res.msg;
-                    PopulateRanking();
-                }
-
-            }
-        }
-    }
-
-    string ReadFile(string path)
-    {
-        if (File.Exists(path))
-        {
-            using (StreamReader reader = new StreamReader(path))
-            {
-                string content = reader.ReadToEnd();
-                return content;
-            }
-        }
-        return "";
-    }
-
 }
 
-public class LeaderboardJSONObj
+public class LeaderboardResponse
 {
     public bool status;
     public string error;
