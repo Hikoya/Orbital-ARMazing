@@ -132,7 +132,7 @@ export const deleteAsset = async (
   } else {
     console.log(attemptRes.error);
   }
-  
+
   try {
     if (id !== undefined) {
       await log(session.user.email, id, `Delete Asset ${id}`);

@@ -4,5 +4,6 @@ export type Leaderboard = {
   eventName?: string;
   username: string;
   points?: number;
+  action?: any;
   updated_at?: string;
 };

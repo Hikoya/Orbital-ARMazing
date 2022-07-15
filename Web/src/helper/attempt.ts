@@ -18,10 +18,7 @@ export const createAttempt = async (data: Attempt): Promise<Result> => {
     });
 
     if (event) {
-      if (
-        data.eventID !== undefined &&
-        event.id !== undefined
-      ) {
+      if (data.eventID !== undefined && event.id !== undefined) {
         await log('Unity', data.eventID, `Create Attempt ${event.id}`);
       }
       result = { status: true, error: null, msg: 'Success!' };
@@ -78,7 +75,9 @@ export const deleteAttempt = async (
   return result;
 };
 
-export const fetchAllAttemptByAssetID = async(assetID: string): Promise<Result> => {
+export const fetchAllAttemptByAssetID = async (
+  assetID: string,
+): Promise<Result> => {
   let result: Result = {
     status: false,
     error: '',
@@ -99,4 +98,58 @@ export const fetchAllAttemptByAssetID = async(assetID: string): Promise<Result> 
   }
 
   return result;
-}
+};
+
+export const fetchAttemptByEventID = async (
+  eventID: string,
+  username: string,
+): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const att: Attempt[] = await prisma.attempt.findMany({
+      where: {
+        eventID: eventID,
+        username: username,
+      },
+    });
+
+    result = { status: true, error: null, msg: att };
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error, msg: null };
+  }
+
+  return result;
+};
+
+export const doesUserAttempt = async (
+  eventID: string,
+  username: string,
+  assetID: string,
+): Promise<boolean> => {
+  let result = false;
+
+  try {
+    const att: Attempt = await prisma.attempt.findFirst({
+      where: {
+        eventID: eventID,
+        username: username,
+        assetID: assetID,
+      },
+    });
+
+    if (att) {
+      result = true;
+    }
+  } catch (error) {
+    console.error(error);
+    result = false;
+  }
+
+  return result;
+};
