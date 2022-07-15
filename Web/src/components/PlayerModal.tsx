@@ -90,12 +90,12 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
       const tableField: JSX.Element = (
         <TableContainer>
           <Table variant='simple'>
-          <Thead>
-            <Tr>
-              <Th>Asset Name</Th>
-              <Th>Points</Th>
-            </Tr>
-          </Thead>
+            <Thead>
+              <Tr>
+                <Th>Asset Name</Th>
+                <Th>Points</Th>
+              </Tr>
+            </Thead>
 
             <Tbody>{list}</Tbody>
           </Table>

@@ -43,7 +43,11 @@ export const createEvent = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to create event in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -82,7 +86,11 @@ export const editEvent = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to update event in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -112,12 +120,12 @@ export const deleteEvent = async (
       }
     }
   } else {
-    console.log(assetRes.error);
+    console.error(assetRes.error);
   }
 
   const leaderBoardRes: Result = await deleteLeaderBoardByEventID(id, session);
   if (!leaderBoardRes.status) {
-    console.log(leaderBoardRes.error);
+    console.error(leaderBoardRes.error);
   }
 
   try {
@@ -140,7 +148,11 @@ export const deleteEvent = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to delete event in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -166,7 +178,11 @@ export const fetchAllEventByUser = async (
       result = { status: true, error: null, msg: event };
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = {
+        status: false,
+        error: 'Failed to fetch event in database',
+        msg: null,
+      };
     }
   } else if (session.user.level === levels.FACILITATOR) {
     try {
@@ -205,7 +221,11 @@ export const fetchAllEventByUser = async (
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error.toString(), msg: null };
+      result = {
+        status: false,
+        error: 'Failed to fetch event in database',
+        msg: null,
+      };
     }
   }
 
@@ -225,7 +245,11 @@ export const fetchAllEvent = async (): Promise<Result> => {
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to fetch event in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -248,7 +272,11 @@ export const fetchEventByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to fetch event in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -271,7 +299,11 @@ export const fetchEventByCode = async (eventCode: string): Promise<Result> => {
     result = { status: true, error: null, msg: event };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to fetch event in database',
+      msg: null,
+    };
   }
 
   return result;

@@ -43,8 +43,12 @@ export const createAsset = async (data: Asset): Promise<Result> => {
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to create asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -82,8 +86,12 @@ export const editAsset = async (
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to create asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -113,7 +121,7 @@ export const deleteAsset = async (
       }
     }
   } else {
-    console.log(quizzesRes.error);
+    console.error(quizzesRes.error);
   }
 
   const attemptRes: Result = await fetchAllAttemptByAssetID(id);
@@ -130,7 +138,7 @@ export const deleteAsset = async (
       }
     }
   } else {
-    console.log(attemptRes.error);
+    console.error(attemptRes.error);
   }
 
   try {
@@ -154,8 +162,12 @@ export const deleteAsset = async (
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to delete asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -181,7 +193,7 @@ export const fetchAllAssetByUser = async (
       result = { status: true, error: null, msg: asset };
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error, msg: null };
+      result = { status: false, error: 'Failed to find asset', msg: null };
     }
   } else if (session.user.level === levels.FACILITATOR) {
     try {
@@ -226,11 +238,19 @@ export const fetchAllAssetByUser = async (
 
         result = { status: true, error: null, msg: assetList };
       } else {
-        result = { status: false, error: listOfEventsRes.error, msg: null };
+        result = {
+          status: false,
+          error: 'Failed to get list of assets',
+          msg: null,
+        };
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error.toString(), msg: null };
+      result = {
+        status: false,
+        error: 'Failed to get list of assets',
+        msg: null,
+      };
     }
   }
 
@@ -250,7 +270,11 @@ export const fetchAllAsset = async (): Promise<Result> => {
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;
@@ -275,7 +299,11 @@ export const fetchAllAssetByEventID = async (
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;
@@ -298,7 +326,11 @@ export const fetchAssetByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;
@@ -321,7 +353,7 @@ export const countAsset = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: numberOfAssets };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: 0 };
+    result = { status: false, error: 'Failed to count assets', msg: 0 };
   }
 
   return result;

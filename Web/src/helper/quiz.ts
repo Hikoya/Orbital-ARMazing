@@ -40,8 +40,12 @@ export const createQuiz = async (data: Quiz): Promise<Result> => {
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to create question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -79,8 +83,12 @@ export const editQuiz = async (
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to update question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -117,8 +125,12 @@ export const deleteQuiz = async (
       };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to delete question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -141,8 +153,12 @@ export const fetchAllQuiz = async (session: Session): Promise<Result> => {
 
       result = { status: true, error: null, msg: qn };
     } catch (error) {
-      console.log(error);
-      result = { status: false, error: error.toString(), msg: null };
+      console.error(error);
+      result = {
+        status: false,
+        error: 'Failed to find question in database',
+        msg: null,
+      };
     }
   } else if (session.user.level === levels.FACILITATOR) {
     try {
@@ -191,7 +207,11 @@ export const fetchAllQuiz = async (session: Session): Promise<Result> => {
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: error.toString(), msg: null };
+      result = {
+        status: false,
+        error: 'Failed to find question in database',
+        msg: null,
+      };
     }
   }
 
@@ -218,8 +238,12 @@ export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
       result = { status: true, error: null, msg: [] };
     }
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to find question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -243,8 +267,12 @@ export const fetchAllQuizByAssetID = async (
 
     result = { status: true, error: null, msg: qn };
   } catch (error) {
-    console.log(error);
-    result = { status: false, error: error.toString(), msg: null };
+    console.error(error);
+    result = {
+      status: false,
+      error: 'Failed to find question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -267,7 +295,11 @@ export const fetchQuizByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: qn };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = {
+      status: false,
+      error: 'Failed to find question in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -308,7 +340,11 @@ export const countQuiz = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: numberOfQuiz };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: 0 };
+    result = {
+      status: false,
+      error: 'Failed to count question in database',
+      msg: 0,
+    };
   }
 
   return result;
