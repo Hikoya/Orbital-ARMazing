@@ -5,6 +5,7 @@ import { Statistic } from 'types/dashboard';
 
 import { countUserInEvent } from '@helper/leaderboard';
 import { countAsset } from '@helper/asset';
+import { countQuiz } from '@helper/quiz';
 import { fetchAllEventByUser } from '@helper/event';
 
 export const fetchStatistic = async (session: Session): Promise<Result> => {
@@ -17,6 +18,7 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
   let numberOfAssets = 0;
   let numberOfEvents = 0;
   let numberOfUsers = 0;
+  let numberOfQuiz = 0;
 
   try {
     const eventsObj = await fetchAllEventByUser(session);
@@ -39,6 +41,11 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
               const countAssets: Result = await countAsset(id);
               if (countAssets.status) {
                 numberOfAssets += countAssets.msg;
+
+                const countQuizs: Result = await countQuiz(id);
+                if (countQuizs.status) {
+                  numberOfQuiz += countQuizs.msg;
+                }
               }
             }
           }
@@ -50,6 +57,7 @@ export const fetchStatistic = async (session: Session): Promise<Result> => {
       event: numberOfEvents,
       asset: numberOfAssets,
       user: numberOfUsers,
+      quiz: numberOfQuiz,
     };
 
     result = { status: true, error: '', msg: resultMsg };

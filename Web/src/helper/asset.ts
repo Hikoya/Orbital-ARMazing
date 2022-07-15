@@ -4,6 +4,7 @@ import { Asset } from 'types/asset';
 import { Result } from 'types/api';
 import { EventPermission } from 'types/eventPermission';
 import { Quiz } from 'types/quiz';
+import { Attempt } from 'types/attempt';
 
 import { levels } from '@constants/admin';
 
@@ -11,6 +12,7 @@ import { filterDuplicates } from '@helper/common';
 import { deleteQuiz, fetchAllQuizByAssetID } from '@helper/quiz';
 import { fetchAllEventWPermission } from '@helper/permission';
 import { log } from '@helper/log';
+import { deleteAttempt, fetchAllAttemptByAssetID } from '@helper/attempt';
 
 export const createAsset = async (data: Asset): Promise<Result> => {
   let result: Result = {
@@ -112,6 +114,23 @@ export const deleteAsset = async (
     }
   } else {
     console.log(quizzesRes.error);
+  }
+
+  const attemptRes: Result = await fetchAllAttemptByAssetID(id);
+  if (attemptRes.status) {
+    const attempt: Attempt[] = attemptRes.msg;
+    if (attempt.length > 0) {
+      for (let key = 0; key < attempt.length; key += 1) {
+        if (attempt[key]) {
+          const att: Attempt = attempt[key];
+          if (att.id !== undefined) {
+            await deleteAttempt(att.id, session);
+          }
+        }
+      }
+    }
+  } else {
+    console.log(attemptRes.error);
   }
 
   try {
@@ -302,7 +321,7 @@ export const countAsset = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: numberOfAssets };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = { status: false, error: error.toString(), msg: 0 };
   }
 
   return result;

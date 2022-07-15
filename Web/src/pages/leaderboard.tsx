@@ -20,10 +20,14 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import PlayerModal from '@components/PlayerModal';
+
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 import { Leaderboard } from 'types/leaderboard';
 import { checkerString } from '@helper/common';
+
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 
 import { parentVariant } from '@root/motion';
 import { motion } from 'framer-motion';
@@ -34,6 +38,10 @@ const MotionBox = motion(Box);
 export default function LeaderboardComponent() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
+
+  const [specificPlayer, setSpecificPlayerData] = useState<Leaderboard | null>(
+    null,
+  );
 
   const [eventID, setEventID] = useState('');
   const eventIDDB = useRef('');
@@ -49,20 +57,44 @@ export default function LeaderboardComponent() {
 
   const [hasLeaderBoard, setHasLeaderBoard] = useState(false);
 
-  const includeActionButton = useCallback(async (content: Leaderboard[]) => {
-    if (content !== null && content.length > 0) {
-      setHasLeaderBoard(true);
-    } else {
-      setHasLeaderBoard(false);
-    }
+  const generateActionButton = useCallback(async (content: Leaderboard) => {
+    const button: JSX.Element = (
+      <Button
+        size='sm'
+        leftIcon={<InfoOutlineIcon />}
+        onClick={(event) => {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
+          setSpecificPlayerData(content);
+        }}
+      >
+        View Details
+      </Button>
+    );
 
-    for (let key = 0; key < content.length; key += 1) {
-      if (content[key]) {
-        // const dataField = content[key];
-      }
-    }
-    setData(content);
+    return button;
   }, []);
+
+  const includeActionButton = useCallback(
+    async (content: Leaderboard[]) => {
+      if (content !== null && content.length > 0) {
+        setHasLeaderBoard(true);
+      } else {
+        setHasLeaderBoard(false);
+      }
+
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField: Leaderboard = content[key];
+          const buttons = await generateActionButton(dataField);
+          dataField.action = buttons;
+        }
+      }
+      setData(content);
+    },
+    [generateActionButton],
+  );
 
   const fetchData = useCallback(
     async (eventIDField: string) => {
@@ -263,6 +295,10 @@ export default function LeaderboardComponent() {
         Header: 'Points',
         accessor: 'points',
       },
+      {
+        Header: 'Actions',
+        accessor: 'action',
+      },
     ],
     [],
   );
@@ -296,6 +332,12 @@ export default function LeaderboardComponent() {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          <PlayerModal
+            isOpen={specificPlayer}
+            onClose={() => setSpecificPlayerData(null)}
+            modalData={specificPlayer}
+          />
+
           {noEvent && (
             <Stack justify='center' align='center'>
               <Text>Please create an Event first.</Text>

@@ -290,3 +290,26 @@ export const isCreatorOfQuiz = async (
 
   return false;
 };
+
+export const countQuiz = async (id: string): Promise<Result> => {
+  let result: Result = {
+    status: false,
+    error: '',
+    msg: '',
+  };
+
+  try {
+    const numberOfQuiz: number = await prisma.questions.count({
+      where: {
+        eventID: id,
+      },
+    });
+
+    result = { status: true, error: null, msg: numberOfQuiz };
+  } catch (error) {
+    console.error(error);
+    result = { status: false, error: error.toString(), msg: 0 };
+  }
+
+  return result;
+};
