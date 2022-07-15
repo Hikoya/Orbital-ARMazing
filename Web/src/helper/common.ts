@@ -1,3 +1,5 @@
+import { levels } from "@constants/admin";
+
 export const checkerString = (data: string): boolean => {
   if (data !== null && data !== undefined) {
     const res = data.trim();
@@ -18,3 +20,19 @@ export const filterDuplicates = (data: any[]): any[] => {
 
   return uniqueArray;
 };
+
+export const fetchLevel = async (level: number): Promise<string> => {
+  let result = '';
+
+  const keys: string[] = Object.keys(levels);
+  const values = Object.values(levels);
+
+  for (let key = 0; key < keys.length; key += 1) {
+    if (values[key] === level) {
+      result = keys[key];
+      break;
+    }
+  }
+
+  return result;
+}

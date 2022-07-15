@@ -8,6 +8,7 @@ import {
   FiSettings,
   FiPaperclip,
   FiAward,
+  FiUser,
 } from 'react-icons/fi';
 
 import NavLink from '@components/NavLink';
@@ -18,6 +19,7 @@ const adminMenu = [
   { label: 'Manage Assets', icon: FiStar, href: '/asset' },
   { label: 'Manage Quiz', icon: FiPaperclip, href: '/quiz' },
   { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
+  { label: 'Manage Users', icon: FiUser, href: '/user' },
 ];
 
 const userMenu = [
@@ -57,7 +59,7 @@ export default function Sidebar({ session, onClose, ...rest }) {
       {...rest}
     >
       <Flex h='20' alignItems='center' mx='8' justifyContent='space-between'>
-        <Link href='/sys'>
+        <Link href='/'>
           <Text fontSize='2xl' fontFamily='monospace' fontWeight='bold'>
             ARMazing
           </Text>
