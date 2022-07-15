@@ -4,5 +4,6 @@ export type Attempt = {
   username: string;
   assetID: string;
   assetName?: string;
+  points: number;
   updated_at?: string;
 };

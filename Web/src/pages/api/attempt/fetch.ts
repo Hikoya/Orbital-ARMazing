@@ -56,6 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                       username: username,
                       assetID: att.assetID,
                       assetName: asset.name,
+                      points: att.points,
                     };
 
                     parsedAttempts.push(data);

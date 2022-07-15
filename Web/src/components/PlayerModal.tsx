@@ -16,6 +16,13 @@ import {
   Stack,
   StackDivider,
   Text,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Td,
+  Th,
+  TableContainer,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { cardVariant, parentVariant } from '@root/motion';
@@ -38,7 +45,7 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
   const eventIDDB = useRef('');
   const usernameDB = useRef('');
 
-  const [attempt, setAttempt] = useState<JSX.Element[] | null>(null);
+  const [attempt, setAttempt] = useState<JSX.Element | null>();
 
   const reset = () => {
     setUsername('');
@@ -66,14 +73,38 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
         if (content[key]) {
           const att: Attempt = content[key];
           if (att.assetName !== undefined) {
-            list.push(<Text>{att.assetName}</Text>);
+            list.push(
+              <Tr key={`tr-r-${key}`}>
+                <Td key={`td-r-${key}-1`}>
+                  <Text>{att.assetName}</Text>
+                </Td>
+                <Td key={`td-r-${key}-2`}>
+                  <Text>{att.points}</Text>
+                </Td>
+              </Tr>,
+            );
           }
         }
       }
 
-      setAttempt(list);
+      const tableField: JSX.Element = (
+        <TableContainer>
+          <Table variant='simple'>
+          <Thead>
+            <Tr>
+              <Th>Asset Name</Th>
+              <Th>Points</Th>
+            </Tr>
+          </Thead>
+
+            <Tbody>{list}</Tbody>
+          </Table>
+        </TableContainer>
+      );
+
+      setAttempt(tableField);
     } else {
-      setAttempt([]);
+      setAttempt(null);
     }
   }, []);
 
@@ -176,7 +207,7 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
                       <Box>
                         <List spacing={5}>
                           {checkerString(eventName) && (
-                            <ListItem>
+                            <ListItem key='player-eventname'>
                               <Stack direction='row'>
                                 <Text
                                   textTransform='uppercase'
@@ -191,7 +222,7 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
                           )}
 
                           {checkerString(username) && (
-                            <ListItem>
+                            <ListItem key='player-username'>
                               <Stack direction='row'>
                                 <Text
                                   textTransform='uppercase'
@@ -205,7 +236,7 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
                             </ListItem>
                           )}
 
-                          <ListItem>
+                          <ListItem key='player-points'>
                             <Stack direction='row'>
                               <Text
                                 textTransform='uppercase'
@@ -218,8 +249,8 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
                             </Stack>
                           </ListItem>
 
-                          {attempt && attempt.length > 0 && (
-                            <ListItem>
+                          {attempt && (
+                            <ListItem key='player-attempt'>
                               <Stack direction='column'>
                                 <Text
                                   textTransform='uppercase'

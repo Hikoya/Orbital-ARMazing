@@ -107,6 +107,7 @@ model Attempt {
   eventID   String
   username   String
   assetID   String
+  points    Int     @default(0)
   created_at DateTime @default(now()) @db.DateTime(0)
   updated_at DateTime @default(now()) @db.DateTime(0)  
 }

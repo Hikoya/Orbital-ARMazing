@@ -47,6 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               eventID: eventID,
               username: username,
               assetID: assetID,
+              points: points
             };
 
             const attemptRes: Result = await createAttempt(attemptData);
