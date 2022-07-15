@@ -321,7 +321,7 @@ export const countUserInEvent = async (eventID: string): Promise<Result> => {
     result = { status: true, error: null, msg: users };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: error.toString(), msg: null };
+    result = { status: false, error: error.toString(), msg: 0 };
   }
 
   return result;

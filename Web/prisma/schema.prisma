@@ -101,3 +101,12 @@ model Log {
   created_at DateTime @default(now()) @db.DateTime(0)
   updated_at DateTime @default(now()) @db.DateTime(0)
 }
+
+model Attempt {
+  id      String    @id @default(cuid())
+  eventID   String
+  username   String
+  assetID   String
+  created_at DateTime @default(now()) @db.DateTime(0)
+  updated_at DateTime @default(now()) @db.DateTime(0)  
+}

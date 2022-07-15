@@ -25,6 +25,7 @@ export default function Home() {
   const [event, setEvent] = useState(0);
   const [user, setUser] = useState(0);
   const [asset, setAsset] = useState(0);
+  const [quiz, setQuiz] = useState(0);
 
   const [data, setData] = useState(false);
 
@@ -42,6 +43,10 @@ export default function Home() {
 
       if (content.asset) {
         setAsset(content.asset);
+      }
+
+      if (content.quiz) {
+        setQuiz(content.quiz);
       }
     } else {
       setData(false);
@@ -96,6 +101,10 @@ export default function Home() {
               <Stat>
                 <StatLabel>Total Assets</StatLabel>
                 <StatNumber>{asset}</StatNumber>
+              </Stat>
+              <Stat>
+                <StatLabel>Total Quizzes</StatLabel>
+                <StatNumber>{quiz}</StatNumber>
               </Stat>
               <Stat>
                 <StatLabel>Total Users joined</StatLabel>
