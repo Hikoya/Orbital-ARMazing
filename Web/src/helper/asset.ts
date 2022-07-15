@@ -44,7 +44,11 @@ export const createAsset = async (data: Asset): Promise<Result> => {
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to create asset in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to create asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -83,7 +87,11 @@ export const editAsset = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to create asset in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to create asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -155,7 +163,11 @@ export const deleteAsset = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error:'Failed to delete asset in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to delete asset in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -226,11 +238,19 @@ export const fetchAllAssetByUser = async (
 
         result = { status: true, error: null, msg: assetList };
       } else {
-        result = { status: false, error: 'Failed to get list of assets', msg: null };
+        result = {
+          status: false,
+          error: 'Failed to get list of assets',
+          msg: null,
+        };
       }
     } catch (error) {
       console.error(error);
-      result = { status: false, error: 'Failed to get list of assets', msg: null };
+      result = {
+        status: false,
+        error: 'Failed to get list of assets',
+        msg: null,
+      };
     }
   }
 
@@ -250,7 +270,11 @@ export const fetchAllAsset = async (): Promise<Result> => {
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to get list of assets', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;
@@ -275,7 +299,11 @@ export const fetchAllAssetByEventID = async (
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to get list of assets' , msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;
@@ -298,7 +326,11 @@ export const fetchAssetByID = async (id: string): Promise<Result> => {
     result = { status: true, error: null, msg: asset };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to get list of assets', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to get list of assets',
+      msg: null,
+    };
   }
 
   return result;

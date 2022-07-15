@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Result } from 'types/api';
-import { User } from 'types/user';
 
 import { currentSession } from '@helper/sessionServer';
 import { checkerString } from '@helper/common';
@@ -28,7 +27,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               error: null,
               msg: 'Level updated',
             };
-  
+
             res.status(200).send(result);
             res.end();
           } else {
@@ -37,11 +36,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
               error: qn.error,
               msg: '',
             };
-  
+
             res.status(200).send(result);
             res.end();
           }
-        
         } else {
           result = {
             status: false,

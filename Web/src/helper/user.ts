@@ -25,11 +25,19 @@ export const updateUserLevel = async (
     if (u) {
       result = { status: true, error: null, msg: 'Success!' };
     } else {
-      result = { status: false, error: 'Failed to update level for user', msg: ''};
+      result = {
+        status: false,
+        error: 'Failed to update level for user',
+        msg: '',
+      };
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to update level for user', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to update level for user',
+      msg: null,
+    };
   }
 
   return result;
@@ -52,7 +60,7 @@ export const fetchAllUser = async (): Promise<Result> => {
   }
 
   return result;
-}
+};
 
 export const fetchUserByEmail = async (email: string) => {
   let result: Result = {
@@ -65,7 +73,7 @@ export const fetchUserByEmail = async (email: string) => {
     const allUser: User = await prisma.user.findUnique({
       where: {
         email: email,
-      }
+      },
     });
 
     result = { status: true, error: null, msg: allUser };
@@ -75,4 +83,4 @@ export const fetchUserByEmail = async (email: string) => {
   }
 
   return result;
-}
+};

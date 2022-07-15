@@ -1,4 +1,4 @@
-import { levels } from "@constants/admin";
+import { levels } from '@constants/admin';
 
 export const checkerString = (data: string): boolean => {
   if (data !== null && data !== undefined) {
@@ -35,4 +35,4 @@ export const fetchLevel = async (level: number): Promise<string> => {
   }
 
   return result;
-}
+};

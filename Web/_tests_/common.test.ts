@@ -1,4 +1,4 @@
-import { checkerString, checkerNumber, filterDuplicates } from '@helper/common';
+import { checkerString, checkerNumber, filterDuplicates, fetchLevel } from '@helper/common';
 
 test('checkerString test 1', async () => {
   expect(checkerString('2022-06-19')).toStrictEqual(true);
@@ -24,4 +24,13 @@ test('filterDuplicates test 1', async () => {
   expect(
     filterDuplicates(['hello', 'hello', 'null', 'null', 'there', 'there']),
   ).toStrictEqual(['hello', 'null', 'there']);
+});
+
+test('fetchLevel test 1', async () => {
+  expect(await fetchLevel(4)).toStrictEqual('');
+  expect(await fetchLevel(0)).toStrictEqual('USER');
+  expect(await fetchLevel(1)).toStrictEqual('FACILITATOR');
+  expect(await fetchLevel(2)).toStrictEqual('ORGANIZER');
+  expect(await fetchLevel(3)).toStrictEqual('');
+  expect(await fetchLevel(-4)).toStrictEqual('');
 });

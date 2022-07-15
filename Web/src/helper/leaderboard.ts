@@ -86,7 +86,11 @@ export const joinEvent = async (
           }
         } catch (error) {
           console.error(error);
-          result = { status: false, error: 'Failed to insert player into leaderboard!', msg: null };
+          result = {
+            status: false,
+            error: 'Failed to insert player into leaderboard!',
+            msg: null,
+          };
         }
       }
     } else {
@@ -239,7 +243,11 @@ export const deleteLeaderBoardByEventID = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to delete leaderboard in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to delete leaderboard in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -298,7 +306,11 @@ export const updateUserPoints = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to update leaderboard', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to update leaderboard',
+      msg: null,
+    };
   }
 
   return result;
@@ -321,7 +333,11 @@ export const countUserInEvent = async (eventID: string): Promise<Result> => {
     result = { status: true, error: null, msg: users };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to count players in leaderboard', msg: 0 };
+    result = {
+      status: false,
+      error: 'Failed to count players in leaderboard',
+      msg: 0,
+    };
   }
 
   return result;

@@ -31,7 +31,11 @@ export const createAttempt = async (data: Attempt): Promise<Result> => {
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to create attempt in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to create attempt in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -69,7 +73,11 @@ export const deleteAttempt = async (
     }
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to delete attempt in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to delete attempt in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -94,7 +102,11 @@ export const fetchAllAttemptByAssetID = async (
     result = { status: true, error: null, msg: att };
   } catch (error) {
     console.error(error);
-    result = { status: false, error: 'Failed to fetch attempt in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to fetch attempt in database',
+      msg: null,
+    };
   }
 
   return result;
@@ -121,7 +133,11 @@ export const fetchAttemptByEventID = async (
     result = { status: true, error: null, msg: att };
   } catch (error) {
     console.error(error);
-    result = { status: false, error:  'Failed to fetch attempt in database', msg: null };
+    result = {
+      status: false,
+      error: 'Failed to fetch attempt in database',
+      msg: null,
+    };
   }
 
   return result;

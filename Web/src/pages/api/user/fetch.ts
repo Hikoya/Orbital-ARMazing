@@ -35,7 +35,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 adminStr: adminStr,
                 level: user.level,
                 levelStr: levelStr,
-              }
+              };
 
               parsedUser.push(parsedData);
             }

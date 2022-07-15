@@ -63,10 +63,7 @@ export default function UserComponent() {
     levelDBEdit.current = 0;
   };
 
-  const validateFields = (
-    idField: string,
-    levelField: number,
-  ) => {
+  const validateFields = (idField: string, levelField: number) => {
     if (!checkerString(idField)) {
       setError('Please choose a user!');
       return false;
@@ -113,31 +110,28 @@ export default function UserComponent() {
     }
   };
 
-  const includeActionButton = useCallback(
-    async (content: User[]) => {
-      const selectionEdit: JSX.Element[] = [];
-      selectionEdit.push(<option key='' value='' aria-label='Default' />);
+  const includeActionButton = useCallback(async (content: User[]) => {
+    const selectionEdit: JSX.Element[] = [];
+    selectionEdit.push(<option key='' value='' aria-label='Default' />);
 
-      const allUsers: User[] = [];
+    const allUsers: User[] = [];
 
-      for (let key = 0; key < content.length; key += 1) {
-        if (content[key]) {
-          const dataField: User = content[key];
-          selectionEdit.push(
-            <option key={dataField.id} value={dataField.email}>
-              {dataField.email}
-            </option>,
-          );
-          allUsers.push(dataField);
-        }
+    for (let key = 0; key < content.length; key += 1) {
+      if (content[key]) {
+        const dataField: User = content[key];
+        selectionEdit.push(
+          <option key={dataField.id} value={dataField.email}>
+            {dataField.email}
+          </option>,
+        );
+        allUsers.push(dataField);
       }
+    }
 
-      memberData.current = allUsers;
-      setUserDropdown(selectionEdit);
-      setData(content);
-    },
-    [],
-  );
+    memberData.current = allUsers;
+    setUserDropdown(selectionEdit);
+    setData(content);
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -155,16 +149,11 @@ export default function UserComponent() {
     } catch (error) {
       return false;
     }
-  }, []);
+  }, [includeActionButton]);
 
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    if (
-      validateFields(
-        userDBEdit.current,
-        levelDBEdit.current,
-      )
-    ) {
+    if (validateFields(userDBEdit.current, levelDBEdit.current)) {
       try {
         const rawResponse = await fetch('/api/user/edit', {
           method: 'POST',
@@ -198,7 +187,7 @@ export default function UserComponent() {
             isClosable: true,
           });
         }
-        
+
         return true;
       } catch (error) {
         return false;
@@ -212,7 +201,7 @@ export default function UserComponent() {
 
     const keys: string[] = Object.keys(levels);
     const values = Object.values(levels);
-  
+
     for (let key = 0; key < keys.length; key += 1) {
       levelD.push(
         <option key={`levels-${values[key]}`} value={values[key]}>
@@ -222,7 +211,6 @@ export default function UserComponent() {
     }
 
     setLevelDropdown(levelD);
-
   }, []);
 
   useEffect(() => {
@@ -261,9 +249,8 @@ export default function UserComponent() {
     setSearch(searchInput);
 
     if (checkerString(searchInput)) {
-      const filteredDataField = data.filter(
-        (value) =>
-          value.email.toLowerCase().includes(searchInput.toLowerCase())
+      const filteredDataField = data.filter((value) =>
+        value.email.toLowerCase().includes(searchInput.toLowerCase()),
       );
 
       setFilteredData(filteredDataField);
@@ -319,14 +306,15 @@ export default function UserComponent() {
           )}
         </Box>
 
-        {data.length > 0 && ( <MotionSimpleGrid
+        {data.length > 0 && (
+          <MotionSimpleGrid
             mt='3'
             minChildWidth={{ base: 'full', md: '500px', lg: '500px' }}
             minH='full'
             variants={parentVariant}
             initial='initial'
             animate='animate'
-            >
+          >
             <MotionBox key={2}>
               <Stack
                 spacing={4}
@@ -377,8 +365,8 @@ export default function UserComponent() {
                 </form>
               </Stack>
             </MotionBox>
-            </MotionSimpleGrid>)}
-       
+          </MotionSimpleGrid>
+        )}
       </Box>
     </Auth>
   );
