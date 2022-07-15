@@ -15,22 +15,15 @@ public class QuizManager : MonoBehaviour
     public GameObject[] options;
     public int currentQuestion;
     public string filename;
-    private string jsonContent;
+    private string jsonContent = null;
 
     public TMP_Text QuestionTxt;
 
     private void Start()
     {
-        filename = "testquiz.json";
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            StartCoroutine(ReadAndGenerateQuizFromJSONAndroid(filename));
-        }
-        else
-        {
-            QnA = ReadQuizFromJSON(filename);
-            GenerateQuestion();
-        }
+        filename = PlayerPrefs.GetString("eventid") + ".txt";
+        QnA = ReadQuizFromJSON(filename);
+        GenerateQuestion();
     }
 
     public void NextQuestion()
@@ -89,63 +82,27 @@ public class QuizManager : MonoBehaviour
 
     List<QuestionAndAnswers> ReadQuizFromJSON(string filename)
     {
-        jsonContent = ReadFile(GetPath(filename));
+        string path = Application.persistentDataPath + filename;
+        if (File.Exists(path))
+        {
+            using (StreamReader reader = new StreamReader(path))
+            {
+                jsonContent = reader.ReadToEnd();
+            }
+        }
 
         if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {
             return null;
         }
 
-        QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(jsonContent);
+        QuizResponse res = JsonConvert.DeserializeObject<QuizResponse>(jsonContent);
         return res.msg;
-    }
-
-    string GetPath(string filename)
-    {
-        if (Application.platform == RuntimePlatform.IPhonePlayer) return Application.dataPath + "/Raw" + filename;
-        else return Application.dataPath + "/StreamingAssets/" + filename;
-    }
-
-    IEnumerator ReadAndGenerateQuizFromJSONAndroid(string filename)
-    {
-        string filePath = "jar:file://" + Application.dataPath + "!/assets/" + filename;
-        using (UnityWebRequest request = UnityWebRequest.Get(filePath))
-        {
-            yield return request.SendWebRequest();
-            if (request.isNetworkError || request.isHttpError)
-            {
-                Debug.Log(request.error);
-            } 
-            else
-            {
-                jsonContent = request.downloadHandler.text;
-                if (!string.IsNullOrEmpty(jsonContent) && !(jsonContent == "{}"))
-                {
-                    QuizJSONObj res = JsonConvert.DeserializeObject<QuizJSONObj>(jsonContent);
-                    QnA = res.msg;
-                    GenerateQuestion();
-                }
-
-            }
-        }
-    }
-
-    string ReadFile(string path)
-    {
-        if(File.Exists(path))
-        {
-            using (StreamReader reader = new StreamReader(path))
-            {
-                string content = reader.ReadToEnd();
-                return content;
-            }
-        }
-        return "";
     }
     
 }
 
-public class QuizJSONObj
+public class QuizResponse
 {
     public bool status;
     public string error;

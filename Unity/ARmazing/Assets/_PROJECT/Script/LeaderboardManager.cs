@@ -31,7 +31,7 @@ public class LeaderboardManager : MonoBehaviour
     {
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/leaderboard";
         WWWForm form = new WWWForm();
-        form.AddField("eventID", "cl4vdb84g00830m1yk5v2143l");
+        form.AddField("eventID", PlayerPrefs.GetString("eventid"));
         using (UnityWebRequest request = UnityWebRequest.Post(uri, form))
         {
             request.SetRequestHeader("Authorization", auth);
@@ -42,7 +42,7 @@ public class LeaderboardManager : MonoBehaviour
             }
             else
             {
-                LeaderboardResponse response = GetFetchLeaderboardDataResponse(request.downloadHandler.text);
+                LeaderboardResponse response = GetLeaderboardDataResponse(request.downloadHandler.text);
                 Debug.Log(response.msg);
                 
                 if (response.status)
@@ -55,7 +55,7 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
-    public LeaderboardResponse GetFetchLeaderboardDataResponse(string jsonContent)
+    public LeaderboardResponse GetLeaderboardDataResponse(string jsonContent)
     {
         if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {

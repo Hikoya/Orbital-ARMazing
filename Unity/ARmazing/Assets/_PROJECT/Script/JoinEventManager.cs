@@ -6,6 +6,7 @@ using UnityEngine.XR.ARFoundation;
 using TMPro;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using System.IO;
 
 public class JoinEventManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class JoinEventManager : MonoBehaviour
     private string auth = "Bearer passwordispasswordissecret";
     private string eventCode = null;
     private string nickname = null;
+    private string eventId = null;
 
 
     private void Start()
@@ -53,10 +55,10 @@ public class JoinEventManager : MonoBehaviour
 
                 if (response.status)
                 {
+                    eventId = response.msg;
                     PlayerPrefs.SetString("nickname", nickname);
-                    PlayerPrefs.SetString("eventid", response.msg);
-                    LoaderUtility.Initialize();
-                    SceneManager.LoadScene("AR", LoadSceneMode.Single);
+                    PlayerPrefs.SetString("eventid", eventId);
+                    StartCoroutine(FetchAndSaveQuizJson());
                 }
                 else messageText.text = response.error;
             }
@@ -73,8 +75,56 @@ public class JoinEventManager : MonoBehaviour
         JoinEventResponse res = JsonConvert.DeserializeObject<JoinEventResponse>(jsonString);
         return res;
     }
-}
 
+    IEnumerator FetchAndSaveQuizJson()
+    {
+        string uri = "https://orbital-armazing.herokuapp.com/api/unity/quiz";
+        WWWForm form = new WWWForm();
+        form.AddField("eventID", eventId);
+        using (UnityWebRequest request = UnityWebRequest.Post(uri, form))
+        {
+            request.SetRequestHeader("Authorization", auth);
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                messageText.text = request.error;
+            }
+            else
+            {
+                QuizResponse response = GetQuizDataResponse(request.downloadHandler.text);
+
+                if (response.status)
+                {
+                    WriteToFile(eventId + ".txt", request.downloadHandler.text);
+                    LoaderUtility.Initialize();
+                    SceneManager.LoadScene("AR", LoadSceneMode.Single);
+                }
+                else messageText.text = response.error;
+            }
+        }
+    }
+
+    public QuizResponse GetQuizDataResponse(string jsonContent)
+    {
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
+        {
+            return null;
+        }
+        QuizResponse res = JsonConvert.DeserializeObject<QuizResponse>(jsonContent);
+        return res;
+    }
+
+    private void WriteToFile(string filename, string data)
+    {
+        string path = Application.persistentDataPath + filename;
+        FileStream fileStream = new FileStream(path, FileMode.Create);
+
+        using (StreamWriter writer = new StreamWriter(fileStream))
+        {
+            writer.Write(data);
+        }
+    }
+}
 
 public class JoinEventResponse
 {
