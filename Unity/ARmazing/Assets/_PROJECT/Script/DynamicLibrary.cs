@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Unity.Jobs;
 using UnityEngine;
@@ -207,4 +208,24 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
         }
     }
+}
+
+public class AssetResponse
+{
+    public bool status;
+    public string error;
+    public List<ImageData> msg;
+}
+
+public class ImageData
+{
+    public string id;
+    public string eventID;
+    public string name;
+    public string description;
+    public string latitude;
+    public string longitude;
+    public bool visible;
+    public string visibleText;
+    public string imagePath;
 }
