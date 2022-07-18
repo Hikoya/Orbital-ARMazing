@@ -95,7 +95,7 @@ public class JoinEventManager : MonoBehaviour
 
                 if (response.status)
                 {
-                    WriteToFile(eventId + ".txt", request.downloadHandler.text);
+                    WriteToFile(eventId.Replace(" ", "") + ".txt", request.downloadHandler.text);
                     StartCoroutine(FetchAndSaveAssetImages());
                 }
                 else messageText.text = response.error;
@@ -142,9 +142,9 @@ public class JoinEventManager : MonoBehaviour
                 AssetResponse response = GetAssetResponse(request.downloadHandler.text);
                 if (response.status)
                 {
-                    foreach (ImageData imageData in response.msg)
+                    foreach (AssetData assetData in response.msg)
                     {
-                        yield return StartCoroutine(DownloadAndSaveImage(imageData.imagePath, imageData.name + ".JPG"));
+                        yield return StartCoroutine(DownloadAndSaveImage(assetData.imagePath, assetData.name.Replace(" ","") + ".JPG"));
                     }
                     LoaderUtility.Initialize();
                     SceneManager.LoadScene("AR", LoadSceneMode.Single);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Unity.Jobs;
 using UnityEngine;
@@ -49,16 +50,16 @@ namespace UnityEngine.XR.ARFoundation.Samples
         }
 
         [SerializeField, Tooltip("The set of images to add to the image library at runtime")]
-        ImageData[] m_Images;
+        List<ImageData> m_Images;
 
         /// <summary>
         /// The set of images to add to the image library at runtime
         /// </summary>
-        public ImageData[] images
-        {
-            get => m_Images;
-            set => m_Images = value;
-        }
+        //public ImageData[] images
+        //{
+        //    get => m_Images;
+        //   set => m_Images = value;
+        //}
 
         enum State
         {
@@ -134,6 +135,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
             {
                 case State.AddImagesRequested:
                     {
+                        string[] files = Directory.GetFiles(Application.persistentDataPath, "*.JPG");
+                        foreach (string file in files)
+                        {
+                            m_Images.Add(LoadPNG(file));
+                        }
+                        
+                  
                         if (m_Images == null)
                         {
                             SetError("No images to add.");
@@ -207,6 +215,26 @@ namespace UnityEngine.XR.ARFoundation.Samples
                     }
             }
         }
+
+        public static ImageData LoadPNG(string filePath)
+        {
+
+            Texture2D tex = null;
+            byte[] fileData;
+            ImageData imageData = new ImageData();
+
+            if (File.Exists(filePath))
+            {
+                
+                fileData = File.ReadAllBytes(filePath);
+                tex = new Texture2D(2,2, TextureFormat.RGBA32,false);
+                tex.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+                imageData.texture = tex;
+                imageData.name = Path.GetFileName(filePath).Replace(".JPG", "");
+                imageData.width = 0.1f;
+            }
+            return imageData;
+        }
     }
 }
 
@@ -214,10 +242,10 @@ public class AssetResponse
 {
     public bool status;
     public string error;
-    public List<ImageData> msg;
+    public List<AssetData> msg;
 }
 
-public class ImageData
+public class AssetData
 {
     public string id;
     public string eventID;
