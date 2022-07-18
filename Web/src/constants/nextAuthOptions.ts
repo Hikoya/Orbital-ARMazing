@@ -1,9 +1,11 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@helper/db';
 import EmailProvider from 'next-auth/providers/email';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import nodemailer from 'nodemailer';
 
 import { log } from '@helper/log';
+import { User } from 'types/user';
 
 /**
  * Takes in a callback link and email of the user and generates
@@ -363,6 +365,7 @@ function text({ newURL, host }) {
 export const options = {
   providers: [
     EmailProvider({
+      id: 'email',
       server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: Number(process.env.EMAIL_SERVER_PORT),
@@ -393,6 +396,41 @@ export const options = {
         });
       },
     }),
+    CredentialsProvider({
+      id: 'credentials',
+      name: 'Credentials',
+      credentials: {
+        username: {
+          label: 'email',
+          type: 'text',
+          placeholder: 'testuser@test.com',
+        },
+        password: { label: 'password', type: 'password' },
+      },
+      async authorize(credentials, req) {
+        try {
+          const userFromDB: User = await prisma.user.findFirst({
+            where: {
+              email: credentials?.username,
+              password: credentials?.password,
+            },
+          });
+
+          if (userFromDB) {
+            return {
+              email: userFromDB.email,
+              admin: userFromDB.admin,
+              level: userFromDB.level,
+            };
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      },
+    }),
   ],
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
@@ -411,15 +449,28 @@ export const options = {
   },
   callbacks: {
     async signIn({ user, email }) {
-      if (Object.prototype.hasOwnProperty.call(email, 'verificationRequest')) {
-        const email: string = (user.email as string).trim().toLowerCase();
-        await log(email, email, 'Attempted to log in');
-      } else {
-        if (email !== undefined && email !== null) {
-          await log(email, email, 'Login');
-        } else if (user.email !== undefined && user.email !== null) {
-          await log(user.email, user.email, 'Login');
+      try {
+        if (
+          email !== null &&
+          Object.prototype.hasOwnProperty.call(email, 'verificationRequest')
+        ) {
+          const email: string = (user.email as string).trim().toLowerCase();
+          await log(email, email, 'Attempted to log in');
+        } else {
+          if (email !== undefined && email !== null) {
+            await log(email, email, 'Login');
+          } else if (user.email !== undefined && user.email !== null) {
+            await log(user.email, user.email, 'Login');
+          }
         }
+
+        if (user) {
+          return user;
+        }
+
+        return true;
+      } catch (error) {
+        console.error(error);
       }
 
       return true;
@@ -444,6 +495,7 @@ export const options = {
 
         return session;
       } catch (error) {
+        console.error(error);
         return session;
       }
     },
