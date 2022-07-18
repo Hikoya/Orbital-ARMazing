@@ -66,5 +66,4 @@ describe('Render Index Page', () => {
     expect(screen.getByTestId('motion-box-quiz')).toBeInTheDocument();
     expect(screen.getByTestId('motion-box-event')).toBeInTheDocument();
   });
-
 });

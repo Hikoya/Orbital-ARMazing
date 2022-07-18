@@ -24,7 +24,11 @@ function Auth({ children, admin }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development' || process.env.ENVIRONMENT === 'development') {
+        if (
+          !process.env.NODE_ENV ||
+          process.env.NODE_ENV === 'development' ||
+          process.env.ENVIRONMENT === 'development'
+        ) {
           devSession.current = await currentSession();
           if (
             isAdmin &&

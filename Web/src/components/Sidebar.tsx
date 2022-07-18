@@ -49,6 +49,7 @@ export default function Sidebar({ session, onClose, ...rest }) {
         router.events.off('routeChangeComplete', onClose);
       };
     }
+    return () => {};
   }, [router, onClose, session]);
 
   return (

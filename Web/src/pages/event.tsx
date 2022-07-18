@@ -24,6 +24,8 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import LoadingModal from '@components/LoadingModal';
+
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 
@@ -102,6 +104,8 @@ export default function EventComponent(props: any) {
   const [filteredData, setFilteredData] = useState<Event[] | null>(null);
 
   const [organizer, setOrganizer] = useState(true);
+
+  const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
 
   /**
    * Resets all values to their default values upon successful creation
@@ -283,6 +287,7 @@ export default function EventComponent(props: any) {
    */
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -295,12 +300,11 @@ export default function EventComponent(props: any) {
       if (content.status) {
         await includeActionButton(content.msg as Event[]);
       }
-
-      setLoading(false);
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setLoading(false);
+    setSubmitButtonPressed(false);
   }, [includeActionButton]);
 
   /**
@@ -318,6 +322,7 @@ export default function EventComponent(props: any) {
         endDateDB.current,
       )
     ) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/event/create', {
           method: 'POST',
@@ -355,13 +360,10 @@ export default function EventComponent(props: any) {
           });
         }
       } catch (error) {
-        return false;
+        console.error(error);
       }
-
-      return true;
+      setSubmitButtonPressed(false);
     }
-
-    return false;
   };
 
   /**
@@ -381,6 +383,7 @@ export default function EventComponent(props: any) {
       )
     ) {
       try {
+        setSubmitButtonPressed(true);
         const rawResponse = await fetch('/api/event/edit', {
           method: 'POST',
           headers: {
@@ -418,13 +421,10 @@ export default function EventComponent(props: any) {
           });
         }
       } catch (error) {
-        return false;
+        console.error(error);
       }
-
-      return true;
+      setSubmitButtonPressed(false);
     }
-
-    return false;
   };
 
   /**
@@ -435,6 +435,7 @@ export default function EventComponent(props: any) {
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDBEdit.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/event/delete', {
           method: 'POST',
@@ -467,13 +468,10 @@ export default function EventComponent(props: any) {
           });
         }
       } catch (error) {
-        return false;
+        console.error(error);
       }
-
-      return true;
+      setSubmitButtonPressed(false);
     }
-
-    return false;
   };
 
   /**
@@ -614,7 +612,19 @@ export default function EventComponent(props: any) {
   return (
     <Auth admin={undefined}>
       <Box>
-        <Box data-testid={'box-event'} bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+        <Box
+          data-testid='box-event'
+          bg='white'
+          borderRadius='lg'
+          p={8}
+          color='gray.700'
+          shadow='base'
+        >
+          <LoadingModal
+            isOpen={!!submitButtonPressed}
+            onClose={() => setSubmitButtonPressed(false)}
+          />
+
           {loadingData && (data === null || data === []) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>

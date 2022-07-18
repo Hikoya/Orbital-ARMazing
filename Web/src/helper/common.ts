@@ -15,7 +15,7 @@ export const checkerString = (data: string): boolean => {
   if (data !== null && data !== undefined) {
     const res = data.trim();
     return res !== '';
-  } 
+  }
   return false;
 };
 

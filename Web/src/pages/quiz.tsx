@@ -23,6 +23,8 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import LoadingModal from '@components/LoadingModal';
+
 import { Result } from 'types/api';
 import { Event } from 'types/event';
 import { Asset } from 'types/asset';
@@ -127,6 +129,8 @@ export default function QuizComponent(props: any) {
 
   const [organizer, setOrganizer] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
+
+  const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
 
   /**
    * Resets all values to their default values upon successful creation of quiz
@@ -395,6 +399,7 @@ export default function QuizComponent(props: any) {
    */
   const fetchData = useCallback(async () => {
     setLoading(true);
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/quiz/fetch', {
         headers: {
@@ -406,12 +411,11 @@ export default function QuizComponent(props: any) {
       if (content.status) {
         await includeActionButton(content.msg as Quiz[]);
       }
-
-      setLoading(false);
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
+    setLoading(false);
   }, [includeActionButton]);
 
   /**
@@ -434,6 +438,7 @@ export default function QuizComponent(props: any) {
         pointsDB.current,
       )
     ) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/quiz/create', {
           method: 'POST',
@@ -475,13 +480,10 @@ export default function QuizComponent(props: any) {
           });
         }
       } catch (error) {
-        return false;
+        console.error(error);
       }
-
-      return true;
+      setSubmitButtonPressed(false);
     }
-
-    return false;
   };
 
   /**
@@ -505,6 +507,7 @@ export default function QuizComponent(props: any) {
         pointsDBEdit.current,
       )
     ) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/quiz/edit', {
           method: 'POST',
@@ -547,13 +550,10 @@ export default function QuizComponent(props: any) {
           });
         }
       } catch (error) {
-        return false;
+        console.error(error);
       }
-
-      return true;
+      setSubmitButtonPressed(false);
     }
-
-    return false;
   };
 
   /**
@@ -564,6 +564,7 @@ export default function QuizComponent(props: any) {
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(quizDBEdit.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/quiz/delete', {
           method: 'POST',
@@ -595,13 +596,11 @@ export default function QuizComponent(props: any) {
             isClosable: true,
           });
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -715,6 +714,7 @@ export default function QuizComponent(props: any) {
    * Fetches all event that the user is authorized to view
    */
   const fetchEventData = useCallback(async () => {
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -728,11 +728,10 @@ export default function QuizComponent(props: any) {
       } else {
         setNoEvent(true);
       }
-
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
   }, [eventDropDownMenu]);
 
   /**
@@ -784,6 +783,7 @@ export default function QuizComponent(props: any) {
    * Fetches all asset that the user is authorized to view
    */
   const fetchAssetData = useCallback(async () => {
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/asset/fetch', {
         headers: {
@@ -795,11 +795,10 @@ export default function QuizComponent(props: any) {
       if (content.status) {
         await assetDropDownMenu(content.msg as Asset[]);
       }
-
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
   }, [assetDropDownMenu]);
 
   useEffect(() => {
@@ -887,6 +886,11 @@ export default function QuizComponent(props: any) {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          <LoadingModal
+            isOpen={!!submitButtonPressed}
+            onClose={() => setSubmitButtonPressed(false)}
+          />
+
           {loadingData && (data === null || data.length === 0) && (
             <Box mt={30}>
               <Stack align='center' justify='center'>
