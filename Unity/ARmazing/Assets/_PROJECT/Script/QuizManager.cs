@@ -82,7 +82,7 @@ public class QuizManager : MonoBehaviour
 
     List<QuestionAndAnswers> ReadQuizFromJSON(string filename)
     {
-        string path = Application.persistentDataPath + filename;
+        string path = Path.Combine(Application.persistentDataPath, filename);
         if (File.Exists(path))
         {
             using (StreamReader reader = new StreamReader(path))

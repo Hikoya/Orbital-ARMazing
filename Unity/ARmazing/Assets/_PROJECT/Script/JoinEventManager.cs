@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.IO;
+using System;
 
 public class JoinEventManager : MonoBehaviour
 {
@@ -19,7 +20,6 @@ public class JoinEventManager : MonoBehaviour
     private string nickname = null;
     private string eventId = null;
 
-
     private void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
@@ -30,7 +30,7 @@ public class JoinEventManager : MonoBehaviour
         //Milestone 2: call backend API to join event (if active) and download necessary event assets
         eventCode = eventNameInput.text;
         nickname = nicknameInput.text;
-        StartCoroutine(JoinEventPost());
+        StartCoroutine(JoinEventPost()); 
     }
 
     IEnumerator JoinEventPost()
@@ -95,9 +95,8 @@ public class JoinEventManager : MonoBehaviour
 
                 if (response.status)
                 {
-                    WriteToFile(eventId + ".txt", request.downloadHandler.text);
-                    LoaderUtility.Initialize();
-                    SceneManager.LoadScene("AR", LoadSceneMode.Single);
+                    WriteToFile(eventId.Replace(" ", "") + ".txt", request.downloadHandler.text);
+                    StartCoroutine(FetchAndSaveAssetImages());
                 }
                 else messageText.text = response.error;
             }
@@ -116,14 +115,83 @@ public class JoinEventManager : MonoBehaviour
 
     private void WriteToFile(string filename, string data)
     {
-        string path = Application.persistentDataPath + filename;
+        string path = Path.Combine(Application.persistentDataPath, filename);
         FileStream fileStream = new FileStream(path, FileMode.Create);
-
+        
         using (StreamWriter writer = new StreamWriter(fileStream))
         {
             writer.Write(data);
         }
     }
+
+    IEnumerator FetchAndSaveAssetImages()
+    {
+        string uri = "https://orbital-armazing.herokuapp.com/api/unity/landmark";
+        WWWForm form = new WWWForm();
+        form.AddField("eventID", eventId);
+        using (UnityWebRequest request = UnityWebRequest.Post(uri, form))
+        {
+            request.SetRequestHeader("Authorization", auth);
+            yield return request.SendWebRequest();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                messageText.text = request.error;
+            }
+            else
+            {
+                AssetResponse response = GetAssetResponse(request.downloadHandler.text);
+                if (response.status)
+                {
+                    foreach (AssetData assetData in response.msg)
+                    {
+                        yield return StartCoroutine(DownloadAndSaveImage(assetData.imagePath, assetData.name.Replace(" ","") + ".JPG"));
+                    }
+                    LoaderUtility.Initialize();
+                    SceneManager.LoadScene("AR", LoadSceneMode.Single);
+                }
+                else messageText.text = response.error;
+            }
+        }
+    }
+
+    IEnumerator DownloadAndSaveImage(string url, string filename)
+    {
+        Debug.Log(url);
+        using (UnityWebRequest uwr = UnityWebRequestTexture.GetTexture(url))
+        {
+            yield return uwr.SendWebRequest();
+
+            if (uwr.isNetworkError || uwr.isHttpError)
+            {
+                Debug.Log(uwr.error);
+            }
+            else
+            {
+                Debug.Log("Success");
+                Texture myTexture = DownloadHandlerTexture.GetContent(uwr);
+                byte[] results = uwr.downloadHandler.data;
+                yield return StartCoroutine(SaveImage(filename, results));
+            }
+        }
+    }
+
+    public AssetResponse GetAssetResponse(string jsonContent)
+    {
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
+        {
+            return null;
+        }
+        AssetResponse res = JsonConvert.DeserializeObject<AssetResponse>(jsonContent);
+        return res;
+    }
+
+    IEnumerator SaveImage(string filename, byte[] imageBytes)
+    {
+        string path = Path.Combine(Application.persistentDataPath, filename);
+        File.WriteAllBytes(path, imageBytes);
+        yield return new WaitUntil(() => File.Exists(path));
+        Debug.Log("Saved Data to: " + path.Replace("/", "\\"));
+    } 
 }
 
 public class JoinEventResponse

@@ -778,7 +778,7 @@ GameObject:
   - component: {fileID: 623350360}
   - component: {fileID: 623350359}
   - component: {fileID: 623350363}
-  - component: {fileID: 623350362}
+  - component: {fileID: 623350364}
   m_Layer: 0
   m_Name: AR Session Origin
   m_TagString: Untagged
@@ -831,28 +831,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &623350362
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623350357}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8b9ee99ce9fbb34b8d010b055a91703, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Images:
-  - m_Texture: {fileID: 2800000, guid: bf3e5eea780b9bf4e8b16535be2c6dc7, type: 3}
-    m_Name: Computing1
-    m_Width: 0.1
-  - m_Texture: {fileID: 2800000, guid: 7159b5439e162944fb7481b916d426de, type: 3}
-    m_Name: Computing2
-    m_Width: 0.1
-  - m_Texture: {fileID: 2800000, guid: 9a181909aba08ae4688c1394eb9dadd9, type: 3}
-    m_Name: Museum
-    m_Width: 0.1
 --- !u!114 &623350363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,6 +844,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _arUICanvasPrefab: {fileID: 1610999444}
+--- !u!114 &623350364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623350357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b9ee99ce9fbb34b8d010b055a91703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Images: []
 --- !u!1 &688087332
 GameObject:
   m_ObjectHideFlags: 0
