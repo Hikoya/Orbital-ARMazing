@@ -15,7 +15,10 @@ export const currentSession = async (
   context: any = null,
   server: boolean = true,
 ): Promise<Session | null> => {
-  if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+  if (
+    process.env.SETDEV &&
+    (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
+  ) {
     let session: Session | null = null;
     session = {
       expires: '1',

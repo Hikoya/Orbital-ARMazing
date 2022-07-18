@@ -13,14 +13,14 @@ import {
 } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 import { checkerString } from '@helper/common';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
 
 /**
  * This component renders the signin page that is displayed to the user
  * if there is no previous session found.
  */
 export default function SignIn(props: Promise<{ data: string }>) {
-  const router = useRouter()
+  const router = useRouter();
 
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -121,17 +121,17 @@ export default function SignIn(props: Promise<{ data: string }>) {
         </Box>
 
         <Button
-                  type='submit'
-                  bg='blue.200'
-                  disabled={loading}
-                  color='white'
-                  _hover={{
-                    bg: 'blue.300',
-                  }}
-                  onClick={handleClick}
-                >
-            Test User Login
-          </Button>
+          type='submit'
+          bg='blue.200'
+          disabled={loading}
+          color='white'
+          _hover={{
+            bg: 'blue.300',
+          }}
+          onClick={handleClick}
+        >
+          Test User Login
+        </Button>
       </Stack>
     </Flex>
   );
