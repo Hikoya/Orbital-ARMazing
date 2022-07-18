@@ -1,3 +1,7 @@
+/**
+ * List of weekdays
+ * Starts from 1 (Monday) to 0 (Sunday)
+ */
 const numberToWeekday = {
   1: 'Monday',
   2: 'Tuesday',

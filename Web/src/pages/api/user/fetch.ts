@@ -6,6 +6,14 @@ import { currentSession } from '@helper/sessionServer';
 import { fetchAllUser } from '@helper/user';
 import { fetchLevel } from '@helper/common';
 
+/**
+ * API Route to fetch all users
+ *
+ * The level is the role given to the user
+ * eg. 0 is USER
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

@@ -10,6 +10,13 @@ import { fetchAllEventWPermission } from '@helper/permission';
 import { filterDuplicates } from '@helper/common';
 import { log } from '@helper/log';
 
+/**
+ * Create a Quiz
+ *
+ *
+ * @param data Quiz details
+ * @return a Promise containing a Result
+ */
 export const createQuiz = async (data: Quiz): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -51,6 +58,14 @@ export const createQuiz = async (data: Quiz): Promise<Result> => {
   return result;
 };
 
+/**
+ * Edit a Quiz
+ *
+ *
+ * @param data Quiz details
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const editQuiz = async (
   data: Quiz,
   session: Session,
@@ -94,6 +109,14 @@ export const editQuiz = async (
   return result;
 };
 
+/**
+ * Delete a Quiz
+ *
+ *
+ * @param data Quiz details
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const deleteQuiz = async (
   id: string,
   session: Session,
@@ -136,6 +159,13 @@ export const deleteQuiz = async (
   return result;
 };
 
+/**
+ * Fetches all quizzes that the user is authorized to view
+ *
+ *
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const fetchAllQuiz = async (session: Session): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -218,6 +248,13 @@ export const fetchAllQuiz = async (session: Session): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetches all quiz filtered by event ID
+ *
+ *
+ * @param eventID Event ID
+ * @return a Promise containing a Result
+ */
 export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -249,6 +286,13 @@ export const fetchAllQuizByEvent = async (eventID: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetches all quiz filtered by Asset ID
+ *
+ *
+ * @param assetID Asset ID
+ * @return a Promise containing a Result
+ */
 export const fetchAllQuizByAssetID = async (
   assetID: string,
 ): Promise<Result> => {
@@ -278,6 +322,13 @@ export const fetchAllQuizByAssetID = async (
   return result;
 };
 
+/**
+ * Fetches all quiz filtered by quiz ID
+ *
+ *
+ * @param id Quiz ID
+ * @return a Promise containing a Result
+ */
 export const fetchQuizByID = async (id: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -305,6 +356,15 @@ export const fetchQuizByID = async (id: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Check whether the quiz is created by the user
+ *
+ *
+ * @param id Quiz ID
+ * @param session User Session
+ * @return a Promise containing a boolean indicating whether
+ * quiz is created by user
+ */
 export const isCreatorOfQuiz = async (
   id: string,
   session: Session,
@@ -323,6 +383,13 @@ export const isCreatorOfQuiz = async (
   return false;
 };
 
+/**
+ * Counts all quiz filtered by event ID
+ *
+ *
+ * @param id Event ID
+ * @return a Promise containing a Result
+ */
 export const countQuiz = async (id: string): Promise<Result> => {
   let result: Result = {
     status: false,

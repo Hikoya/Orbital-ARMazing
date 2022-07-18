@@ -2,6 +2,13 @@ import { numberToWeekday } from '@constants/weekdays';
 import { monthNamesFull } from '@constants/months';
 import moment from 'moment-timezone';
 
+/**
+ * Checks whether the given Date object is valid by calling the
+ * getTime() function and checking if the result is a number.
+ *
+ * @param d Date object
+ * @return boolean on whether the object is a valid Date
+ */
 export const isValidDate = (d: Date): boolean => {
   if (Object.prototype.toString.call(d) === '[object Date]') {
     if (isNaN(d.getTime())) {
@@ -14,6 +21,15 @@ export const isValidDate = (d: Date): boolean => {
   }
 };
 
+/**
+ * Takes in a valid Date object and formats it into a readable
+ * date string
+ *
+ * eg. Tuesday, 28 June 2022
+ *
+ * @param date Date object
+ * @return string formatted in the desired format
+ */
 export const prettifyDate = (date: Date): string => {
   if (date && isValidDate(date)) {
     const dateObj = moment.tz(date, 'Asia/Singapore');
@@ -28,6 +44,13 @@ export const prettifyDate = (date: Date): string => {
   return `Unknown Date`;
 };
 
+/**
+ * Takes in a valid Date string in YYYY-MM-DD format
+ * and converts into a Unix timestamp to store in the database
+ *
+ * @param date String in YYYY-MM-DD format
+ * @return UNIX timestamp of the date in seconds
+ */
 export const convertDateToUnix = (date: string): number => {
   const prettified = moment
     .tz(date, 'YYYY-MM-DD', true, 'Asia/Singapore')
@@ -39,6 +62,13 @@ export const convertDateToUnix = (date: string): number => {
   }
 };
 
+/**
+ * Takes in a number and converts back into a Date object if the
+ * timestamp is valid
+ *
+ * @param date Date object
+ * @return Date object if timestamp valid, null otherwise
+ */
 export const convertUnixToDate = (date: number): Date | null => {
   if (date < 0) {
     return null;
@@ -57,6 +87,15 @@ export const convertUnixToDate = (date: number): Date | null => {
   }
 };
 
+/**
+ * Takes in a valid Date object and formats it into a readable
+ * date string in YYYY-MM-DD format
+ *
+ * eg. 2022-08-22
+ *
+ * @param date Date object
+ * @return string formatted in the desired format
+ */
 export const formatDateToString = (date: Date): string => {
   return moment.tz(date, 'Asia/Singapore').format('YYYY-MM-DD');
 };

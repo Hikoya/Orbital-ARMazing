@@ -5,6 +5,14 @@ import nodemailer from 'nodemailer';
 
 import { log } from '@helper/log';
 
+/**
+ * Takes in a callback link and email of the user and generates
+ * a login email
+ * @param newURL Callback link
+ * @param email Email
+ *
+ * @return Email in HTML formatted with callback link and email
+ */
 function html({ newURL, email }) {
   const escapedEmail = `${email.replace(/\./g, '&#8203;.')}`;
 
@@ -335,10 +343,23 @@ function html({ newURL, email }) {
 `;
 }
 
+/**
+ * Takes in a callback link and hostname of server
+ * Only called when the email provider dont support HTML-generated emails.
+ *
+ * @param newURL Callback link
+ * @param host Server link
+ *
+ * @return Simple string with callback link
+ */
 function text({ newURL, host }) {
   return `Sign in to ${host}\n${newURL}\n\n`;
 }
 
+/**
+ * Options for the Next-Auth library, including all the callbacks to
+ * authenticate users and send login emails to the user.
+ */
 export const options = {
   providers: [
     EmailProvider({

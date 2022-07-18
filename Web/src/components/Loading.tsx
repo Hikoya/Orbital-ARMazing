@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, Flex, Stack, Heading, Text, Spinner } from '@chakra-ui/react';
 
+/**
+ * This component is the default loading screen
+ */
 export default function Loading({ message }) {
   return (
     <Flex minH='100vh' align='center' justify='center' bg='gray.50'>

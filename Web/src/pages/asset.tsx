@@ -60,6 +60,10 @@ interface MarkerData {
   };
 }
 
+/**
+ * This component renders the /asset path, showing a table of all the assets visible to the user,
+ * as well as provide options to edit and create new assets.
+ */
 export default function AssetComponent(props: any) {
   const router = useRouter();
 
@@ -142,6 +146,9 @@ export default function AssetComponent(props: any) {
     setCoordinate(text);
   };
 
+  /**
+   * Resets all values to their default values upon successful creation of asset
+   */
   const reset = async () => {
     nameDB.current = '';
     descriptionDB.current = '';
@@ -160,6 +167,9 @@ export default function AssetComponent(props: any) {
     setError('');
   };
 
+  /**
+   * Resets all values to their default values upon successful editing of asset
+   */
   const resetEdit = async () => {
     assetDBEdit.current = '';
     nameDBEdit.current = '';
@@ -180,6 +190,9 @@ export default function AssetComponent(props: any) {
     setErrorEdit('');
   };
 
+  /**
+   * Input validation for creating an asset
+   */
   const validateFields = (
     nameField: string,
     descriptionField: string,
@@ -239,6 +252,9 @@ export default function AssetComponent(props: any) {
     return true;
   };
 
+  /**
+   * Input validation for editing an asset
+   */
   const validateFieldsEdit = (
     idField: string,
     nameField: string,
@@ -298,6 +314,9 @@ export default function AssetComponent(props: any) {
     return true;
   };
 
+  /**
+   * Generates an action button to redirect users to the image path.
+   */
   const generateActionButton = useCallback(
     async (content: Asset) => {
       const button: JSX.Element = (
@@ -324,6 +343,12 @@ export default function AssetComponent(props: any) {
     [router],
   );
 
+  /**
+   * Creates a dropdown menu for all assets fetched, and calls the function to generate
+   * an action button.
+   *
+   * Populates the data on the table in the end.
+   */
   const includeActionButton = useCallback(
     async (content: Asset[]) => {
       const selectionEdit: JSX.Element[] = [];
@@ -371,6 +396,9 @@ export default function AssetComponent(props: any) {
     [generateActionButton],
   );
 
+  /**
+   * Fetches assets data by calling the API
+   */
   const fetchAssetData = useCallback(async () => {
     setLoading(true);
     try {
@@ -392,6 +420,11 @@ export default function AssetComponent(props: any) {
     }
   }, [includeActionButton]);
 
+  /**
+   * Validates the input from the user, and calls the API to create an asset
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -451,6 +484,11 @@ export default function AssetComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the input from the user, and calls the API to edit an asset
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -543,6 +581,11 @@ export default function AssetComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the asset ID, and calls the API to delete an asset
+   *
+   * Fetches the latest asset data upon successful request.
+   */
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(assetDBEdit.current)) {
@@ -586,6 +629,9 @@ export default function AssetComponent(props: any) {
     return false;
   };
 
+  /**
+   * Changes all input fields to the given Asset details
+   */
   const changeDataEdit = (dataField: Asset) => {
     setNameEdit(dataField.name);
     setDescriptionEdit(dataField.description);
@@ -602,6 +648,9 @@ export default function AssetComponent(props: any) {
     longitudeDBEdit.current = dataField.longitude;
   };
 
+  /**
+   * Event that is called when a user uploads a file on Create Asset
+   */
   const onFileChange = async (event: {
     target: { files: FileList | null };
   }) => {
@@ -612,6 +661,9 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user uploads a file on the Edit Asset
+   */
   const onFileChangeEdit = async (event: {
     target: { files: FileList | null };
   }) => {
@@ -622,6 +674,9 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   */
   const onEventChange = async (event: { target: { value: any } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -630,6 +685,10 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   * for the Edit Asset portion
+   */
   const onEventChangeEdit = async (event: { target: { value: any } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -638,6 +697,9 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the asset dropdown menu
+   */
   const onAssetChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -657,6 +719,9 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Generates the event dropdown menu
+   */
   const eventDropDownMenu = async (content: Event[]) => {
     if (content.length > 0) {
       setNoEvent(false);
@@ -681,6 +746,9 @@ export default function AssetComponent(props: any) {
     }
   };
 
+  /**
+   * Fetches all event that the user is authorized to view
+   */
   const fetchData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/event/fetch', {
@@ -767,6 +835,9 @@ export default function AssetComponent(props: any) {
     [],
   );
 
+  /**
+   * Event that is called when the user types something in the search bar
+   */
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
@@ -1258,6 +1329,10 @@ export default function AssetComponent(props: any) {
   );
 }
 
+/**
+ * On page load, fetches the current session and returns the session data as well
+ * as the API key for the Google Maps API.
+ */
 export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {

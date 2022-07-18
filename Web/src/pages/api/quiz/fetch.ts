@@ -8,6 +8,11 @@ import { fetchEventByID } from '@helper/event';
 import { Event } from 'types/event';
 import { levels } from '@constants/admin';
 
+/**
+ * API Route to fetch all quizzes
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

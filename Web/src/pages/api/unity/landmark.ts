@@ -4,6 +4,15 @@ import { Asset } from 'types/asset';
 
 import { fetchAllAssetByEventID } from '@helper/asset';
 
+/**
+ * API Route to fetch all assets filtered by event ID
+ *
+ * This API route is only for the Unity Application
+ * Authentication is exchanged through an Authorization Header code shared
+ * between the two applications.
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
     status: false,

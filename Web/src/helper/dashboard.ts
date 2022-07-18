@@ -8,6 +8,18 @@ import { countAsset } from '@helper/asset';
 import { countQuiz } from '@helper/quiz';
 import { fetchAllEventByUser } from '@helper/event';
 
+/**
+ * Fetches all statistics
+ *
+ * The list of statistics are:
+ * 1. Number of Events associated with the user
+ * 2. Number of Assets associated with the user
+ * 3. Number of Quizzes associated with 2.
+ * 4. Number of Users that have joined the Events in 1.
+ *
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const fetchStatistic = async (session: Session): Promise<Result> => {
   let result: Result = {
     status: false,

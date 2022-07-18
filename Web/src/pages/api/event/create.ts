@@ -8,6 +8,11 @@ import { createEvent, generateEventCode } from '@helper/event';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
+/**
+ * API Route to create an Event
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   const { name, description, startDate, endDate, isPublic, visible } = req.body;

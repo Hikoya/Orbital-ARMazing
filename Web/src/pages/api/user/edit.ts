@@ -5,6 +5,14 @@ import { currentSession } from '@helper/sessionServer';
 import { checkerString } from '@helper/common';
 import { fetchUserByEmail, updateUserLevel } from '@helper/user';
 
+/**
+ * API Route to edit a user permission
+ *
+ * The level is the role given to the user
+ * eg. 0 is USER
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   const { email, level } = req.body;

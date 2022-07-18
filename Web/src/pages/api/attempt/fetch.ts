@@ -11,6 +11,11 @@ import { checkerString } from '@helper/common';
 import { fetchAttemptByEventID } from '@helper/attempt';
 import { fetchAssetByID } from '@helper/asset';
 
+/**
+ * API Route to fetch all attempts by event ID and username
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

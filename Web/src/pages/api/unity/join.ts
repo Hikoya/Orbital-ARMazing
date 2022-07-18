@@ -5,6 +5,15 @@ import { Event } from 'types/event';
 import { joinEvent } from '@helper/leaderboard';
 import { fetchEventByCode } from '@helper/event';
 
+/**
+ * API Route to allow players to join an Event through event code
+ *
+ * This API route is only for the Unity Application
+ * Authentication is exchanged through an Authorization Header code shared
+ * between the two applications.
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
     status: false,

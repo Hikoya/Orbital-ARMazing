@@ -26,6 +26,9 @@ import {
   ChevronLeftIcon,
 } from '@chakra-ui/icons';
 
+/**
+ * A simple Table widget that renders all data in a table format
+ */
 export default function TableWidget({ columns, data }) {
   const {
     getTableProps,

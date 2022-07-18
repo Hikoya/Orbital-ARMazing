@@ -13,6 +13,9 @@ import {
 import { FiChevronDown } from 'react-icons/fi';
 import { signOut } from 'next-auth/react';
 
+/**
+ * Component that contains a logout button
+ */
 export default function UserProfile(props: any) {
   const [url, setURL] = useState('https://localhost:3000');
 

@@ -3,6 +3,12 @@ import { Session } from 'next-auth/core/types';
 import { options } from '@constants/nextAuthOptions';
 import { unstable_getServerSession } from 'next-auth/next';
 
+/**
+ * Retrieves the current session. This function is used for server-side code
+ * If development, mocks a fake session and returns the session.
+ *
+ * @return a Promise containing a Result
+ */
 export const currentSession = async (
   request: any = null,
   response: any = null,

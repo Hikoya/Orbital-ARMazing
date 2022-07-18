@@ -5,6 +5,11 @@ import { currentSession } from '@helper/sessionServer';
 import { fetchStatistic } from '@helper/dashboard';
 import { levels } from '@constants/admin';
 
+/**
+ * API Route to fetch dashboard statistics
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

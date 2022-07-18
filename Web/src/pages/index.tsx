@@ -19,6 +19,10 @@ import { Statistic } from 'types/dashboard';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders the main dashboard page that is displayed to the user upon
+ * successful authentication.
+ */
 export default function Home() {
   const [loading, setLoading] = useState(false);
 

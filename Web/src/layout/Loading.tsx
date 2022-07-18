@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, Flex, Heading, Stack, Spinner, Text } from '@chakra-ui/react';
 
+/**
+ * Default loading page when the content is loading.
+ */
 export default function Loading() {
   return (
     <Flex minH='100vh' align='center' justify='center' bg='gray.50'>

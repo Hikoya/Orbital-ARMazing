@@ -4,6 +4,9 @@ import { ChakraProvider } from '@chakra-ui/react';
 import Head from 'next/head';
 import type { AppProps } from 'next/app';
 
+/**
+ * Entry point of the application
+ */
 export default function App({
   Component,
   pageProps: { session, ...pageProps },

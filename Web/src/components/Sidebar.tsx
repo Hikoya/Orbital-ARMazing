@@ -8,7 +8,6 @@ import {
   FiSettings,
   FiPaperclip,
   FiAward,
-  FiUser,
 } from 'react-icons/fi';
 
 import NavLink from '@components/NavLink';
@@ -19,7 +18,6 @@ const adminMenu = [
   { label: 'Manage Assets', icon: FiStar, href: '/asset' },
   { label: 'Manage Quiz', icon: FiPaperclip, href: '/quiz' },
   { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
-  { label: 'Manage Users', icon: FiUser, href: '/user' },
 ];
 
 const userMenu = [
@@ -30,6 +28,9 @@ const userMenu = [
   { label: 'Leaderboard', icon: FiAward, href: '/leaderboard' },
 ];
 
+/**
+ * Sidebar component at the side with all navigation links
+ */
 export default function Sidebar({ session, onClose, ...rest }) {
   const router = useRouter();
   const [menu, setMenu] = useState(userMenu);

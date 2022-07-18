@@ -1,6 +1,11 @@
 import React from 'react';
 import { Box, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 
+/**
+ * This component renders the verify request page that the user sees upon successful
+ * input of their email during the login process. The component will remind the users
+ * that an email has been sent and to check their email to complete the login process.
+ */
 export default function VerifyRequest() {
   return (
     <Flex minH='100vh' align='center' justify='center' bg='gray.50'>

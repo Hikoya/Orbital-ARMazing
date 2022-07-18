@@ -2,6 +2,16 @@ import { prisma } from '@helper/db';
 import { Result } from 'types/api';
 import { User } from 'types/user';
 
+/**
+ * Updates the user level.
+ *
+ * Level is a number indicating the role granted.
+ * eg. 0 for USER
+ *
+ * @param email Email of user
+ * @param level Permission level
+ * @return a Promise containing a Result
+ */
 export const updateUserLevel = async (
   email: string,
   level: number,
@@ -43,6 +53,11 @@ export const updateUserLevel = async (
   return result;
 };
 
+/**
+ * Fetches all users
+ *
+ * @return a Promise containing a Result
+ */
 export const fetchAllUser = async (): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -62,6 +77,12 @@ export const fetchAllUser = async (): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetches user filtered by email
+ *
+ * @param email Email of user
+ * @return a Promise containing a Result
+ */
 export const fetchUserByEmail = async (email: string) => {
   let result: Result = {
     status: false,

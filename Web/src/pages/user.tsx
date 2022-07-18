@@ -33,6 +33,10 @@ import { levels } from '@constants/admin';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders the /user path, showing a table of all the users visible to the user,
+ * as well as provide options to edit user permission
+ */
 export default function UserComponent() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
@@ -54,6 +58,9 @@ export default function UserComponent() {
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState<User[] | null>(null);
 
+  /**
+   * Resets all values to their default values upon successful request
+   */
   const reset = async () => {
     setError('');
     setUser('');
@@ -63,6 +70,9 @@ export default function UserComponent() {
     levelDBEdit.current = 0;
   };
 
+  /**
+   * Input validation for editing user permission
+   */
   const validateFields = (idField: string, levelField: number) => {
     if (!checkerString(idField)) {
       setError('Please choose a user!');
@@ -78,11 +88,17 @@ export default function UserComponent() {
     return true;
   };
 
+  /**
+   * Changes all input fields to the given User details
+   */
   const changeDataEdit = (dataField: User) => {
     setLevel(dataField.level);
     levelDBEdit.current = dataField.level;
   };
 
+  /**
+   * Event that is called when a user selects a level from the dropdown menu
+   */
   const onLevelChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -91,6 +107,9 @@ export default function UserComponent() {
     }
   };
 
+  /**
+   * Event that is called when a user selects a user from the dropdown menu
+   */
   const onUserChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -110,6 +129,11 @@ export default function UserComponent() {
     }
   };
 
+  /**
+   * Creates a dropdown menu for all users fetched
+   *
+   * Populates the data on the table in the end.
+   */
   const includeActionButton = useCallback(async (content: User[]) => {
     const selectionEdit: JSX.Element[] = [];
     selectionEdit.push(<option key='' value='' aria-label='Default' />);
@@ -133,6 +157,9 @@ export default function UserComponent() {
     setData(content);
   }, []);
 
+  /**
+   * Fetches user data by calling the API
+   */
   const fetchData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/user/fetch', {
@@ -151,6 +178,10 @@ export default function UserComponent() {
     }
   }, [includeActionButton]);
 
+  /**
+   * Validates the input from the user, and calls the API to edit user permission   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (validateFields(userDBEdit.current, levelDBEdit.current)) {
@@ -196,6 +227,9 @@ export default function UserComponent() {
     return false;
   };
 
+  /**
+   * Generates the user permission dropdown menu
+   */
   const generateLevels = useCallback(async () => {
     const levelD: JSX.Element[] = [];
 
@@ -244,6 +278,9 @@ export default function UserComponent() {
     [],
   );
 
+  /**
+   * Event that is called when the user types something in the search bar
+   */
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);

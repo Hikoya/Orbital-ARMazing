@@ -4,6 +4,9 @@ import { FiMenu } from 'react-icons/fi';
 import UserProfile from '@components/UserProfile';
 import Link from 'next/link';
 
+/**
+ * This component renders the Header with logo and user profile navigation
+ */
 export default function Header({ onOpen, ...rest }) {
   return (
     <Flex

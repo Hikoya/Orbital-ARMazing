@@ -5,6 +5,15 @@ import { Event } from 'types/event';
 import { formatDateToString, convertUnixToDate } from '@constants/date';
 import { fetchAllEvent } from '@helper/event';
 
+/**
+ * API Route to fetch all events
+ *
+ * This API route is only for the Unity Application
+ * Authentication is exchanged through an Authorization Header code shared
+ * between the two applications.
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
     status: false,

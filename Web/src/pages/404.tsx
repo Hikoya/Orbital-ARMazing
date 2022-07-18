@@ -2,6 +2,12 @@ import React, { useEffect } from 'react';
 import { Box, Flex, Heading, Stack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+/**
+ * This component handles the redirection whenever it encountered a 404 error.
+ *
+ * The component will timeout for a few seconds, after which it will automatically redirect the user to the
+ * default dashboard.
+ */
 export default function Error404() {
   const router = useRouter();
 

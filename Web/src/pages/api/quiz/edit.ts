@@ -8,6 +8,11 @@ import { currentSession } from '@helper/sessionServer';
 import { editQuiz } from '@helper/quiz';
 import { checkerNumber, checkerString } from '@helper/common';
 
+/**
+ * API Route to edit a Quiz
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   const {

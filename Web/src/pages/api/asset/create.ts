@@ -17,6 +17,11 @@ export const config = {
   },
 };
 
+/**
+ * API Route to create an asset
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

@@ -6,6 +6,11 @@ import { deleteEvent, isCreatorOfEvent } from '@helper/event';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
+/**
+ * API Route to delete an Event
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   const { id } = req.body;
