@@ -36,6 +36,12 @@ import { checkerString } from '@helper/common';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders a modal that shows a player info.
+ * The player is a user that joins an event through the Unity application.
+ *
+ * Details such as name, points received and attempted quizzes are displayed.
+ */
 export default function PlayerModal({ isOpen, onClose, modalData }) {
   const [loadingData, setLoadingData] = useState(true);
   const [username, setUsername] = useState('');
@@ -65,6 +71,9 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
     }, 200);
   };
 
+  /**
+   * Generates a table that shows the list of attempted quizzes at all the landmarks available
+   */
   const generateAttemptList = useCallback(async (content: Attempt[]) => {
     if (content.length > 0) {
       const list: JSX.Element[] = [];
@@ -108,6 +117,9 @@ export default function PlayerModal({ isOpen, onClose, modalData }) {
     }
   }, []);
 
+  /**
+   * Fetches all the attempts by the player through event ID and username
+   */
   const fetchAttempt = useCallback(async () => {
     if (checkerString(eventIDDB.current) && checkerString(usernameDB.current)) {
       try {

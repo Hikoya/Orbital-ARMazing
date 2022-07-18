@@ -1,4 +1,9 @@
-import { checkerString, checkerNumber, filterDuplicates, fetchLevel } from '@helper/common';
+import {
+  checkerString,
+  checkerNumber,
+  filterDuplicates,
+  fetchLevel,
+} from '@helper/common';
 
 test('checkerString test 1', async () => {
   expect(checkerString('2022-06-19')).toStrictEqual(true);

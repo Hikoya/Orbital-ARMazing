@@ -14,6 +14,13 @@ import { deleteAsset, fetchAllAssetByEventID } from '@helper/asset';
 import { deleteLeaderBoardByEventID } from '@helper/leaderboard';
 import { log } from '@helper/log';
 
+/**
+ * Create an Event
+ *
+ * @param data Event details
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const createEvent = async (
   data: Event,
   session: Session,
@@ -53,6 +60,13 @@ export const createEvent = async (
   return result;
 };
 
+/**
+ * Edit an Event
+ *
+ * @param data Event details
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const editEvent = async (
   data: Event,
   session: Session,
@@ -96,6 +110,18 @@ export const editEvent = async (
   return result;
 };
 
+/**
+ * Delete an Event based on its ID
+ *
+ * Firstly, the assets associated with the event is deleted.
+ * Next, the leaderboard associated with the event is deleted
+ *
+ * Finally, the event itself is deleted.
+ *
+ * @param id Event ID
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const deleteEvent = async (
   id: string,
   session: Session,
@@ -158,6 +184,12 @@ export const deleteEvent = async (
   return result;
 };
 
+/**
+ * Fetches all event filtered by the user ID (creator/ faciliator)
+ *
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const fetchAllEventByUser = async (
   session: Session,
 ): Promise<Result> => {
@@ -232,6 +264,11 @@ export const fetchAllEventByUser = async (
   return result;
 };
 
+/**
+ * Fetches all event
+ *
+ * @return a Promise containing a Result
+ */
 export const fetchAllEvent = async (): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -255,6 +292,12 @@ export const fetchAllEvent = async (): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetches all event filtered by the event ID
+ *
+ * @param id Event ID
+ * @return a Promise containing a Result
+ */
 export const fetchEventByID = async (id: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -282,6 +325,12 @@ export const fetchEventByID = async (id: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetches all event filtered by the event code (6 digit code)
+ *
+ * @param eventCode Event Code
+ * @return a Promise containing a Result
+ */
 export const fetchEventByCode = async (eventCode: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -309,6 +358,13 @@ export const fetchEventByCode = async (eventCode: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Check whether the user has the permission to perform operations on the event
+ *
+ * @param event Event Data
+ * @param session User Session
+ * @return a Promise containing a boolean on whether user has permission
+ */
 export const isEventAuthorized = async (
   event: Event,
   session: Session,
@@ -335,6 +391,13 @@ export const isEventAuthorized = async (
   return false;
 };
 
+/**
+ * Check whether the user is the creator of the event
+ *
+ * @param id Event ID
+ * @param session User Session
+ * @return a Promise containing a boolean on whether user creator
+ */
 export const isCreatorOfEvent = async (
   id: string,
   session: Session,
@@ -354,6 +417,12 @@ export const isCreatorOfEvent = async (
   return false;
 };
 
+/**
+ * Check whether the event code already exists
+ *
+ * @param code Event Code
+ * @return a Promise containing a boolean on whether code exists
+ */
 export const isCodeTaken = async (code: string): Promise<boolean> => {
   let result: boolean = true;
 
@@ -377,6 +446,11 @@ export const isCodeTaken = async (code: string): Promise<boolean> => {
   return result;
 };
 
+/**
+ * Generates a random 6 digit event code
+ *
+ * @return a Promise containing a string that represents a unique event code
+ */
 export const generateEventCode = async (): Promise<string> => {
   let code: string = '';
   const maxLength = 6;

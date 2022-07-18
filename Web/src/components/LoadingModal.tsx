@@ -11,6 +11,9 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 
+/**
+ * This component renders a loading modal
+ */
 export default function LoadingModal({ isOpen, onClose }) {
   return (
     <Modal

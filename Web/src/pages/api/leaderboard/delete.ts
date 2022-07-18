@@ -8,6 +8,11 @@ import { deleteLeaderBoardByEventID } from '@helper/leaderboard';
 import { levels } from '@constants/admin';
 import { checkerString } from '@root/src/helper/common';
 
+/**
+ * API Route to delete the leaderboard filtered by event ID
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

@@ -6,6 +6,11 @@ import { deleteAsset, isCreatorOfAsset } from '@helper/asset';
 import { levels } from '@constants/admin';
 import { checkerString } from '@helper/common';
 
+/**
+ * API Route to delete an asset
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
 

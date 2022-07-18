@@ -7,6 +7,13 @@ import { fetchEventByID, fetchEventByCode } from '@helper/event';
 import { log } from '@helper/log';
 import { Session } from 'next-auth/core/types';
 
+/**
+ * Checks whether the user is already registered under the event
+ *
+ * @param eventID Event ID
+ * @param username Username of player
+ * @return a Promise containing a Result
+ */
 export const doesUserExist = async (
   eventID: string,
   username: string,
@@ -46,6 +53,13 @@ export const doesUserExist = async (
   return result;
 };
 
+/**
+ * Registers the player under the event
+ *
+ * @param eventCode Event Code
+ * @param user Username of player
+ * @return a Promise containing a Result
+ */
 export const joinEvent = async (
   eventCode: string,
   user: string,
@@ -111,6 +125,12 @@ export const joinEvent = async (
   return result;
 };
 
+/**
+ * Fetches the leaderboard filtered by the Event ID
+ *
+ * @param eventID Event ID
+ * @return a Promise containing a Result
+ */
 export const fetchLeaderBoardByEventID = async (
   eventID: string,
 ): Promise<Result> => {
@@ -173,6 +193,13 @@ export const fetchLeaderBoardByEventID = async (
   return result;
 };
 
+/**
+ * Resets the leaderboard filtered by the Event ID
+ *
+ * @param eventID Event ID
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const resetLeaderBoardByEventID = async (
   eventID: string,
   session: Session,
@@ -213,6 +240,13 @@ export const resetLeaderBoardByEventID = async (
   return result;
 };
 
+/**
+ * Deletes the leaderboard filtered by the Event ID
+ *
+ * @param eventID Event ID
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const deleteLeaderBoardByEventID = async (
   eventID: string,
   session: Session,
@@ -253,6 +287,14 @@ export const deleteLeaderBoardByEventID = async (
   return result;
 };
 
+/**
+ * Updates the user points
+ *
+ * @param eventID Event ID
+ * @param username Username
+ * @param points Number of points to add
+ * @return a Promise containing a Result
+ */
 export const updateUserPoints = async (
   eventID: string,
   username: string,
@@ -316,6 +358,12 @@ export const updateUserPoints = async (
   return result;
 };
 
+/**
+ * Count the number of users registered under the event
+ *
+ * @param eventID Event ID
+ * @return a Promise containing a Result
+ */
 export const countUserInEvent = async (eventID: string): Promise<Result> => {
   let result: Result = {
     status: false,

@@ -17,6 +17,9 @@ interface MarkerData {
   };
 }
 
+/**
+ * This component renders the Google Map for Assets page
+ */
 function MapComponent({ location, zoomLevel, apiKey, markers, dataHandler }) {
   const toast = useToast();
 

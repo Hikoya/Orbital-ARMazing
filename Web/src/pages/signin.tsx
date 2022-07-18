@@ -14,6 +14,10 @@ import {
 import { signIn } from 'next-auth/react';
 import { checkerString } from '@helper/common';
 
+/**
+ * This component renders the signin page that is displayed to the user
+ * if there is no previous session found.
+ */
 export default function SignIn(props: Promise<{ data: string }>) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');

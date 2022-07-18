@@ -2,6 +2,9 @@ import React from 'react';
 import NextLink from 'next/link';
 import { Flex, Icon, Text } from '@chakra-ui/react';
 
+/**
+ * This component renders individual navigation links for the sidebar
+ */
 export default function NavLink({ link, ...rest }) {
   const { label, icon, href } = link;
 

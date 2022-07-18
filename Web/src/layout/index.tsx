@@ -4,6 +4,10 @@ import Sidebar from '@components/Sidebar';
 
 import { Box, Drawer, DrawerContent, useDisclosure } from '@chakra-ui/react';
 
+/**
+ * Main layout. This layout is used to enforce consistency
+ * for all pages. It contains the Header, Sidebar and the main content.
+ */
 export default function Layout({ session, children }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (

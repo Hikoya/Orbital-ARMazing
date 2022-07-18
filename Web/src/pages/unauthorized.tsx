@@ -2,6 +2,11 @@ import React, { useEffect } from 'react';
 import { Flex, Box, Stack, Heading, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 
+/**
+ * This component renders the unauthorized page when the user access an
+ * admins-only page. The component will automatically redirect the user to the default
+ * dashboard after a specified period of time.
+ */
 export default function Unauthorized() {
   const router = useRouter();
 

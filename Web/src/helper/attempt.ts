@@ -5,6 +5,12 @@ import { Session } from 'next-auth/core/types';
 
 import { log } from '@helper/log';
 
+/**
+ * Creates a user attempt
+ *
+ * @param data Attempt data
+ * @return a Promise containing a Result
+ */
 export const createAttempt = async (data: Attempt): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -41,6 +47,13 @@ export const createAttempt = async (data: Attempt): Promise<Result> => {
   return result;
 };
 
+/**
+ * Deletes a user attempt based on attempt ID
+ *
+ * @param id Attempt ID
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const deleteAttempt = async (
   id: string,
   session: Session,
@@ -83,6 +96,12 @@ export const deleteAttempt = async (
   return result;
 };
 
+/**
+ * Fetches all attempts filtered by asset ID
+ *
+ * @param assetID Asset ID
+ * @return a Promise containing a Result
+ */
 export const fetchAllAttemptByAssetID = async (
   assetID: string,
 ): Promise<Result> => {
@@ -112,6 +131,12 @@ export const fetchAllAttemptByAssetID = async (
   return result;
 };
 
+/**
+ * Fetches all attempts filtered by event ID
+ *
+ * @param eventID Event ID
+ * @return a Promise containing a Result
+ */
 export const fetchAttemptByEventID = async (
   eventID: string,
   username: string,
@@ -143,6 +168,14 @@ export const fetchAttemptByEventID = async (
   return result;
 };
 
+/**
+ * Check whether a user has already attempted a particular quiz at the landmark
+ *
+ * @param eventID Event ID
+ * @param username Username
+ * @param assetID Asset ID
+ * @return a Promise containing a boolean on whether user attempted quiz
+ */
 export const doesUserAttempt = async (
   eventID: string,
   username: string,

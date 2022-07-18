@@ -35,6 +35,10 @@ import { motion } from 'framer-motion';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders the /leaderboard path, allowing users to see the current
+ * leaderboard and perform certain operations such as reset or delete
+ */
 export default function LeaderboardComponent() {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
@@ -57,6 +61,9 @@ export default function LeaderboardComponent() {
 
   const [hasLeaderBoard, setHasLeaderBoard] = useState(false);
 
+  /**
+   * Generates an action button to set the player modal
+   */
   const generateActionButton = useCallback(async (content: Leaderboard) => {
     const button: JSX.Element = (
       <Button
@@ -76,6 +83,11 @@ export default function LeaderboardComponent() {
     return button;
   }, []);
 
+  /**
+   * Calls the function to generate an action button.
+   *
+   * Populates the data on the table in the end.
+   */
   const includeActionButton = useCallback(
     async (content: Leaderboard[]) => {
       if (content !== null && content.length > 0) {
@@ -96,6 +108,9 @@ export default function LeaderboardComponent() {
     [generateActionButton],
   );
 
+  /**
+   * Fetches leaderboard data by calling the API
+   */
   const fetchData = useCallback(
     async (eventIDField: string) => {
       setLoading(true);
@@ -123,6 +138,9 @@ export default function LeaderboardComponent() {
     [includeActionButton],
   );
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   */
   const onEventChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -143,6 +161,12 @@ export default function LeaderboardComponent() {
       await fetchData(value);
     }
   };
+
+  /**
+   * Validates the event ID, and calls the API to reset the leaderboard
+   *
+   * Fetches the latest leaderboard data upon successful request.
+   */
   const handleReset = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDB.current)) {
@@ -185,6 +209,11 @@ export default function LeaderboardComponent() {
     return false;
   };
 
+  /**
+   * Validates the event ID, and calls the API to delete the leaderboard
+   *
+   * Fetches the latest leaderboard data upon successful request.
+   */
   const handleDeletePlayer = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDB.current)) {
@@ -227,6 +256,9 @@ export default function LeaderboardComponent() {
     return false;
   };
 
+  /**
+   * Generates the event dropdown menu
+   */
   const eventDropDownMenu = useCallback(async (content: Event[]) => {
     if (content.length > 0) {
       setNoEvent(false);
@@ -252,6 +284,9 @@ export default function LeaderboardComponent() {
     }
   }, []);
 
+  /**
+   * Fetches all event that the user is authorized to view
+   */
   const fetchEventData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/event/fetch', {
@@ -303,6 +338,9 @@ export default function LeaderboardComponent() {
     [],
   );
 
+  /**
+   * Event that is called when the user types something in the search bar
+   */
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);

@@ -3,6 +3,10 @@ import { Box, Flex } from '@chakra-ui/react';
 import Link from 'next/link';
 import Image from 'next/image';
 
+/**
+ * This component takes in an
+ * image, title and link and displays a simple card
+ */
 export default function Card({ product }) {
   const { img, title, link } = product;
 

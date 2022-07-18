@@ -7,6 +7,11 @@ import { currentSession } from '@helper/sessionServer';
 import { fetchAllEventByUser } from '@helper/event';
 import { levels } from '@constants/admin';
 
+/**
+ * API Route to fetch all events by user session
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

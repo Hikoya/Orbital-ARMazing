@@ -1,6 +1,9 @@
 import React from 'react';
 import { Flex, Box, Stack, Heading, Text } from '@chakra-ui/react';
 
+/**
+ * Default error page
+ */
 export default function Error() {
   return (
     <Flex minH='100vh' align='center' justify='center' bg='gray.50'>

@@ -14,6 +14,12 @@ import { fetchAllEventWPermission } from '@helper/permission';
 import { log } from '@helper/log';
 import { deleteAttempt, fetchAllAttemptByAssetID } from '@helper/attempt';
 
+/**
+ * Creates an Asset in the database
+ *
+ * @param data Asset
+ * @return a Promise containing a Result
+ */
 export const createAsset = async (data: Asset): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -54,6 +60,13 @@ export const createAsset = async (data: Asset): Promise<Result> => {
   return result;
 };
 
+/**
+ * Edit an existing Asset in the database
+ *
+ * @param data Asset
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const editAsset = async (
   data: Asset,
   session: Session,
@@ -97,6 +110,19 @@ export const editAsset = async (
   return result;
 };
 
+/**
+ * Delete an existing Asset in the database
+ *
+ * First, all the quizzes tagged under the asset will be deleted
+ * Additionally, all the attempts by the players under the asset
+ * will be deleted.
+ *
+ * Finally, the asset itself is deleted.
+ *
+ * @param id Asset id
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const deleteAsset = async (
   id: string,
   session: Session,
@@ -173,6 +199,12 @@ export const deleteAsset = async (
   return result;
 };
 
+/**
+ * Fetch all assets created by the user email
+ *
+ * @param session User Session
+ * @return a Promise containing a Result
+ */
 export const fetchAllAssetByUser = async (
   session: Session,
 ): Promise<Result> => {
@@ -257,6 +289,11 @@ export const fetchAllAssetByUser = async (
   return result;
 };
 
+/**
+ * Fetch all assets
+ *
+ * @return a Promise containing a Result
+ */
 export const fetchAllAsset = async (): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -280,6 +317,12 @@ export const fetchAllAsset = async (): Promise<Result> => {
   return result;
 };
 
+/**
+ * Fetch all assets filtered by the event ID
+ *
+ * @param eventID Event ID
+ * @return a Promise containing a Result
+ */
 export const fetchAllAssetByEventID = async (
   eventID: string,
 ): Promise<Result> => {
@@ -309,6 +352,12 @@ export const fetchAllAssetByEventID = async (
   return result;
 };
 
+/**
+ * Fetch all assets filtered by the asset ID
+ *
+ * @param id Asset ID
+ * @return a Promise containing a Result
+ */
 export const fetchAssetByID = async (id: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -336,6 +385,12 @@ export const fetchAssetByID = async (id: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Count all assets filtered by the asset ID
+ *
+ * @param id Event ID
+ * @return a Promise containing a Result
+ */
 export const countAsset = async (id: string): Promise<Result> => {
   let result: Result = {
     status: false,
@@ -359,6 +414,14 @@ export const countAsset = async (id: string): Promise<Result> => {
   return result;
 };
 
+/**
+ * Check whether the asset is created by the user
+ *
+ * @param id Event ID
+ * @param session User Session
+ * @return a Promise containing a boolean on whether
+ * the asset is created by the user.
+ */
 export const isCreatorOfAsset = async (
   id: string,
   session: Session,

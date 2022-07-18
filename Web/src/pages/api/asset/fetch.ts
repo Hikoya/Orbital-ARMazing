@@ -9,6 +9,11 @@ import { fetchEventByID } from '@helper/event';
 
 import { levels } from '@constants/admin';
 
+/**
+ * API Route to fetch all assets
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   let result: Result = {

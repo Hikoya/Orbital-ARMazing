@@ -7,6 +7,11 @@ import { currentSession } from '@helper/sessionServer';
 import { deleteQuiz, isCreatorOfQuiz } from '@helper/quiz';
 import { checkerString } from '@helper/common';
 
+/**
+ * API Route to delete a Quiz
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const session = await currentSession(req, res, null, true);
   const { quizID } = req.body;

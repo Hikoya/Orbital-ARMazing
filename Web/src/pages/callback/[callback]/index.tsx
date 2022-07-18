@@ -3,6 +3,14 @@ import { Box, Flex, Heading, Stack, Spinner, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { CheckCircleIcon } from '@chakra-ui/icons';
 
+/**
+ * This component handles the callback redirection when the user presses the
+ * login link in the email sent to them as part of authentiation.
+ *
+ * The component will timeout for a few seconds to prevent automated scanners from
+ * using up the login link, after which it will automatically redirect the user to the
+ * default dashboard.
+ */
 export default function EmailCallBack() {
   const router = useRouter();
   const { query } = router;

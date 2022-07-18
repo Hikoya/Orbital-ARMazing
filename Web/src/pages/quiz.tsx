@@ -42,6 +42,10 @@ import { levels } from '@constants/admin';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders the /quiz path, showing a table of all the assets visible to the user,
+ * as well as provide options to edit and create new assets.
+ */
 export default function QuizComponent(props: any) {
   const [loadingData, setLoading] = useState(false);
   const toast = useToast();
@@ -124,6 +128,9 @@ export default function QuizComponent(props: any) {
   const [organizer, setOrganizer] = useState(false);
   const [noEvent, setNoEvent] = useState(false);
 
+  /**
+   * Resets all values to their default values upon successful creation of quiz
+   */
   const reset = async () => {
     eventIDDB.current = '';
     assetIDDB.current = '';
@@ -150,6 +157,9 @@ export default function QuizComponent(props: any) {
     setError('');
   };
 
+  /**
+   * Resets all values to their default values upon successful editing of quiz
+   */
   const resetEdit = async () => {
     quizDBEdit.current = '';
     eventIDDBEdit.current = '';
@@ -178,6 +188,9 @@ export default function QuizComponent(props: any) {
     setErrorEdit('');
   };
 
+  /**
+   * Input validation for creating a quiz
+   */
   const validateFields = (
     eventIDField: string,
     assetIDField: string,
@@ -259,6 +272,9 @@ export default function QuizComponent(props: any) {
     return true;
   };
 
+  /**
+   * Input validation for editing a quiz
+   */
   const validateFieldsEdit = (
     quizIDField: string,
     eventIDField: string,
@@ -346,6 +362,12 @@ export default function QuizComponent(props: any) {
     return true;
   };
 
+  /**
+   * Creates a dropdown menu for all quiz fetched, and calls the function to generate
+   * an action button.
+   *
+   * Populates the data on the table in the end.
+   */
   const includeActionButton = useCallback(async (content: Quiz[]) => {
     const selectionEdit: JSX.Element[] = [];
     selectionEdit.push(<option key='' value='' aria-label='Default' />);
@@ -368,6 +390,9 @@ export default function QuizComponent(props: any) {
     setData(content);
   }, []);
 
+  /**
+   * Fetches quiz data by calling the API
+   */
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -389,6 +414,11 @@ export default function QuizComponent(props: any) {
     }
   }, [includeActionButton]);
 
+  /**
+   * Validates the input from the user, and calls the API to create a quiz
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -454,6 +484,11 @@ export default function QuizComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the input from the user, and calls the API to edit a quiz
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -521,6 +556,11 @@ export default function QuizComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the asset ID, and calls the API to delete a quiz
+   *
+   * Fetches the latest quiz data upon successful request.
+   */
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(quizDBEdit.current)) {
@@ -564,6 +604,9 @@ export default function QuizComponent(props: any) {
     return false;
   };
 
+  /**
+   * Changes all input fields to the given Quiz details
+   */
   const changeDataEdit = (dataField: Quiz) => {
     if (dataField.assetID !== undefined) {
       setAssetIDEdit(dataField.assetID);
@@ -596,6 +639,9 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the quiz dropdown menu
+   */
   const onQuizChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -615,6 +661,9 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   */
   const onEventChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -623,6 +672,10 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   * for the Edit Quiz portion
+   */
   const onEventChangeEdit = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -631,6 +684,9 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Generates the event dropdown menu
+   */
   const eventDropDownMenu = useCallback(async (content: Event[]) => {
     if (content.length > 0) {
       setNoEvent(false);
@@ -655,6 +711,9 @@ export default function QuizComponent(props: any) {
     }
   }, []);
 
+  /**
+   * Fetches all event that the user is authorized to view
+   */
   const fetchEventData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/event/fetch', {
@@ -676,6 +735,9 @@ export default function QuizComponent(props: any) {
     }
   }, [eventDropDownMenu]);
 
+  /**
+   * Event that is called when a user selects an item from the asset dropdown menu
+   */
   const onAssetChange = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -684,6 +746,10 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Event that is called when a user selects an item from the asset dropdown menu
+   * on the Edit Asset portion
+   */
   const onAssetChangeEdit = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -692,6 +758,9 @@ export default function QuizComponent(props: any) {
     }
   };
 
+  /**
+   * Generates the asset dropdown menu
+   */
   const assetDropDownMenu = useCallback(async (content: Asset[]) => {
     const selection: JSX.Element[] = [];
     selection.push(<option key='' value='' aria-label='default' />);
@@ -711,6 +780,9 @@ export default function QuizComponent(props: any) {
     setAssetDropdown(selection);
   }, []);
 
+  /**
+   * Fetches all asset that the user is authorized to view
+   */
   const fetchAssetData = useCallback(async () => {
     try {
       const rawResponse = await fetch('/api/asset/fetch', {
@@ -784,6 +856,9 @@ export default function QuizComponent(props: any) {
     [],
   );
 
+  /**
+   * Event that is called when the user types something in the search bar
+   */
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput = event.target.value;
     setSearch(searchInput);
@@ -1230,6 +1305,9 @@ export default function QuizComponent(props: any) {
   );
 }
 
+/**
+ * On page load, fetches the current session and returns the session data.
+ */
 export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {

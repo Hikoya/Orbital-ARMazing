@@ -3,6 +3,7 @@ import {
   convertUnixToDate,
   prettifyDate,
   isValidDate,
+  formatDateToString,
 } from '@constants/date';
 import moment from 'moment-timezone';
 
@@ -106,5 +107,29 @@ test('isValidDate test 1', async () => {
   );
   expect(isValidDate(new Date('2022-werewr 213123adsfdsesdfds'))).toStrictEqual(
     false,
+  );
+});
+
+test('formatDateToString test 1', async () => {
+  expect(formatDateToString(new Date('2022-06-17'))).toStrictEqual(
+    '2022-06-17',
+  );
+  expect(formatDateToString(new Date('2022-06-18'))).toStrictEqual(
+    '2022-06-18',
+  );
+  expect(formatDateToString(new Date('2022-06-19'))).toStrictEqual(
+    '2022-06-19',
+  );
+  expect(formatDateToString(new Date('2022-06-20'))).toStrictEqual(
+    '2022-06-20',
+  );
+  expect(formatDateToString(new Date('2022-06-21'))).toStrictEqual(
+    '2022-06-21',
+  );
+  expect(formatDateToString(new Date('2022-06-22'))).toStrictEqual(
+    '2022-06-22',
+  );
+  expect(formatDateToString(new Date('2022-06-23'))).toStrictEqual(
+    '2022-06-23',
   );
 });

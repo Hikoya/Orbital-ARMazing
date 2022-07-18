@@ -42,6 +42,10 @@ import { levels } from '@constants/admin';
 const MotionSimpleGrid = motion(SimpleGrid);
 const MotionBox = motion(Box);
 
+/**
+ * This component renders the /event path, showing a table of all the event visible to the user,
+ * as well as provide options to edit and create new event.
+ */
 export default function EventComponent(props: any) {
   const [loadingData, setLoading] = useState(true);
   const toast = useToast();
@@ -99,6 +103,10 @@ export default function EventComponent(props: any) {
 
   const [organizer, setOrganizer] = useState(true);
 
+  /**
+   * Resets all values to their default values upon successful creation
+   * of event
+   */
   const reset = async () => {
     nameDB.current = '';
     descriptionDB.current = '';
@@ -116,6 +124,10 @@ export default function EventComponent(props: any) {
     setError('');
   };
 
+  /**
+   * Resets all values to their default values upon successful editing
+   * of event
+   */
   const resetEdit = async () => {
     eventIDDBEdit.current = '';
     nameDBEdit.current = '';
@@ -135,6 +147,9 @@ export default function EventComponent(props: any) {
     setErrorEdit('');
   };
 
+  /**
+   * Input validation for creating an event
+   */
   const validateFields = (
     nameFieldDB: string,
     descriptionFieldDB: string,
@@ -183,6 +198,9 @@ export default function EventComponent(props: any) {
     return true;
   };
 
+  /**
+   * Input validation for editing an event
+   */
   const validateFieldsEdit = (
     idField: string,
     nameField: string,
@@ -231,6 +249,11 @@ export default function EventComponent(props: any) {
     return true;
   };
 
+  /**
+   * Creates a dropdown menu for all event fetched
+   *
+   * Populates the data on the table in the end.
+   */
   const includeActionButton = useCallback(async (content: Event[]) => {
     const allEvent: Event[] = [];
     const selectionEdit: JSX.Element[] = [];
@@ -255,6 +278,9 @@ export default function EventComponent(props: any) {
     setEventDropdown(selectionEdit);
   }, []);
 
+  /**
+   * Fetches event data by calling the API
+   */
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
@@ -277,6 +303,11 @@ export default function EventComponent(props: any) {
     }
   }, [includeActionButton]);
 
+  /**
+   * Validates the input from the user, and calls the API to create an event
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitCreate = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -333,6 +364,11 @@ export default function EventComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the input from the user, and calls the API to edit an event
+   *
+   * Resets the input fields upon successful request.
+   */
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (
@@ -391,6 +427,11 @@ export default function EventComponent(props: any) {
     return false;
   };
 
+  /**
+   * Validates the event ID, and calls the API to delete an event
+   *
+   * Fetches the latest event data upon successful request.
+   */
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDBEdit.current)) {
@@ -435,6 +476,9 @@ export default function EventComponent(props: any) {
     return false;
   };
 
+  /**
+   * Changes all input fields to the given Event details
+   */
   const changeDataEdit = (dataField: Event) => {
     setNameEdit(dataField.name);
     setDescriptionEdit(dataField.description);
@@ -458,6 +502,10 @@ export default function EventComponent(props: any) {
     publicDBEdit.current = dataField.isPublic;
   };
 
+  /**
+   * Event that is called when a user selects an item from the event dropdown menu
+   * for the Edit Event portion
+   */
   const onEventChangeEdit = async (event: { target: { value: string } }) => {
     if (event.target.value) {
       const { value } = event.target;
@@ -537,6 +585,9 @@ export default function EventComponent(props: any) {
     generate(props);
   }, [fetchData, props]);
 
+  /**
+   * Event that is called when the user types something in the search bar
+   */
   const handleSearch = (event: { target: { value: string } }) => {
     const searchInput: string = event.target.value;
     setSearch(searchInput);
@@ -867,6 +918,9 @@ export default function EventComponent(props: any) {
   );
 }
 
+/**
+ * On page load, fetches the current session and returns the session data.
+ */
 export const getServerSideProps: GetServerSideProps = async (cont) => ({
   props: (async function Props() {
     try {

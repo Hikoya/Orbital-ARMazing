@@ -8,6 +8,15 @@ import { fetchAllQuizByEvent } from '@helper/quiz';
 import { fetchEventByID } from '@helper/event';
 import { fetchAssetByID } from '@helper/asset';
 
+/**
+ * API Route to fetch all quizzes
+ *
+ * This API route is only for the Unity Application
+ * Authentication is exchanged through an Authorization Header code shared
+ * between the two applications.
+ *
+ * @return A Result with status code
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   let result: Result = {
     status: false,

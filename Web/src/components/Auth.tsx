@@ -6,6 +6,13 @@ import Layout from '@layout/index';
 import Loading from '@layout/Loading';
 import { Session } from 'next-auth/core/types';
 
+/**
+ * This component checks whether a session is present, and redirects the user
+ * to the signin page if no session is found.
+ *
+ * Additionally, the component checks whether the user is an admin for admin-level
+ * pages.
+ */
 function Auth({ children, admin }) {
   const { data: session, status } = useSession();
   const loading = status === 'loading';
