@@ -614,7 +614,7 @@ export default function EventComponent(props: any) {
   return (
     <Auth admin={undefined}>
       <Box>
-        <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+        <Box data-testid={'box-event'} bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
           {loadingData && (data === null || data === []) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>

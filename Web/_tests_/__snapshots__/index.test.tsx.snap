@@ -1,0 +1,471 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render Index Page Check for Manage Cards 1`] = `
+<div>
+  <div
+    class="css-2k1zm6"
+  >
+    <div
+      class="css-rf1m55"
+    >
+      <div
+        class="css-1bxj9j3"
+      >
+        <p
+          class="chakra-text css-1gfp23t"
+        >
+          ARMazing
+        </p>
+        <button
+          aria-label="Close"
+          class="css-33zxup"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="chakra-icon css-onkibi"
+            focusable="false"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M.439,21.44a1.5,1.5,0,0,0,2.122,2.121L11.823,14.3a.25.25,0,0,1,.354,0l9.262,9.263a1.5,1.5,0,1,0,2.122-2.121L14.3,12.177a.25.25,0,0,1,0-.354l9.263-9.262A1.5,1.5,0,0,0,21.439.44L12.177,9.7a.25.25,0,0,1-.354,0L2.561.44A1.5,1.5,0,0,0,.439,2.561L9.7,11.823a.25.25,0,0,1,0,.354Z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+      </div>
+      <div
+        class="css-cpuzs9"
+        href="/"
+        role="group"
+      >
+        <svg
+          class="chakra-icon css-1b1fm3x"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"
+          />
+          <polyline
+            points="9 22 9 12 15 12 15 22"
+          />
+        </svg>
+        <p
+          class="chakra-text css-1uno72p"
+        >
+          Home
+        </p>
+      </div>
+      <div
+        class="css-cpuzs9"
+        href="/event"
+        role="group"
+      >
+        <svg
+          class="chakra-icon css-1b1fm3x"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="12"
+            r="3"
+          />
+          <path
+            d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"
+          />
+        </svg>
+        <p
+          class="chakra-text css-1uno72p"
+        >
+          Manage Events
+        </p>
+      </div>
+      <div
+        class="css-cpuzs9"
+        href="/asset"
+        role="group"
+      >
+        <svg
+          class="chakra-icon css-1b1fm3x"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <polygon
+            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+          />
+        </svg>
+        <p
+          class="chakra-text css-1uno72p"
+        >
+          Manage Assets
+        </p>
+      </div>
+      <div
+        class="css-cpuzs9"
+        href="/quiz"
+        role="group"
+      >
+        <svg
+          class="chakra-icon css-1b1fm3x"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"
+          />
+        </svg>
+        <p
+          class="chakra-text css-1uno72p"
+        >
+          Manage Quiz
+        </p>
+      </div>
+      <div
+        class="css-cpuzs9"
+        href="/leaderboard"
+        role="group"
+      >
+        <svg
+          class="chakra-icon css-1b1fm3x"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="12"
+            cy="8"
+            r="7"
+          />
+          <polyline
+            points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"
+          />
+        </svg>
+        <p
+          class="chakra-text css-1uno72p"
+        >
+          Leaderboard
+        </p>
+      </div>
+    </div>
+    <div
+      class="css-1z0lsiy"
+    >
+      <button
+        aria-label="open menu"
+        class="chakra-button css-2mi4sz"
+        type="button"
+      >
+        <svg
+          aria-hidden="true"
+          fill="none"
+          focusable="false"
+          height="1em"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+          width="1em"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <line
+            x1="3"
+            x2="21"
+            y1="12"
+            y2="12"
+          />
+          <line
+            x1="3"
+            x2="21"
+            y1="6"
+            y2="6"
+          />
+          <line
+            x1="3"
+            x2="21"
+            y1="18"
+            y2="18"
+          />
+        </svg>
+      </button>
+      <p
+        class="chakra-text css-1ri2w28"
+      >
+        ARMazing
+      </p>
+      <div
+        class="chakra-stack css-1qgtx64"
+      >
+        <div
+          class="css-70qvj9"
+        >
+          <button
+            aria-controls="menu-list-4"
+            aria-expanded="false"
+            aria-haspopup="menu"
+            class="chakra-menu__menu-button css-10lilp"
+            id="menu-button-4"
+          >
+            <span
+              class="css-xl71ch"
+            >
+              <div
+                class="chakra-stack css-1qwdsol"
+              >
+                <span
+                  class="chakra-avatar css-1ruhx4w"
+                >
+                  <svg
+                    aria-label=" avatar"
+                    class="chakra-avatar__svg css-16ite8i"
+                    role="img"
+                    viewBox="0 0 128 128"
+                  >
+                    <path
+                      d="M103,102.1388 C93.094,111.92 79.3504,118 64.1638,118 C48.8056,118 34.9294,111.768 25,101.7892 L25,95.2 C25,86.8096 31.981,80 40.6,80 L87.4,80 C96.019,80 103,86.8096 103,95.2 L103,102.1388 Z"
+                      fill="currentColor"
+                    />
+                    <path
+                      d="M63.9961647,24 C51.2938136,24 41,34.2938136 41,46.9961647 C41,59.7061864 51.2938136,70 63.9961647,70 C76.6985159,70 87,59.7061864 87,46.9961647 C87,34.2938136 76.6985159,24 63.9961647,24"
+                      fill="currentColor"
+                    />
+                  </svg>
+                </span>
+                <div
+                  class="css-1t6irk0"
+                >
+                  <svg
+                    fill="none"
+                    height="1em"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="1em"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <polyline
+                      points="6 9 12 15 18 9"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </span>
+          </button>
+          <div
+            class="css-0"
+            style="visibility: hidden; position: absolute; min-width: max-content; inset: 0 auto auto 0;"
+          >
+            <div
+              aria-orientation="vertical"
+              class="chakra-menu__menu-list css-1il77ld"
+              id="menu-list-4"
+              role="menu"
+              style="transform-origin: var(--popper-transform-origin); opacity: 0; visibility: hidden; transform: scale(0.8) translateZ(0);"
+              tabindex="-1"
+            >
+              <button
+                class="chakra-menu__menuitem css-1k756t9"
+                data-index="0"
+                id="menu-list-4-menuitem-2"
+                role="menuitem"
+                tabindex="-1"
+                type="button"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="css-1fr3uq1"
+    >
+      <div
+        class="css-0"
+      >
+        <div
+          class="css-1y5rknw"
+        >
+          <div
+            class="chakra-stack css-1jxjhsf"
+          >
+            <p
+              class="chakra-text css-0"
+            >
+              Loading Please wait...
+            </p>
+          </div>
+        </div>
+        <div
+          class="css-122qq90"
+        >
+          <div
+            class="css-0"
+            data-testid="motion-box-event"
+            style="opacity: 0; transform: translateY(60px) translateZ(0);"
+          >
+            <div
+              class="css-5zhube"
+            >
+              <div
+                class="css-1rwh58z"
+              >
+                <div
+                  class="css-1eu8bwv"
+                >
+                  <span
+                    style="box-sizing: border-box; display: block; overflow: hidden; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px;"
+                  >
+                    <img
+                      alt="image"
+                      data-nimg="fill"
+                      decoding="async"
+                      sizes="100vw"
+                      src="/_next/image?url=%2Fimage%2Fevents.png&w=3840&q=75"
+                      srcset="/_next/image?url=%2Fimage%2Fevents.png&w=640&q=75 640w, /_next/image?url=%2Fimage%2Fevents.png&w=750&q=75 750w, /_next/image?url=%2Fimage%2Fevents.png&w=828&q=75 828w, /_next/image?url=%2Fimage%2Fevents.png&w=1080&q=75 1080w, /_next/image?url=%2Fimage%2Fevents.png&w=1200&q=75 1200w, /_next/image?url=%2Fimage%2Fevents.png&w=1920&q=75 1920w, /_next/image?url=%2Fimage%2Fevents.png&w=2048&q=75 2048w, /_next/image?url=%2Fimage%2Fevents.png&w=3840&q=75 3840w"
+                      style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;"
+                    />
+                  </span>
+                </div>
+                <div
+                  class="css-1vae7t2"
+                >
+                  <h4
+                    class="css-14owmhk"
+                  >
+                    Manage Events
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+            data-testid="motion-box-asset"
+            style="opacity: 0; transform: translateY(60px) translateZ(0);"
+          >
+            <div
+              class="css-5zhube"
+            >
+              <div
+                class="css-1rwh58z"
+              >
+                <div
+                  class="css-1eu8bwv"
+                >
+                  <span
+                    style="box-sizing: border-box; display: block; overflow: hidden; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px;"
+                  >
+                    <img
+                      alt="image"
+                      data-nimg="fill"
+                      decoding="async"
+                      sizes="100vw"
+                      src="/_next/image?url=%2Fimage%2Fassets.png&w=3840&q=75"
+                      srcset="/_next/image?url=%2Fimage%2Fassets.png&w=640&q=75 640w, /_next/image?url=%2Fimage%2Fassets.png&w=750&q=75 750w, /_next/image?url=%2Fimage%2Fassets.png&w=828&q=75 828w, /_next/image?url=%2Fimage%2Fassets.png&w=1080&q=75 1080w, /_next/image?url=%2Fimage%2Fassets.png&w=1200&q=75 1200w, /_next/image?url=%2Fimage%2Fassets.png&w=1920&q=75 1920w, /_next/image?url=%2Fimage%2Fassets.png&w=2048&q=75 2048w, /_next/image?url=%2Fimage%2Fassets.png&w=3840&q=75 3840w"
+                      style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;"
+                    />
+                  </span>
+                </div>
+                <div
+                  class="css-1vae7t2"
+                >
+                  <h4
+                    class="css-14owmhk"
+                  >
+                    Manage Assets
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="css-0"
+            data-testid="motion-box-quiz"
+            style="opacity: 0; transform: translateY(60px) translateZ(0);"
+          >
+            <div
+              class="css-5zhube"
+            >
+              <div
+                class="css-1rwh58z"
+              >
+                <div
+                  class="css-1eu8bwv"
+                >
+                  <span
+                    style="box-sizing: border-box; display: block; overflow: hidden; background: none; opacity: 1; border: 0px; margin: 0px; padding: 0px; position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px;"
+                  >
+                    <img
+                      alt="image"
+                      data-nimg="fill"
+                      decoding="async"
+                      sizes="100vw"
+                      src="/_next/image?url=%2Fimage%2Fquiz.png&w=3840&q=75"
+                      srcset="/_next/image?url=%2Fimage%2Fquiz.png&w=640&q=75 640w, /_next/image?url=%2Fimage%2Fquiz.png&w=750&q=75 750w, /_next/image?url=%2Fimage%2Fquiz.png&w=828&q=75 828w, /_next/image?url=%2Fimage%2Fquiz.png&w=1080&q=75 1080w, /_next/image?url=%2Fimage%2Fquiz.png&w=1200&q=75 1200w, /_next/image?url=%2Fimage%2Fquiz.png&w=1920&q=75 1920w, /_next/image?url=%2Fimage%2Fquiz.png&w=2048&q=75 2048w, /_next/image?url=%2Fimage%2Fquiz.png&w=3840&q=75 3840w"
+                      style="position: absolute; top: 0px; left: 0px; bottom: 0px; right: 0px; box-sizing: border-box; padding: 0px; margin: auto; display: block; width: 0px; height: 0px; min-width: 100%; max-width: 100%; min-height: 100%; max-height: 100%; object-fit: cover;"
+                    />
+                  </span>
+                </div>
+                <div
+                  class="css-1vae7t2"
+                >
+                  <h4
+                    class="css-14owmhk"
+                  >
+                    Manage Quiz Pool
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

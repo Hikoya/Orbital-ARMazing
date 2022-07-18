@@ -42,11 +42,14 @@ export default function Sidebar({ session, onClose, ...rest }) {
       }
     }
 
-    router.events.on('routeChangeComplete', onClose);
-    return () => {
-      router.events.off('routeChangeComplete', onClose);
-    };
-  }, [router.events, onClose, session]);
+    if (router.events !== undefined && router.events !== null) {
+      router.events.on('routeChangeComplete', onClose);
+
+      return () => {
+        router.events.off('routeChangeComplete', onClose);
+      };
+    }
+  }, [router, onClose, session]);
 
   return (
     <Box

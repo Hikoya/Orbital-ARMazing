@@ -98,19 +98,19 @@ export default function Home() {
             shadow='base'
           >
             <HStack>
-              <Stat>
+              <Stat key={'total-event'}>
                 <StatLabel>Total Events</StatLabel>
                 <StatNumber>{event}</StatNumber>
               </Stat>
-              <Stat>
+              <Stat key={'total-asset'}>
                 <StatLabel>Total Assets</StatLabel>
                 <StatNumber>{asset}</StatNumber>
               </Stat>
-              <Stat>
+              <Stat key={'total-quiz'}>
                 <StatLabel>Total Quizzes</StatLabel>
                 <StatNumber>{quiz}</StatNumber>
               </Stat>
-              <Stat>
+              <Stat key={'total-user'}>
                 <StatLabel>Total Users joined</StatLabel>
                 <StatNumber>{user}</StatNumber>
               </Stat>
@@ -142,8 +142,9 @@ export default function Home() {
           initial='initial'
           animate='animate'
         >
-          <MotionBox variants={cardVariant} key='1'>
+          <MotionBox data-testid={'motion-box-event'} variants={cardVariant} key='1'>
             <Card
+              key={'event-card'}
               product={{
                 img: '/image/events.png',
                 title: 'Manage Events',
@@ -152,8 +153,9 @@ export default function Home() {
             />
           </MotionBox>
 
-          <MotionBox variants={cardVariant} key='1'>
+          <MotionBox data-testid={'motion-box-asset'} variants={cardVariant} key='2'>
             <Card
+              key={'asset-card'}
               product={{
                 img: '/image/assets.png',
                 title: 'Manage Assets',
@@ -162,8 +164,9 @@ export default function Home() {
             />
           </MotionBox>
 
-          <MotionBox variants={cardVariant} key='1'>
+          <MotionBox data-testid={'motion-box-quiz'} variants={cardVariant} key='3'>
             <Card
+              key={'quiz-card'}
               product={{
                 img: '/image/quiz.png',
                 title: 'Manage Quiz Pool',

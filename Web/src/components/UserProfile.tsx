@@ -12,6 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { FiChevronDown } from 'react-icons/fi';
 import { signOut } from 'next-auth/react';
+import { checkerString } from '@helper/common';
 
 /**
  * Component that contains a logout button
@@ -23,13 +24,11 @@ export default function UserProfile(props: any) {
     async function fetchData(propsField: Promise<{ data: string }>) {
       const propRes = await propsField;
       try {
-        if (propRes.data) {
+        if (propRes.data !== undefined && checkerString(propRes.data)) {
           setURL(propRes.data);
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
     }
     fetchData(props);
