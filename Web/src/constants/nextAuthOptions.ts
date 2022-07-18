@@ -452,6 +452,7 @@ export const options = {
       try {
         if (
           email !== null &&
+          email !== undefined && 
           Object.prototype.hasOwnProperty.call(email, 'verificationRequest')
         ) {
           const email: string = (user.email as string).trim().toLowerCase();
