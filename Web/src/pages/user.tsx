@@ -20,6 +20,8 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import LoadingModal from '@components/LoadingModal';
+
 import { Result } from 'types/api';
 import { User } from 'types/user';
 
@@ -57,6 +59,8 @@ export default function UserComponent() {
 
   const [search, setSearch] = useState('');
   const [filteredData, setFilteredData] = useState<User[] | null>(null);
+
+  const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
 
   /**
    * Resets all values to their default values upon successful request
@@ -161,6 +165,7 @@ export default function UserComponent() {
    * Fetches user data by calling the API
    */
   const fetchData = useCallback(async () => {
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/user/fetch', {
         headers: {
@@ -172,10 +177,10 @@ export default function UserComponent() {
       if (content.status) {
         await includeActionButton(content.msg as User[]);
       }
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
   }, [includeActionButton]);
 
   /**
@@ -185,6 +190,7 @@ export default function UserComponent() {
   const handleSubmitEdit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (validateFields(userDBEdit.current, levelDBEdit.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/user/edit', {
           method: 'POST',
@@ -218,13 +224,11 @@ export default function UserComponent() {
             isClosable: true,
           });
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -300,6 +304,11 @@ export default function UserComponent() {
     <Auth admin>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          <LoadingModal
+            isOpen={!!submitButtonPressed}
+            onClose={() => setSubmitButtonPressed(false)}
+          />
+
           {loadingData && (data === null || data.length === 0) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
@@ -389,6 +398,7 @@ export default function UserComponent() {
                     <Stack spacing={5}>
                       <Button
                         type='submit'
+                        disabled={submitButtonPressed}
                         bg='blue.400'
                         color='white'
                         _hover={{

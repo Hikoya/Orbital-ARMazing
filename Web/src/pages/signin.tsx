@@ -89,6 +89,7 @@ export default function SignIn(props: Promise<{ data: string }>) {
                 <Button
                   type='submit'
                   bg='blue.400'
+                  disabled={loading}
                   color='white'
                   _hover={{
                     bg: 'blue.500',

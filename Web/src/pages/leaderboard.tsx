@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
 import PlayerModal from '@components/PlayerModal';
+import LoadingModal from '@components/LoadingModal';
 
 import { Result } from 'types/api';
 import { Event } from 'types/event';
@@ -60,6 +61,8 @@ export default function LeaderboardComponent() {
   const [noEvent, setNoEvent] = useState(false);
 
   const [hasLeaderBoard, setHasLeaderBoard] = useState(false);
+
+  const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
 
   /**
    * Generates an action button to set the player modal
@@ -114,6 +117,7 @@ export default function LeaderboardComponent() {
   const fetchData = useCallback(
     async (eventIDField: string) => {
       setLoading(true);
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/leaderboard/fetch', {
           method: 'POST',
@@ -128,12 +132,12 @@ export default function LeaderboardComponent() {
         const content: Result = await rawResponse.json();
         if (content.status) {
           await includeActionButton(content.msg as Leaderboard[]);
-          setLoading(false);
         }
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
+      setLoading(false);
     },
     [includeActionButton],
   );
@@ -170,6 +174,7 @@ export default function LeaderboardComponent() {
   const handleReset = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDB.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/leaderboard/reset', {
           method: 'POST',
@@ -200,13 +205,11 @@ export default function LeaderboardComponent() {
             isClosable: true,
           });
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -217,6 +220,7 @@ export default function LeaderboardComponent() {
   const handleDeletePlayer = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(eventIDDB.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/leaderboard/delete', {
           method: 'POST',
@@ -247,13 +251,11 @@ export default function LeaderboardComponent() {
             isClosable: true,
           });
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -288,6 +290,7 @@ export default function LeaderboardComponent() {
    * Fetches all event that the user is authorized to view
    */
   const fetchEventData = useCallback(async () => {
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -301,11 +304,10 @@ export default function LeaderboardComponent() {
       } else {
         setNoEvent(true);
       }
-
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
   }, [eventDropDownMenu]);
 
   useEffect(() => {
@@ -370,6 +372,11 @@ export default function LeaderboardComponent() {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          <LoadingModal
+            isOpen={!!submitButtonPressed}
+            onClose={() => setSubmitButtonPressed(false)}
+          />
+
           <PlayerModal
             isOpen={specificPlayer}
             onClose={() => setSpecificPlayerData(null)}

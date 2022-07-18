@@ -29,6 +29,8 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import TableWidget from '@components/TableWidget';
+import LoadingModal from '@components/LoadingModal';
+
 import { Asset } from 'types/asset';
 import { Result } from 'types/api';
 import { Event } from 'types/event';
@@ -145,6 +147,8 @@ export default function AssetComponent(props: any) {
     const text = `Latitude: ${locationC.lat} , Longitude: ${locationC.lng}`;
     setCoordinate(text);
   };
+
+  const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
 
   /**
    * Resets all values to their default values upon successful creation of asset
@@ -401,6 +405,7 @@ export default function AssetComponent(props: any) {
    */
   const fetchAssetData = useCallback(async () => {
     setLoading(true);
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/asset/fetch', {
         headers: {
@@ -412,12 +417,11 @@ export default function AssetComponent(props: any) {
       if (content.status) {
         await includeActionButton(content.msg as Asset[]);
       }
-
-      setLoading(false);
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
+    setLoading(false);
   }, [includeActionButton]);
 
   /**
@@ -437,6 +441,7 @@ export default function AssetComponent(props: any) {
         longitudeDB.current,
       )
     ) {
+      setSubmitButtonPressed(true);
       try {
         if (selectedFileDB.current !== null) {
           const dataField = new FormData();
@@ -475,13 +480,11 @@ export default function AssetComponent(props: any) {
         } else {
           setError('Please include an image');
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -501,6 +504,7 @@ export default function AssetComponent(props: any) {
         longitudeDBEdit.current,
       )
     ) {
+      setSubmitButtonPressed(true);
       try {
         if (selectedFileDBEdit.current !== null) {
           const dataField = new FormData();
@@ -573,12 +577,11 @@ export default function AssetComponent(props: any) {
             });
           }
         }
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -589,6 +592,7 @@ export default function AssetComponent(props: any) {
   const handleDelete = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
     if (checkerString(assetDBEdit.current)) {
+      setSubmitButtonPressed(true);
       try {
         const rawResponse = await fetch('/api/asset/delete', {
           method: 'POST',
@@ -620,13 +624,11 @@ export default function AssetComponent(props: any) {
             isClosable: true,
           });
         }
-
-        return true;
       } catch (error) {
-        return false;
+        console.error(error);
       }
+      setSubmitButtonPressed(false);
     }
-    return false;
   };
 
   /**
@@ -750,6 +752,7 @@ export default function AssetComponent(props: any) {
    * Fetches all event that the user is authorized to view
    */
   const fetchData = useCallback(async () => {
+    setSubmitButtonPressed(true);
     try {
       const rawResponse = await fetch('/api/event/fetch', {
         headers: {
@@ -763,11 +766,10 @@ export default function AssetComponent(props: any) {
       } else {
         setNoEvent(true);
       }
-
-      return true;
     } catch (error) {
-      return false;
+      console.error(error);
     }
+    setSubmitButtonPressed(false);
   }, []);
 
   useEffect(() => {
@@ -867,6 +869,11 @@ export default function AssetComponent(props: any) {
     <Auth admin={undefined}>
       <Box>
         <Box bg='white' borderRadius='lg' p={8} color='gray.700' shadow='base'>
+          <LoadingModal
+            isOpen={!!submitButtonPressed}
+            onClose={() => setSubmitButtonPressed(false)}
+          />
+
           {loadingData && (data === null || data.length === 0) && (
             <Box mt={30}>
               <Stack justify='center' align='center'>
