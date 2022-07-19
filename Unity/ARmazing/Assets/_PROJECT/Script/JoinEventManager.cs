@@ -141,7 +141,8 @@ public class JoinEventManager : MonoBehaviour
             {
                 AssetResponse response = GetAssetResponse(request.downloadHandler.text);
                 if (response.status)
-                {
+                { 
+                    WriteToFile("AssetData.txt", JsonConvert.SerializeObject(response.msg));
                     foreach (AssetData assetData in response.msg)
                     {
                         yield return StartCoroutine(DownloadAndSaveImage(assetData.imagePath, assetData.name.Replace(" ","") + ".JPG"));

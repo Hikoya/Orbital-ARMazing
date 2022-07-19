@@ -23,6 +23,7 @@ public class AnswerButtonBehaviour : MonoBehaviour
     {
         if (isCorrect)
         {
+            quizManager.incrementPoints();
             image.color = new Color32(70, 204, 28, 255);
             Debug.Log("Correct");
         }

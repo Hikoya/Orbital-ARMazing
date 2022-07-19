@@ -256,4 +256,5 @@ public class AssetData
     public bool visible;
     public string visibleText;
     public string imagePath;
+    public bool quizCompleted;
 }

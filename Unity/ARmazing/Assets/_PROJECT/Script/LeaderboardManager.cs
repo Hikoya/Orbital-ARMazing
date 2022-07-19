@@ -15,7 +15,6 @@ public class LeaderboardManager : MonoBehaviour
     public List<PlayerScores> playerScores;
     private TMP_Text messageText;
     public string filename;
-    private string jsonContent;
     private string auth = "Bearer passwordispasswordissecret";
     
     // Start is called before the first frame update

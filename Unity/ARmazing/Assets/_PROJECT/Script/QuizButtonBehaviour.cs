@@ -4,9 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
+using TMPro;
 
 public class QuizButtonBehaviour : MonoBehaviour
 {
+    
     public void QuizButton()
     {
         SceneManager.LoadScene("Quiz", LoadSceneMode.Single);
