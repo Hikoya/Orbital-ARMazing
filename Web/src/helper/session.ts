@@ -10,7 +10,7 @@ import { getSession } from 'next-auth/react';
  */
 export const currentSession = async (): Promise<Session | null> => {
   if (
-    process.env.SETDEV &&
+    process.env.SETDEV === 'true' &&
     (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
   ) {
     let session: Session | null = null;
