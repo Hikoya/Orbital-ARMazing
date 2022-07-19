@@ -53,6 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                   visible: asset.visible,
                   visibleText: visible,
                   imagePath: asset.imagePath,
+                  quizCompleted: false,
                 };
 
                 parsedAsset.push(data);
