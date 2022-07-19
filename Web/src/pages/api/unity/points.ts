@@ -38,6 +38,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         if (eventID && username && points && assetID) {
           await log(username, eventID, `Attempted Quiz from ${assetID}`);
 
+          const eventIDField: string = (eventID as string).trim();
+          const usernameField: string = (username as string).trim();
+          const assetField: string = (assetID as string).trim();
+          const pointsField: number = Number(points);
+
           const isAttempt: boolean = await doesUserAttempt(
             eventID,
             username,
@@ -53,10 +58,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.end();
           } else {
             const attemptData: Attempt = {
-              eventID: eventID,
-              username: username,
-              assetID: assetID,
-              points: points,
+              eventID: eventIDField,
+              username: usernameField,
+              assetID: assetField,
+              points: pointsField,
             };
 
             const attemptRes: Result = await createAttempt(attemptData);
@@ -73,9 +78,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
             if (success) {
               const updateBoard: Result = await updateUserPoints(
-                eventID,
-                username,
-                points,
+                eventIDField,
+                usernameField,
+                pointsField,
               );
               if (updateBoard.status) {
                 result = {
