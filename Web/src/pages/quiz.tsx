@@ -802,14 +802,13 @@ export default function QuizComponent(props: any) {
   }, [assetDropDownMenu]);
 
   useEffect(() => {
-    async function generate(propsField) {
+    async function generate(propsField: any) {
       await fetchData();
       await fetchEventData();
       await fetchAssetData();
 
-      const propRes = await propsField;
-      if (propRes.sess) {
-        const user: Session = propRes.sess;
+      if (propsField.data) {
+        const user: Session = propsField.data;
         const { level } = user.user;
 
         if (checkerNumber(level)) {
@@ -1312,30 +1311,31 @@ export default function QuizComponent(props: any) {
 /**
  * On page load, fetches the current session and returns the session data.
  */
-export const getServerSideProps: GetServerSideProps = async (cont) => ({
-  props: (async function Props() {
-    try {
-      const session: Session | null = await currentSession(
-        null,
-        null,
-        cont,
-        true,
-      );
-      if (session !== null) {
-        const stringifiedData = safeJsonStringify(session);
-        const data: Session = JSON.parse(stringifiedData);
-        return {
-          sess: data,
-        };
-      }
-      return {
-        sess: null,
-      };
-    } catch (error) {
-      console.error(error);
-      return {
-        sess: null,
-      };
+export const getServerSideProps: GetServerSideProps = async (cont) => {
+  cont.res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59',
+  );
+
+  let data: Session | null = null;
+  try {
+    const session: Session | null = await currentSession(
+      null,
+      null,
+      cont,
+      true,
+    );
+    if (session !== null) {
+      const parsedSession = safeJsonStringify(session);
+      data = JSON.parse(parsedSession);
     }
-  })(),
-});
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    props: {
+      data: data,
+    },
+  };
+};

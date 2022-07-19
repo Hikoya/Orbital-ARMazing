@@ -16,7 +16,7 @@ export const currentSession = async (
   server: boolean = true,
 ): Promise<Session | null> => {
   if (
-    process.env.SETDEV &&
+    process.env.SETDEV === 'true' &&
     (!process.env.NODE_ENV || process.env.NODE_ENV === 'development')
   ) {
     let session: Session | null = null;

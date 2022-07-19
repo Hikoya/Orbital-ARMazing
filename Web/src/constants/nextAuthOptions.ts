@@ -462,8 +462,12 @@ export const options = {
           await log(email, email, 'Attempted to log in');
         } else {
           if (email !== undefined && email !== null) {
-            await log(email, email, 'Login');
+            if (email.email !== null && email.email !== undefined) {
+              await log(email.email, email.email, 'Login');
+            }
           } else if (user.email !== undefined && user.email !== null) {
+            console.log(user.email);
+            console.log('next-auth2');
             await log(user.email, user.email, 'Login');
           }
         }
@@ -494,6 +498,22 @@ export const options = {
           const userFromDB = await prisma.user.findUnique({
             where: {
               email: user.email,
+            },
+          });
+
+          if (userFromDB != null) {
+            const newSession = session;
+            newSession.user.email = userFromDB.email;
+            newSession.user.username = userFromDB.name;
+            newSession.user.admin = userFromDB.admin;
+            newSession.user.level = userFromDB.level;
+
+            return newSession;
+          }
+        } else if (session && session.user !== undefined) {
+          const userFromDB = await prisma.user.findUnique({
+            where: {
+              email: session.user.email,
             },
           });
 
