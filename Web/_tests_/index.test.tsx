@@ -58,6 +58,10 @@ describe('Render Index Page', () => {
     }));
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('Check for Manage Cards', async () => {
     const { container } = render(<Home />);
 

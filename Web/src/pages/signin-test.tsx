@@ -1,32 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
+  Flex,
   Box,
-  Button,
   FormControl,
   FormLabel,
-  Flex,
-  Heading,
   Input,
   Stack,
-  Spinner,
+  Button,
+  Heading,
   Text,
+  Spinner,
 } from '@chakra-ui/react';
 import { signIn } from 'next-auth/react';
 import { checkerString } from '@helper/common';
-import { useRouter } from 'next/router';
 
 /**
  * This component renders the signin page that is displayed to the user
  * if there is no previous session found.
  */
-export default function SignIn(props: Promise<{ data: string }>) {
-  const router = useRouter();
-
+export default function SignInTest(props: Promise<{ data: string }>) {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [url, setURL] = useState('http://localhost:3000'); // default
 
   const emailDB = useRef('');
+  const passwordDB = useRef('');
   const [errorMsg, setError] = useState('');
 
   useEffect(() => {
@@ -41,28 +40,27 @@ export default function SignIn(props: Promise<{ data: string }>) {
 
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    if (checkerString(emailDB.current) && emailDB.current.includes('@')) {
+    if (
+      checkerString(emailDB.current) &&
+      emailDB.current.includes('@') &&
+      checkerString(passwordDB.current)
+    ) {
       try {
         setError('');
         setLoading(true);
-        await signIn('email', {
-          email: email,
+        await signIn('credentials', {
+          username: emailDB.current,
+          password: passwordDB.current,
           callbackUrl: `${url}/`,
         });
-
         return true;
       } catch (error) {
         return false;
       }
     } else {
-      setError('Please enter a valid email');
+      setError('Please enter a valid email or enter a password');
       return false;
     }
-  };
-
-  const handleClick = async (event: { preventDefault: () => void }) => {
-    event.preventDefault();
-    router.push('/signin-test');
   };
 
   return (
@@ -85,11 +83,27 @@ export default function SignIn(props: Promise<{ data: string }>) {
                 <FormLabel>Email address</FormLabel>
                 <Input
                   type='email'
+                  name='email'
                   placeholder='test@gmail.com'
                   size='lg'
+                  value={email}
                   onChange={(event) => {
                     setEmail(event.currentTarget.value);
                     emailDB.current = event.currentTarget.value;
+                  }}
+                />
+              </FormControl>
+              <FormControl id='password'>
+                <FormLabel>Password</FormLabel>
+                <Input
+                  type='password'
+                  name='password'
+                  placeholder=''
+                  size='lg'
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.currentTarget.value);
+                    passwordDB.current = event.currentTarget.value;
                   }}
                 />
               </FormControl>
@@ -108,6 +122,7 @@ export default function SignIn(props: Promise<{ data: string }>) {
               </Stack>
             </Stack>
           </form>
+
           {loading && (
             <Stack spacing={10} mt={5}>
               <Stack align='center'>
@@ -119,19 +134,6 @@ export default function SignIn(props: Promise<{ data: string }>) {
             </Stack>
           )}
         </Box>
-
-        <Button
-          type='submit'
-          bg='blue.200'
-          disabled={loading}
-          color='white'
-          _hover={{
-            bg: 'blue.300',
-          }}
-          onClick={handleClick}
-        >
-          Test User Login
-        </Button>
       </Stack>
     </Flex>
   );

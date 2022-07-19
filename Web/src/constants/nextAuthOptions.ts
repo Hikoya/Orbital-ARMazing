@@ -1,9 +1,12 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { prisma } from '@helper/db';
 import EmailProvider from 'next-auth/providers/email';
+import CredentialsProvider from 'next-auth/providers/credentials';
 import nodemailer from 'nodemailer';
 
 import { log } from '@helper/log';
+import { User } from 'types/user';
+import { SessionStrategy } from 'next-auth';
 
 /**
  * Takes in a callback link and email of the user and generates
@@ -356,6 +359,7 @@ function text({ newURL, host }) {
   return `Sign in to ${host}\n${newURL}\n\n`;
 }
 
+const strat: SessionStrategy = 'jwt';
 /**
  * Options for the Next-Auth library, including all the callbacks to
  * authenticate users and send login emails to the user.
@@ -363,6 +367,7 @@ function text({ newURL, host }) {
 export const options = {
   providers: [
     EmailProvider({
+      id: 'email',
       server: {
         host: process.env.EMAIL_SERVER_HOST,
         port: Number(process.env.EMAIL_SERVER_PORT),
@@ -393,11 +398,47 @@ export const options = {
         });
       },
     }),
+    CredentialsProvider({
+      id: 'credentials',
+      name: 'Credentials',
+      credentials: {
+        username: {
+          label: 'email',
+          type: 'text',
+          placeholder: 'testuser@test.com',
+        },
+        password: { label: 'password', type: 'password' },
+      },
+      async authorize(credentials, req) {
+        try {
+          const userFromDB: User = await prisma.user.findFirst({
+            where: {
+              email: credentials?.username,
+              password: credentials?.password,
+            },
+          });
+
+          if (userFromDB) {
+            const data = {
+              email: userFromDB.email,
+              admin: userFromDB.admin,
+              level: userFromDB.level,
+            };
+            return data;
+          } else {
+            return null;
+          }
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      },
+    }),
   ],
   adapter: PrismaAdapter(prisma),
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    jwt: true,
+    strategy: strat,
     maxAge: 1 * 24 * 60 * 60, // 1 day
   },
   jwt: {
@@ -411,39 +452,65 @@ export const options = {
   },
   callbacks: {
     async signIn({ user, email }) {
-      if (Object.prototype.hasOwnProperty.call(email, 'verificationRequest')) {
-        const email: string = (user.email as string).trim().toLowerCase();
-        await log(email, email, 'Attempted to log in');
-      } else {
-        if (email !== undefined && email !== null) {
-          await log(email, email, 'Login');
-        } else if (user.email !== undefined && user.email !== null) {
-          await log(user.email, user.email, 'Login');
+      try {
+        if (
+          email !== null &&
+          email !== undefined &&
+          Object.prototype.hasOwnProperty.call(email, 'verificationRequest')
+        ) {
+          const email: string = (user.email as string).trim().toLowerCase();
+          await log(email, email, 'Attempted to log in');
+        } else {
+          if (email !== undefined && email !== null) {
+            await log(email, email, 'Login');
+          } else if (user.email !== undefined && user.email !== null) {
+            await log(user.email, user.email, 'Login');
+          }
         }
+
+        if (user) {
+          return user;
+        }
+
+        return true;
+      } catch (error) {
+        console.error(error);
       }
 
       return true;
     },
     async session({ session, user }) {
+      if (session && session.user !== undefined) {
+        if (session.user.email === 'testuser@test.com') {
+          session.user.admin = true;
+          session.user.level = 2;
+
+          return session;
+        }
+      }
+
       try {
-        const userFromDB = await prisma.user.findUnique({
-          where: {
-            email: user.email,
-          },
-        });
+        if (user && user.email !== undefined) {
+          const userFromDB = await prisma.user.findUnique({
+            where: {
+              email: user.email,
+            },
+          });
 
-        if (userFromDB != null) {
-          const newSession = session;
-          newSession.user.email = userFromDB.email;
-          newSession.user.username = userFromDB.name;
-          newSession.user.admin = userFromDB.admin;
-          newSession.user.level = userFromDB.level;
+          if (userFromDB != null) {
+            const newSession = session;
+            newSession.user.email = userFromDB.email;
+            newSession.user.username = userFromDB.name;
+            newSession.user.admin = userFromDB.admin;
+            newSession.user.level = userFromDB.level;
 
-          return newSession;
+            return newSession;
+          }
         }
 
         return session;
       } catch (error) {
+        console.error(error);
         return session;
       }
     },

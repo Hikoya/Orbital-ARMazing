@@ -25,9 +25,10 @@ function Auth({ children, admin }) {
     async function fetchData() {
       try {
         if (
-          !process.env.NODE_ENV ||
-          process.env.NODE_ENV === 'development' ||
-          process.env.ENVIRONMENT === 'development'
+          process.env.SETDEV &&
+          (!process.env.NODE_ENV ||
+            process.env.NODE_ENV === 'development' ||
+            process.env.ENVIRONMENT === 'development')
         ) {
           devSession.current = await currentSession();
           if (
