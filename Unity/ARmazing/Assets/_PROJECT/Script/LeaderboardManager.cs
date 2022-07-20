@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 public class LeaderboardManager : MonoBehaviour
 {
     public GameObject messageBox;
+    public GameObject informationPanel;
     public Transform gridContent;
     public GameObject rowPrefab;
     public List<PlayerScores> playerScores;
@@ -21,13 +22,26 @@ public class LeaderboardManager : MonoBehaviour
     void Start()
     {
         messageText = messageBox.GetComponentInChildren<TMP_Text>();
+
         //For testing
         //PlayerPrefs.SetString("eventid", "cl4vdb84g00830m1yk5v2143l");
+        //PlayerPrefs.SetString("eventname", "testingname");
+        //PlayerPrefs.SetString("eventcode", "testingcode");
+
+        UpdateInformationPanel();
         StartCoroutine(FetchLeaderboardJson());
+    }
+
+    void UpdateInformationPanel()
+    {
+        informationPanel.transform.Find("EventNameText").GetComponent<TMP_Text>().text = "Event Name: " + PlayerPrefs.GetString("eventname");
+        informationPanel.transform.Find("EventCodeText").GetComponent<TMP_Text>().text = "Event Code: " + PlayerPrefs.GetString("eventcode");
     }
 
     IEnumerator FetchLeaderboardJson()
     {
+        messageBox.SetActive(true);
+        messageText.text = "Fetching leaderboard data... Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/leaderboard";
         WWWForm form = new WWWForm();
         form.AddField("eventID", PlayerPrefs.GetString("eventid"));
@@ -48,6 +62,7 @@ public class LeaderboardManager : MonoBehaviour
                 {
                     playerScores = response.msg.OrderByDescending(x => x.points).ToList();
                     UpdateLeaderboard();
+                    messageBox.SetActive(false);
                 }
                 else messageText.text = response.error;
             }

@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 102022936}
   - component: {fileID: 102022935}
   m_Layer: 5
-  m_Name: LeaderboardTitle
+  m_Name: LandmarkTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,7 +181,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: LEADERBOARD
+  m_text: LANDMARKS
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 20265b2d2d47305429405f4b95db2335, type: 2}
   m_sharedMaterial: {fileID: 1794388633353711125, guid: 20265b2d2d47305429405f4b95db2335,
@@ -617,32 +617,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 355529288}
-  - component: {fileID: 355529287}
+  - component: {fileID: 355529289}
   m_Layer: 0
-  m_Name: LeaderboardManager
+  m_Name: LandmarkManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &355529287
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 355529286}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 330e9fa360422d943ae6cffd84fe9e87, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  messageBox: {fileID: 863958828}
-  informationPanel: {fileID: 825983921}
-  gridContent: {fileID: 418827226}
-  rowPrefab: {fileID: 7708447841303341203, guid: 377066987603f3e4c93c1ecc562f6283,
-    type: 3}
-  filename: 
 --- !u!4 &355529288
 Transform:
   m_ObjectHideFlags: 0
@@ -658,6 +640,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &355529289
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 355529286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be9bfd0e6ba0594095dbac99282e869, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageBox: {fileID: 863958828}
+  informationPanel: {fileID: 825983921}
+  gridContent: {fileID: 418827226}
+  rowPrefab: {fileID: 7708447841303341203, guid: 4f0534d3217199041a8d0e045bd2fe9a,
+    type: 3}
 --- !u!1 &418827225
 GameObject:
   m_ObjectHideFlags: 0
@@ -892,7 +891,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Event Code: 0123113'
+  m_text: 'Event Code: 0123112'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 20265b2d2d47305429405f4b95db2335, type: 2}
   m_sharedMaterial: {fileID: 1794388633353711125, guid: 20265b2d2d47305429405f4b95db2335,
@@ -1351,7 +1350,7 @@ GameObject:
   - component: {fileID: 1320157850}
   - component: {fileID: 1320157848}
   m_Layer: 5
-  m_Name: LeaderboardList
+  m_Name: LandmarkList
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
