@@ -356,7 +356,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &111822826
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1358,11 +1358,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AR_Canvas
-      objectReference: {fileID: 0}
-    - target: {fileID: 8290503284795286370, guid: 4b49f3da5e51e034d9c5ff0ec145131c,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8290503284795286382, guid: 4b49f3da5e51e034d9c5ff0ec145131c,
         type: 3}
