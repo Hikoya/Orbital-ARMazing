@@ -80,9 +80,13 @@ public class ARManager : MonoBehaviour
                 canvas.Value.SetActive(false);
             }
         }
+
+        GameObject arPanel = arUICanvas.transform.Find("Panel").gameObject;
         AssetData assetData = ReadAssetDataFromJSON("AssetData.txt", trackedImage.referenceImage.name);
+
         if (assetData.quizCompleted)
         {
+            arPanel.transform.Find("QuizStatus_Text").gameObject.SetActive(true);
             GameObject[] quizButtons = GameObject.FindGameObjectsWithTag("Quiz");
             foreach (GameObject quizButton in quizButtons)
             {
@@ -98,7 +102,7 @@ public class ARManager : MonoBehaviour
             }
         }
 
-        GameObject arPanel = arUICanvas.transform.Find("Panel").gameObject;
+        
 
         TMP_Text titleText = arPanel.transform.Find("Title_Text").gameObject.GetComponent<TMP_Text>();
         titleText.text = assetData.name;

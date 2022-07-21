@@ -90,10 +90,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             {
                 case State.NoImagesAdded:
                     {
-                        if (GUILayout.Button("Add images"))
-                        {
-                            m_State = State.AddImagesRequested;
-                        }
+                        m_State = State.AddImagesRequested;
 
                         break;
                     }
@@ -216,7 +213,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
         }
 
-        public static ImageData LoadPNG(string filePath)
+        ImageData LoadPNG(string filePath)
         {
 
             Texture2D tex = null;

@@ -19,6 +19,7 @@ public class JoinEventManager : MonoBehaviour
     private string eventCode = null;
     private string nickname = null;
     private string eventId = null;
+    private string eventName = null;
 
     private void Start()
     {
@@ -27,7 +28,6 @@ public class JoinEventManager : MonoBehaviour
     }
     public void JoinEventButton()
     {
-        //Milestone 2: call backend API to join event (if active) and download necessary event assets
         eventCode = eventNameInput.text;
         nickname = nicknameInput.text;
         StartCoroutine(JoinEventPost()); 
@@ -36,7 +36,7 @@ public class JoinEventManager : MonoBehaviour
     IEnumerator JoinEventPost()
     {
         messageBox.SetActive(true);
-        messageText.text = "Loading...";
+        messageText.text = "Joining Event... Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/join";
         WWWForm form = new WWWForm();
         form.AddField("eventID", eventCode);
@@ -55,9 +55,13 @@ public class JoinEventManager : MonoBehaviour
 
                 if (response.status)
                 {
-                    eventId = response.msg;
+                    Debug.Log(response.msg);
+                    eventId = response.msg.eventID;
+                    eventName = response.msg.eventName;
                     PlayerPrefs.SetString("nickname", nickname);
                     PlayerPrefs.SetString("eventid", eventId);
+                    PlayerPrefs.SetString("eventname", eventName);
+                    PlayerPrefs.SetString("eventcode", eventCode);
                     StartCoroutine(FetchAndSaveQuizJson());
                 }
                 else messageText.text = response.error;
@@ -78,6 +82,7 @@ public class JoinEventManager : MonoBehaviour
 
     IEnumerator FetchAndSaveQuizJson()
     {
+        messageText.text = "Downloading quiz... Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/quiz";
         WWWForm form = new WWWForm();
         form.AddField("eventID", eventId);
@@ -126,6 +131,7 @@ public class JoinEventManager : MonoBehaviour
 
     IEnumerator FetchAndSaveAssetImages()
     {
+        messageText.text = "Downloading images... Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/landmark";
         WWWForm form = new WWWForm();
         form.AddField("eventID", eventId);
@@ -199,5 +205,11 @@ public class JoinEventResponse
 {
     public bool status;
     public string error;
-    public string msg;
+    public JoinEventMsg msg;
+}
+
+public class JoinEventMsg
+{
+    public string eventID;
+    public string eventName;
 }
