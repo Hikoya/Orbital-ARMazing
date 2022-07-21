@@ -42,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 result = {
                   status: true,
                   error: null,
-                  msg: doesEvent.id,
+                  msg: { eventID: doesEvent.id, eventName: doesEvent.name },
                 };
                 res.status(202).send(result);
                 res.end();

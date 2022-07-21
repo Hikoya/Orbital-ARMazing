@@ -1045,10 +1045,15 @@ export default function QuizComponent(props: any) {
                         placeholder='Choose 1, 2, 3, 4'
                         value={answer}
                         size='lg'
-                        type='number'
                         onChange={(event) => {
-                          setAnswer(Number(event.currentTarget.value));
-                          answerDB.current = Number(event.currentTarget.value);
+                          if (
+                            !Number.isNaN(Number(event.currentTarget.value))
+                          ) {
+                            setAnswer(Number(event.currentTarget.value));
+                            answerDB.current = Number(
+                              event.currentTarget.value,
+                            );
+                          }
                         }}
                       />
                     </FormControl>
@@ -1059,10 +1064,15 @@ export default function QuizComponent(props: any) {
                         placeholder='Points'
                         value={points}
                         size='lg'
-                        type='number'
                         onChange={(event) => {
-                          setPoints(Number(event.currentTarget.value));
-                          pointsDB.current = Number(event.currentTarget.value);
+                          if (
+                            !Number.isNaN(Number(event.currentTarget.value))
+                          ) {
+                            setPoints(Number(event.currentTarget.value));
+                            pointsDB.current = Number(
+                              event.currentTarget.value,
+                            );
+                          }
                         }}
                       />
                     </FormControl>
@@ -1218,10 +1228,14 @@ export default function QuizComponent(props: any) {
                         size='lg'
                         type='number'
                         onChange={(event) => {
-                          setAnswerEdit(Number(event.currentTarget.value));
-                          answerDBEdit.current = Number(
-                            event.currentTarget.value,
-                          );
+                          if (
+                            !Number.isNaN(Number(event.currentTarget.value))
+                          ) {
+                            setAnswerEdit(Number(event.currentTarget.value));
+                            answerDBEdit.current = Number(
+                              event.currentTarget.value,
+                            );
+                          }
                         }}
                       />
                     </FormControl>
@@ -1234,10 +1248,14 @@ export default function QuizComponent(props: any) {
                         size='lg'
                         type='number'
                         onChange={(event) => {
-                          setPointsEdit(Number(event.currentTarget.value));
-                          pointsDBEdit.current = Number(
-                            event.currentTarget.value,
-                          );
+                          if (
+                            !Number.isNaN(Number(event.currentTarget.value))
+                          ) {
+                            setPointsEdit(Number(event.currentTarget.value));
+                            pointsDBEdit.current = Number(
+                              event.currentTarget.value,
+                            );
+                          }
                         }}
                       />
                     </FormControl>
