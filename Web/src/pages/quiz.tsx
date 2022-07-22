@@ -1221,7 +1221,7 @@ export default function QuizComponent(props: any) {
                     </FormControl>
 
                     <FormControl id='answerEdit'>
-                      <FormLabel>Answer</FormLabel>
+                      <FormLabel>Answer (Choose 1, 2, 3, 4)</FormLabel>
                       <Input
                         placeholder='Choose 1, 2, 3, 4'
                         value={answerEdit}
