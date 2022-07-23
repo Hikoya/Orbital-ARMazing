@@ -65,6 +65,8 @@ export default function QuizComponent(props: any) {
   const [assetID, setAssetID] = useState('');
   const assetIDDB = useRef('');
   const [assetDropdown, setAssetDropdown] = useState<JSX.Element[]>([]);
+  const assetDropdownData = useRef<JSX.Element[]>([]);
+  const assetData = useRef<Asset[]>([]);
 
   const [assetIDEdit, setAssetIDEdit] = useState('');
   const assetIDDBEdit = useRef('');
@@ -661,6 +663,66 @@ export default function QuizComponent(props: any) {
   };
 
   /**
+   * Event that is called when the user selects an item from the event dropdown menu
+   * Filters out all assets under the event
+   */
+  const onEventChangeAsset = async (eventIDField: string) => {
+    assetIDDB.current = '';
+    setAssetID('');
+
+    const content: Asset[] = JSON.parse(JSON.stringify(assetData.current));
+    if (content.length > 0) {
+      const selection: JSX.Element[] = [];
+      selection.push(<option key='' value='' aria-label='default' />);
+
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField = content[key];
+          if (dataField.eventID === eventIDField) {
+            selection.push(
+              <option key={dataField.id} value={dataField.id}>
+                {dataField.name}
+              </option>,
+            );
+          }
+        }
+      }
+
+      setAssetDropdown(selection);
+    }
+  };
+
+  /**
+   * Event that is called when the user selects an item from the event dropdown menu
+   * Filters out all assets under the event
+   */
+  const onEventChangeAssetEdit = async (eventIDField: string) => {
+    assetIDDBEdit.current = '';
+    setAssetIDEdit('');
+
+    const content: Asset[] = JSON.parse(JSON.stringify(assetData.current));
+    if (content.length > 0) {
+      const selection: JSX.Element[] = [];
+      selection.push(<option key='' value='' aria-label='default' />);
+
+      for (let key = 0; key < content.length; key += 1) {
+        if (content[key]) {
+          const dataField = content[key];
+          if (dataField.eventID === eventIDField) {
+            selection.push(
+              <option key={dataField.id} value={dataField.id}>
+                {dataField.name}
+              </option>,
+            );
+          }
+        }
+      }
+
+      setAssetDropdown(selection);
+    }
+  };
+
+  /**
    * Event that is called when a user selects an item from the event dropdown menu
    */
   const onEventChange = async (event: { target: { value: string } }) => {
@@ -668,6 +730,7 @@ export default function QuizComponent(props: any) {
       const { value } = event.target;
       eventIDDB.current = value;
       setEventID(value);
+      await onEventChangeAsset(value);
     }
   };
 
@@ -680,6 +743,7 @@ export default function QuizComponent(props: any) {
       const { value } = event.target;
       eventIDDBEdit.current = value;
       setEventIDEdit(value);
+      await onEventChangeAssetEdit(value);
     }
   };
 
@@ -777,6 +841,8 @@ export default function QuizComponent(props: any) {
     }
 
     setAssetDropdown(selection);
+    assetDropdownData.current = selection;
+    assetData.current = content;
   }, []);
 
   /**
@@ -1040,7 +1106,7 @@ export default function QuizComponent(props: any) {
                     </FormControl>
 
                     <FormControl id='answer'>
-                      <FormLabel>Answer</FormLabel>
+                      <FormLabel>Answer (Choose 1, 2, 3, 4)</FormLabel>
                       <Input
                         placeholder='Choose 1, 2, 3, 4'
                         value={answer}
@@ -1134,8 +1200,9 @@ export default function QuizComponent(props: any) {
                     </Stack>
 
                     <Stack spacing={5} w='full'>
-                      <Text>Select Event</Text>
+                      <Text>Event</Text>
                       <Select
+                        disabled
                         onChange={onEventChangeEdit}
                         size='sm'
                         value={eventIDEdit}
@@ -1145,8 +1212,9 @@ export default function QuizComponent(props: any) {
                     </Stack>
 
                     <Stack spacing={5} w='full'>
-                      <Text>Select Asset</Text>
+                      <Text>Asset</Text>
                       <Select
+                        disabled
                         onChange={onAssetChangeEdit}
                         size='sm'
                         value={assetIDEdit}

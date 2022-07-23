@@ -146,6 +146,12 @@ export default function AssetComponent(props: any) {
   const onLocationChange = (locationC: { lat: number; lng: number }) => {
     const text = `Latitude: ${locationC.lat} , Longitude: ${locationC.lng}`;
     setCoordinate(text);
+
+    setLongitude(locationC.lng.toString());
+    longitudeDB.current = locationC.lng.toString();
+
+    setLatitude(locationC.lat.toString());
+    latitudeDB.current = locationC.lat.toString();
   };
 
   const [submitButtonPressed, setSubmitButtonPressed] = useState(false);
@@ -163,6 +169,7 @@ export default function AssetComponent(props: any) {
     visibleDB.current = true;
 
     setName('');
+    setEventID('');
     setDescription('');
     setFileName('');
     setLatitude('');
@@ -185,6 +192,7 @@ export default function AssetComponent(props: any) {
     visibleDBEdit.current = true;
 
     setAsset('');
+    setEventIDEdit('');
     setNameEdit('');
     setDescriptionEdit('');
     setFileNameEdit('');
@@ -1136,8 +1144,9 @@ export default function AssetComponent(props: any) {
                     </Stack>
 
                     <Stack spacing={5} w='full'>
-                      <Text>Select Event</Text>
+                      <Text>Event</Text>
                       <Select
+                        disabled
                         onChange={onEventChangeEdit}
                         size='sm'
                         value={eventIDEdit}
