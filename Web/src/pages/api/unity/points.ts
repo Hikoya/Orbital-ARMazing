@@ -33,8 +33,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const head: string = req.headers.authorization;
       const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
       if (head === secret) {
-        let success = true;
-
         if (eventID && username && points && assetID) {
           await log(username, eventID, `Attempted Quiz from ${assetID}`);
 
@@ -72,7 +70,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
               const attemptRes: Result = await createAttempt(attemptData);
               if (!attemptRes.status) {
-                success = false;
                 result = {
                   status: false,
                   error: attemptRes.error,
@@ -88,7 +85,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 };
                 res.status(202).send(result);
                 res.end();
-              }             
+              }
             } else {
               result = {
                 status: false,
