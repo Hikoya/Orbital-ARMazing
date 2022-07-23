@@ -10,6 +10,7 @@ export type Asset = {
   visibleText?: string;
   imagePath?: string;
   createdBy?: string;
+  quizCompleted?: boolean;
   action?: any;
   updated_at?: string;
 };

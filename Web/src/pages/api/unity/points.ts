@@ -33,10 +33,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const head: string = req.headers.authorization;
       const secret: string = `Bearer ${process.env.AUTHORIZATION_HEADER}`;
       if (head === secret) {
-        let success = true;
-
         if (eventID && username && points && assetID) {
           await log(username, eventID, `Attempted Quiz from ${assetID}`);
+
+          const eventIDField: string = (eventID as string).trim();
+          const usernameField: string = (username as string).trim();
+          const assetField: string = (assetID as string).trim();
+          const pointsField: number = Number(points);
 
           const isAttempt: boolean = await doesUserAttempt(
             eventID,
@@ -52,32 +55,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(200).send(result);
             res.end();
           } else {
-            const attemptData: Attempt = {
-              eventID: eventID,
-              username: username,
-              assetID: assetID,
-              points: points,
-            };
-
-            const attemptRes: Result = await createAttempt(attemptData);
-            if (!attemptRes.status) {
-              success = false;
-              result = {
-                status: false,
-                error: attemptRes.error,
-                msg: '',
+            const updateBoard: Result = await updateUserPoints(
+              eventIDField,
+              usernameField,
+              pointsField,
+            );
+            if (updateBoard.status) {
+              const attemptData: Attempt = {
+                eventID: eventIDField,
+                username: usernameField,
+                assetID: assetField,
+                points: pointsField,
               };
-              res.status(200).send(result);
-              res.end();
-            }
 
-            if (success) {
-              const updateBoard: Result = await updateUserPoints(
-                eventID,
-                username,
-                points,
-              );
-              if (updateBoard.status) {
+              const attemptRes: Result = await createAttempt(attemptData);
+              if (!attemptRes.status) {
+                result = {
+                  status: false,
+                  error: attemptRes.error,
+                  msg: '',
+                };
+                res.status(200).send(result);
+                res.end();
+              } else {
                 result = {
                   status: true,
                   error: 'Successfully updated points',
@@ -85,15 +85,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 };
                 res.status(202).send(result);
                 res.end();
-              } else {
-                result = {
-                  status: false,
-                  error: updateBoard.error,
-                  msg: '',
-                };
-                res.status(200).send(result);
-                res.end();
               }
+            } else {
+              result = {
+                status: false,
+                error: updateBoard.error,
+                msg: '',
+              };
+              res.status(200).send(result);
+              res.end();
             }
           }
         } else {
