@@ -57,32 +57,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             res.status(200).send(result);
             res.end();
           } else {
-            const attemptData: Attempt = {
-              eventID: eventIDField,
-              username: usernameField,
-              assetID: assetField,
-              points: pointsField,
-            };
-
-            const attemptRes: Result = await createAttempt(attemptData);
-            if (!attemptRes.status) {
-              success = false;
-              result = {
-                status: false,
-                error: attemptRes.error,
-                msg: '',
+            const updateBoard: Result = await updateUserPoints(
+              eventIDField,
+              usernameField,
+              pointsField,
+            );
+            if (updateBoard.status) {
+              const attemptData: Attempt = {
+                eventID: eventIDField,
+                username: usernameField,
+                assetID: assetField,
+                points: pointsField,
               };
-              res.status(200).send(result);
-              res.end();
-            }
 
-            if (success) {
-              const updateBoard: Result = await updateUserPoints(
-                eventIDField,
-                usernameField,
-                pointsField,
-              );
-              if (updateBoard.status) {
+              const attemptRes: Result = await createAttempt(attemptData);
+              if (!attemptRes.status) {
+                success = false;
+                result = {
+                  status: false,
+                  error: attemptRes.error,
+                  msg: '',
+                };
+                res.status(200).send(result);
+                res.end();
+              } else {
                 result = {
                   status: true,
                   error: 'Successfully updated points',
@@ -90,15 +88,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                 };
                 res.status(202).send(result);
                 res.end();
-              } else {
-                result = {
-                  status: false,
-                  error: updateBoard.error,
-                  msg: '',
-                };
-                res.status(200).send(result);
-                res.end();
-              }
+              }             
+            } else {
+              result = {
+                status: false,
+                error: updateBoard.error,
+                msg: '',
+              };
+              res.status(200).send(result);
+              res.end();
             }
           }
         } else {
