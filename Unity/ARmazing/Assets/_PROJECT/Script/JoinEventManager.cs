@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR.ARFoundation;
@@ -7,7 +6,6 @@ using TMPro;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.IO;
-using System;
 
 public class JoinEventManager : MonoBehaviour
 {
@@ -21,11 +19,22 @@ public class JoinEventManager : MonoBehaviour
     private string eventId = null;
     private string eventName = null;
 
+    /**
+     * Run once on scene start, forces screen orientation to portrait and
+     * get reference to message text which displays log of event joining progress
+     */
     private void Start()
     {
         Screen.orientation = ScreenOrientation.Portrait;
         messageText = messageBox.GetComponentInChildren<TMP_Text>();
     }
+
+    /**
+     * A public method linked to the Join Event Button of the GUI.
+     * This method will be called once the Join Event Button is clicked.
+     * It gets the data from the text input fields of the GUI and
+     * start the joining event sequence
+     */
     public void JoinEventButton()
     {
         eventCode = eventNameInput.text;
@@ -33,12 +42,12 @@ public class JoinEventManager : MonoBehaviour
         StartCoroutine(JoinEventPost()); 
     }
 
-    void DeletePreviousData()
-    {
-        string[] filePaths = Directory.GetFiles(Application.persistentDataPath); 
-        foreach (string filePath in filePaths) File.Delete(filePath);
-    }
-
+    /**
+     * First coroutine in the joining event sequence 
+     * 1. Remove previous event's asset data if it exist
+     * 2. Calls join event API using HTTP Post with relavent data
+     * 3. Upon getting success response it will call the second coroutine of join event sequence
+     */
     IEnumerator JoinEventPost()
     {
         DeletePreviousData();
@@ -76,17 +85,39 @@ public class JoinEventManager : MonoBehaviour
         }
     }
 
-    public JoinEventResponse GetEventJoinResponse(string jsonString)
+    /**
+     * Deletes previous event data in presistant data path
+     */
+    void DeletePreviousData()
     {
-        if (string.IsNullOrEmpty(jsonString) || jsonString == "{}")
+        string[] filePaths = Directory.GetFiles(Application.persistentDataPath);
+        foreach (string filePath in filePaths) File.Delete(filePath);
+    }
+
+    /**
+     * Parse json string of the join event API response and return it as a
+     * JSON object
+     * 
+     * @param jsonContent string response from join event API call
+     * @return a parsed JSON object JoinEventResponse
+     */
+    public JoinEventResponse GetEventJoinResponse(string jsonContent)
+    {
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {
             return null;
         }
 
-        JoinEventResponse res = JsonConvert.DeserializeObject<JoinEventResponse>(jsonString);
+        JoinEventResponse res = JsonConvert.DeserializeObject<JoinEventResponse>(jsonContent);
         return res;
     }
 
+    /**
+     * Second coroutine in the joining event sequence 
+     * 1. Calls get quiz data API using HTTP Post with relavent data
+     * 2. Upon getting success response, saves quiz data to persistant data path as a text file
+     * 3. It then call the third coroutine of join event sequence
+     */
     IEnumerator FetchAndSaveQuizJson()
     {
         messageText.text = "Downloading quiz... Loading...";
@@ -115,6 +146,13 @@ public class JoinEventManager : MonoBehaviour
         }
     }
 
+    /**
+     * Parse json string of the get quiz data API response and return it as a
+     * JSON object
+     * 
+     * @param jsonContent string response from get quiz data API call
+     * @return a parsed JSON object QuizResponse
+     */
     public QuizResponse GetQuizDataResponse(string jsonContent)
     {
         if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
@@ -125,6 +163,12 @@ public class JoinEventManager : MonoBehaviour
         return res;
     }
 
+    /**
+     * Writes string data into persistent data path with specified filename
+     * 
+     * @param filename string that specify the name of the file to be saved
+     * @param data string to be written and saved as a text file
+     */
     private void WriteToFile(string filename, string data)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);
@@ -136,6 +180,13 @@ public class JoinEventManager : MonoBehaviour
         }
     }
 
+    /**
+     * Third coroutine in the joining event sequence 
+     * 1. Calls get get landmarks API using HTTP Post with relavent data
+     * 2. Upon getting success response, saves landmark data (JSON) and landmark images (JPG)
+     * to persistant data path
+     * 3. It then loads the next scene, AR scene
+     */
     IEnumerator FetchAndSaveAssetImages()
     {
         messageText.text = "Downloading images... Loading...";
@@ -168,6 +219,13 @@ public class JoinEventManager : MonoBehaviour
         }
     }
 
+    /**
+     * Get image url path from landmarks JSON data
+     * Download image and saves it in persistent file path with specified filename
+     * 
+     * @param url string of the image saved on AWS S3 bucket
+     * @param filename string that specify the name of the image file to be saved
+     */
     IEnumerator DownloadAndSaveImage(string url, string filename)
     {
         Debug.Log(url);
@@ -189,6 +247,13 @@ public class JoinEventManager : MonoBehaviour
         }
     }
 
+    /**
+    * Parse json string of the get landmark data API response and return it as a
+    * JSON object
+    * 
+    * @param jsonContent string response from get landmark data API call
+    * @return a parsed JSON object AssetResponse
+    */
     public AssetResponse GetAssetResponse(string jsonContent)
     {
         if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
@@ -199,6 +264,12 @@ public class JoinEventManager : MonoBehaviour
         return res;
     }
 
+    /**
+     * Writes image byte array data into persistent data path with specified filename
+     * 
+     * @param filename string that specify the name of the image file to be saved
+     * @param imagesBytes byte array data of the downloaded image file
+     */
     IEnumerator SaveImage(string filename, byte[] imageBytes)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);

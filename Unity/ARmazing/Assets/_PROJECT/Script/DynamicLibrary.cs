@@ -5,15 +5,11 @@ using System.IO;
 using System.Text;
 using Unity.Jobs;
 using UnityEngine;
-
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 namespace UnityEngine.XR.ARFoundation.Samples
 {
-    /// <summary>
-    /// Adds images to the reference library at runtime.
-    /// </summary>
     [RequireComponent(typeof(ARTrackedImageManager))]
     public class DynamicLibrary : MonoBehaviour
     {
@@ -53,15 +49,6 @@ namespace UnityEngine.XR.ARFoundation.Samples
         [SerializeField, Tooltip("The set of images to add to the image library at runtime")]
         List<ImageData> m_Images;
 
-        /// <summary>
-        /// The set of images to add to the image library at runtime
-        /// </summary>
-        //public ImageData[] images
-        //{
-        //    get => m_Images;
-        //   set => m_Images = value;
-        //}
-
         enum State
         {
             NoImagesAdded,
@@ -77,6 +64,9 @@ namespace UnityEngine.XR.ARFoundation.Samples
 
         StringBuilder m_StringBuilder = new StringBuilder();
 
+        /**
+         * Draws a GUI at runtime that will display debug messages or error messages 
+         */
         void OnGUI()
         {
             var fontSize = 50;
@@ -127,17 +117,33 @@ namespace UnityEngine.XR.ARFoundation.Samples
             m_ErrorMessage = $"Error: {errorMessage}";
         }
 
+        /**
+         * Run once on scene start
+         * 1. Start the adding images sequence with specified delay
+         * due compansate for some mobile devices slowness in start up camera
+         */
         private void Start()
         {
             StartCoroutine(AddImages(3));
         }
 
+        /**
+         * Set the state to signal the start of loading images dynamically into Image Library
+         */
         IEnumerator AddImages(float delay)
         {
             yield return new WaitForSeconds(delay);
             m_State = State.AddImagesRequested;
         }
 
+        /**
+         * Run every frame
+         * 1. If state if AddImageRequest, read images from persistent data path
+         * and load them into the XR Reference Image Library at runtime
+         * 2. Adding images to XR Reference Image Library is a asynchronous the state AddingImages
+         * wait for images to complete loading into the XR Reference Image Library
+         * 3. Once all images are adding the state is set to Done
+         */
         void Update()
         {
             switch (m_State)
@@ -147,7 +153,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
                         string[] files = Directory.GetFiles(Application.persistentDataPath, "*.JPG");
                         foreach (string file in files)
                         {
-                            m_Images.Add(LoadPNG(file));
+                            m_Images.Add(LoadImage(file));
                         }
                         
                   
@@ -225,7 +231,13 @@ namespace UnityEngine.XR.ARFoundation.Samples
             }
         }
 
-        ImageData LoadPNG(string filePath)
+        /**
+         * Loads image data, byte array, from specified file path and return a ImageData object
+         * 
+         * @param filePath string of the image location in local storage
+         * @return a ImageData object of the loaded image
+         */
+        ImageData LoadImage(string filePath)
         {
 
             Texture2D tex = null;
