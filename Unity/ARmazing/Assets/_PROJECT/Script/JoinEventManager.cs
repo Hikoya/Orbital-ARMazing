@@ -33,8 +33,15 @@ public class JoinEventManager : MonoBehaviour
         StartCoroutine(JoinEventPost()); 
     }
 
+    void DeletePreviousData()
+    {
+        string[] filePaths = Directory.GetFiles(Application.persistentDataPath); 
+        foreach (string filePath in filePaths) File.Delete(filePath);
+    }
+
     IEnumerator JoinEventPost()
     {
+        DeletePreviousData();
         messageBox.SetActive(true);
         messageText.text = "Joining Event... Loading...";
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/join";

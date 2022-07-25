@@ -20,11 +20,12 @@ public class QuizManager : MonoBehaviour
     private string auth = "Bearer passwordispasswordissecret";
     private List<AssetData> assetsData = null;
     private AssetData assetData = null;
+     
     private int points = 0;
     private int currentPoint = 0;
 
     public TMP_Text QuestionTxt;
-
+    public TMP_Text QuizTitle;
     private void Start()
     {
         filename = PlayerPrefs.GetString("eventid") + ".txt";
@@ -145,6 +146,7 @@ public class QuizManager : MonoBehaviour
             currentQuestion = Random.Range(0, QnA.Count);
 
             QuestionTxt.text = QnA[currentQuestion].question;
+            QuizTitle.text = QnA[currentQuestion].asset;
             SetAnswers();
         } 
         else

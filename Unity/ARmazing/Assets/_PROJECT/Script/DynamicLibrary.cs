@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -90,7 +91,7 @@ namespace UnityEngine.XR.ARFoundation.Samples
             {
                 case State.NoImagesAdded:
                     {
-                        m_State = State.AddImagesRequested;
+                        //m_State = State.AddImagesRequested;
 
                         break;
                     }
@@ -124,6 +125,17 @@ namespace UnityEngine.XR.ARFoundation.Samples
         {
             m_State = State.Error;
             m_ErrorMessage = $"Error: {errorMessage}";
+        }
+
+        private void Start()
+        {
+            StartCoroutine(AddImages(3));
+        }
+
+        IEnumerator AddImages(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            m_State = State.AddImagesRequested;
         }
 
         void Update()
