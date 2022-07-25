@@ -20,11 +20,19 @@ public class QuizManager : MonoBehaviour
     private string auth = "Bearer passwordispasswordissecret";
     private List<AssetData> assetsData = null;
     private AssetData assetData = null;
+     
     private int points = 0;
     private int currentPoint = 0;
 
     public TMP_Text QuestionTxt;
+    public TMP_Text QuizTitle;
 
+    /**
+     * Run once on scene start
+     * 1. Gets event id stored in PlayerPref
+     * 2. Read, filter and get quiz data according to scanned image
+     * 3. Generate questions from filter quiz data and update GUI
+     */
     private void Start()
     {
         filename = PlayerPrefs.GetString("eventid") + ".txt";
@@ -32,6 +40,14 @@ public class QuizManager : MonoBehaviour
         GenerateQuestion();
     }
 
+    /**
+     * Called once a answer button is pressed
+     * Removes currently shown question from QnA list 
+     * if there are still more question left in the QnA List
+     * move on to the next question and display on GUI
+     * else update asset data JSON to indicate quiz has been attempted
+     * call update points API and load back AR scene
+     */
     public void NextQuestion()
     {
         QnA.RemoveAt(currentQuestion);
@@ -47,6 +63,10 @@ public class QuizManager : MonoBehaviour
         EnableOptions();
     }
 
+    /** 
+     * 1. Calls update points API using HTTP Post with relavent data
+     * 2. Upon getting success response, load back AR scene
+     */
     IEnumerator UpdatePoints()
     {
         string uri = "https://orbital-armazing.herokuapp.com/api/unity/points";
@@ -86,17 +106,27 @@ public class QuizManager : MonoBehaviour
         }
     }
 
-    public UpdatePointsResponse GetUpdatePointsResponse(string jsonString)
+    /**
+     * Parse json string of the update points API response and return it as a
+     * JSON object
+     * 
+     * @param jsonContent string response from get update points API call
+     * @return a parsed JSON object UpdatePointsResponse
+     */
+    public UpdatePointsResponse GetUpdatePointsResponse(string jsonContent)
     {
-        if (string.IsNullOrEmpty(jsonString) || jsonString == "{}")
+        if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
         {
             return null;
         }
 
-        UpdatePointsResponse res = JsonConvert.DeserializeObject<UpdatePointsResponse>(jsonString);
+        UpdatePointsResponse res = JsonConvert.DeserializeObject<UpdatePointsResponse>(jsonContent);
         return res;
     }
 
+    /**
+     * Set all answer buttons as non iteractable
+     */
     public void DisableOptions()
     {
         for (int i = 0; i < options.Length; i++)
@@ -105,6 +135,9 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    /**
+     * Set all answer buttons as iteractable
+     */
     public void EnableOptions()
     {
         for (int i = 0; i < options.Length; i++)
@@ -113,6 +146,9 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    /**
+     * Update answer button texts of the quiz scene
+     */
     void SetAnswers()
     {
         options[0].transform.GetChild(0).GetComponent<TMP_Text>().text = QnA[currentQuestion].option1;
@@ -133,11 +169,18 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    /**
+     * Increments points of the current quiz session
+     */
     public void incrementPoints()
     {
         points += currentPoint;
     }
 
+    /**
+     * Randomly get a question from the QnA list and update GUI elements of quiz scene
+     * if there are no questions in QnA return back to AR scene 
+     */
     void GenerateQuestion()
     {
         if (QnA.Count != 0)
@@ -145,6 +188,7 @@ public class QuizManager : MonoBehaviour
             currentQuestion = Random.Range(0, QnA.Count);
 
             QuestionTxt.text = QnA[currentQuestion].question;
+            QuizTitle.text = QnA[currentQuestion].asset;
             SetAnswers();
         } 
         else
@@ -154,6 +198,13 @@ public class QuizManager : MonoBehaviour
         }
     }
 
+    /**
+     * Read and parse JSON string of the quiz data and return it as a
+     * JSON object list
+     * 
+     * @param filename string of the quiz JSON data in persistent data path
+     * @return a parsed JSON object QuestionAndAnswers list
+     */
     List<QuestionAndAnswers> ReadQuizFromJSON(string filename)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);
@@ -174,6 +225,13 @@ public class QuizManager : MonoBehaviour
         return FilterQuiz(res.msg, PlayerPrefs.GetString("trackedimage"));
     }
 
+    /**
+     * Filter JSON object QuestionAndAnswers list according to the scanned image by the AR
+     * 
+     * @param QnAList JSON object QuestionAndAnswers list to be filtered
+     * @param trackedImageName string name of the scanned iamge by the AR
+     * @return a filtered JSON object QuestionAndAnswers list 
+     */
     List<QuestionAndAnswers> FilterQuiz(List<QuestionAndAnswers> QnAList, string trackedImageName)
     {
         List<QuestionAndAnswers> filteredQuiz = (from QnA in QnAList
@@ -182,6 +240,13 @@ public class QuizManager : MonoBehaviour
         return filteredQuiz;
     }
 
+    /**
+     * Read and parse json string of the get asset (landmark) and return it as a
+     * JSON object list
+     * 
+     * @param filename string of the asset JSON data in persistent data path
+     * @return a parsed JSON object AssetData list
+     */
     List<AssetData> ReadAssetsDataFromJSON(string filename)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);
@@ -202,6 +267,14 @@ public class QuizManager : MonoBehaviour
         return res;
     }
 
+    /**
+     * Update the Asset Data list by setting the quiz completed status to true of the 
+     * scanned image by the AR
+     * 
+     * @param AssetDataList JSON object AssetData list to be updated
+     * @param trackedImageName string name of the image scanned by the AR
+     * @return a updated JSON object AssetData list
+     */
     List<AssetData> UpdateAsset(List<AssetData> AssetDataList, string trackedImageName)
     {
         foreach (AssetData assetData in AssetDataList)
@@ -215,11 +288,25 @@ public class QuizManager : MonoBehaviour
         return AssetDataList;
     }
 
+    /**
+     * Get the Asset Data from the Asset Data list that matches the name of the image 
+     * scanned by the AR
+     * 
+     * @param AssetDataList JSON object AssetData list to search
+     * @param trackedImageName string name of the image scanned by the AR
+     * @return a JSON object AssetData that matches the name of the image scanned by the AR
+     */
     AssetData GetAsset(List<AssetData> AssetDataList, string trackedImageName)
     {
         return AssetDataList.Find(x => x.name.Replace(" ", "") == trackedImageName);
     }
 
+    /**
+     * Writes string data into persistent data path with specified filename
+     * 
+     * @param filename string that specify the name of the file to be saved
+     * @param data string to be written and saved as a text file
+     */
     private void WriteToFile(string filename, string data)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);

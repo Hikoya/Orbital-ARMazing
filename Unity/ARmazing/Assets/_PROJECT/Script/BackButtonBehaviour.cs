@@ -6,6 +6,9 @@ using UnityEngine.XR.ARFoundation;
 
 public class BackButtonBehaviour : MonoBehaviour
 {
+    /**
+     * Called once the back button is pressed and loads the AR scene
+     */
     public void BackButton()
     {
         LoaderUtility.Initialize();

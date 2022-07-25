@@ -9,16 +9,30 @@ public class AnswerButtonBehaviour : MonoBehaviour
     public QuizManager quizManager;
     private Image image;
 
+    /**
+     * Run once on scene start
+     * Get reference to image component of button for color change
+     */
     private void Start()
     {
         image = GetComponent<Image>();
     }
 
+    /**
+     * Called once any of the answer buttons are pressed and starts a coroutine to
+     * update answer button GUI elements
+     */
     public void Answer()
     {
         StartCoroutine(AnswerCoroutine());
     }
 
+    /**
+     * Updates answer button GUI elements, if correct answer button is 
+     * pressed the button turns green, else it turns red. It will then 
+     * call the next question method from the quiz manager to load the 
+     * next set of question and answers.
+     */
     IEnumerator AnswerCoroutine()
     {
         if (isCorrect)

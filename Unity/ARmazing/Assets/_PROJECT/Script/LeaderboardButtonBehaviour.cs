@@ -6,6 +6,9 @@ using UnityEngine.XR.ARFoundation;
 
 public class LeaderboardButtonBehaviour : MonoBehaviour
 {
+    /**
+     * Called once the leaderboard button is pressed and loads the Leaderboard scene
+     */
     public void LeaderboardButton()
     {
         SceneManager.LoadScene("Leaderboard", LoadSceneMode.Single);

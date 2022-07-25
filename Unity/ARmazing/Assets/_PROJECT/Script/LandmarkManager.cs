@@ -15,7 +15,11 @@ public class LandmarkManager : MonoBehaviour
     private TMP_Text messageText;
     private string jsonContent = null;
 
-    // Start is called before the first frame update
+    /**
+     * Run once on scene start
+     * 1. Read asset (landmark) data from persistent data path
+     * 2. Update information panel and landmarks panel
+     */
     void Start()
     {
         messageText = messageBox.GetComponentInChildren<TMP_Text>();
@@ -24,17 +28,27 @@ public class LandmarkManager : MonoBehaviour
         //For testing
         //PlayerPrefs.SetString("eventname", "testingname");
         //PlayerPrefs.SetString("eventcode", "testingcode");
-
-        UpdateLandmarks();
+        
         UpdateInformationPanel();
+        UpdateLandmarks();
     }
 
+    /**
+     * Update information panel with the event name and event code
+     */
     void UpdateInformationPanel()
     {
         informationPanel.transform.Find("EventNameText").GetComponent<TMP_Text>().text = "Event Name: " + PlayerPrefs.GetString("eventname");
         informationPanel.transform.Find("EventCodeText").GetComponent<TMP_Text>().text = "Event Code: " + PlayerPrefs.GetString("eventcode");
     }
 
+    /**
+     * Read and parse json string of the get asset (landmark) and return it as a
+     * JSON object list
+     * 
+     * @param filename string of the asset JSON data in persistent data path
+     * @return a parsed JSON object AssetData list
+     */
     List<AssetData> ReadAssetsDataFromJSON(string filename)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);
@@ -55,6 +69,9 @@ public class LandmarkManager : MonoBehaviour
         return res;
     }
 
+    /**
+     * Update landmark panel with the landmark cards filled with the data read from asset JSON data
+     */
     void UpdateLandmarks()
     {
         foreach (AssetData assetData in assetsData)
@@ -67,11 +84,17 @@ public class LandmarkManager : MonoBehaviour
             row.transform.Find("LatitudeText").GetComponent<TMP_Text>().text = "Latitude: " + assetData.latitude;
             row.transform.Find("LongitudeText").GetComponent<TMP_Text>().text = "Longitude: " + assetData.longitude;
             
-            row.transform.Find("LandmarkImage").GetComponent<Image>().sprite = LoadPNG(assetData.name.Replace(" ", "") + ".JPG");
+            row.transform.Find("LandmarkImage").GetComponent<Image>().sprite = LoadImage(assetData.name.Replace(" ", "") + ".JPG");
         }
     }
 
-    Sprite LoadPNG(string filePath)
+    /**
+     * Loads image data, byte array, from specified file path and return a image sprite 
+     * 
+     * @param filePath string of the image location in local storage
+     * @return a Sprite of the loaded image
+     */
+    Sprite LoadImage(string filePath)
     {
 
         Texture2D tex = null;

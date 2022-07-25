@@ -17,8 +17,12 @@ public class LeaderboardManager : MonoBehaviour
     private TMP_Text messageText;
     public string filename;
     private string auth = "Bearer passwordispasswordissecret";
-    
-    // Start is called before the first frame update
+
+    /**
+     * Run once on scene start
+     * 1. Update Information panel
+     * 2. Start fetching player ranking by calling leaderboard API
+     */
     void Start()
     {
         messageText = messageBox.GetComponentInChildren<TMP_Text>();
@@ -32,12 +36,20 @@ public class LeaderboardManager : MonoBehaviour
         StartCoroutine(FetchLeaderboardJson());
     }
 
+    /**
+     * Update information panel with the event name and event code
+     */
     void UpdateInformationPanel()
     {
         informationPanel.transform.Find("EventNameText").GetComponent<TMP_Text>().text = "Event Name: " + PlayerPrefs.GetString("eventname");
         informationPanel.transform.Find("EventCodeText").GetComponent<TMP_Text>().text = "Event Code: " + PlayerPrefs.GetString("eventcode");
     }
 
+    /** 
+     * 1. Calls leader board API using HTTP Post with relavent data
+     * 2. Upon getting success response, update the leaderboard 
+     * GUI with the returned response
+     */
     IEnumerator FetchLeaderboardJson()
     {
         messageBox.SetActive(true);
@@ -69,6 +81,13 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
+    /**
+     * Parse json string of the leaderboard API response and return it as a
+     * JSON object
+     * 
+     * @param jsonContent string response from leaderboard API call
+     * @return a parsed JSON object LeaderboardResponse
+     */
     public LeaderboardResponse GetLeaderboardDataResponse(string jsonContent)
     {
         if (string.IsNullOrEmpty(jsonContent) || jsonContent == "{}")
@@ -79,6 +98,10 @@ public class LeaderboardManager : MonoBehaviour
         return res;
     }
 
+    /** 
+      * Update GUI elements of the player ranking panel, shows top 10 player ranking sorted in 
+      * descending order 
+      */
     void UpdateLeaderboard()
     {
         for (int i = 0; i < playerScores.Count; i++)

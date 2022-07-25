@@ -1284,6 +1284,7 @@ MonoBehaviour:
   currentQuestion: 0
   filename: 
   QuestionTxt: {fileID: 1797010167}
+  QuizTitle: {fileID: 102022935}
 --- !u!4 &1267481527
 Transform:
   m_ObjectHideFlags: 0
